@@ -189,6 +189,7 @@ approved by some of the Rust teams.
 More work on other issues is commented on in Section [Code that got merged][a].
 
 [^1]: pending
+
 [a]: <code-that-got-merged>
 
 ## Current state
@@ -218,6 +219,9 @@ rust-lang/libc repo these days, so work piles up quickly.
 Though I must admit there's not many new issues opened. It's often the
 maintainers themselves ensuring something that popped up while solving another
 issue isn't forgotten, even though solving it is not a current priority.
+
+For specifics on which code got merged and which didn't, see Section
+[Code that got merged][a].
 
 ## Code that got merged
 
@@ -403,14 +407,180 @@ wrong?_
   older API.
 
   Of course, each platform's practices are completely up to them, but trying to
-  adapt a SemVer-like approach (prevalent in rust-lang/libc) to that makes it a
-  bit hard.
+  adapt a SemVer-like approach (prevalent in rust-lang/libc) to those release
+  habits is hard.
 
-  Without a clear way of knowing which target we're compiling for, this issue
+  Without a clear way of knowing which target we're compiling for, this proposal
   attempted to add the supported OpenBSD version to each target's tuple. This,
-  though, was deemed to suppose too heavy a maintenance burden.
+  though, was deemed too heavy a maintenance burden.
 
-  <!-- [todo]: finish explaining your solution and link to the MCP and the implementation. -->
+  The solution I proposed in a separate MCP at [^9] followed from comments by my
+  mentor and the compiler team left in the Zulip thread in [^10]. That MCP got
+  approved and I've submitted a reference implementation in [^11].
+
+  This solution instead embeds OpenBSD's `-current` release channel version into
+  each target's `target_env`. This then allows us to bind against interfaces
+  depending on that compile-time value.
+
+  This compile-time "property" of each target is then meant to be updated each
+  time a new release is made upstream by OpenBSD. That way, older Rust compiler
+  versions keep the older values (maintained in the OpenBSD ports collection.)
+
+  This seemed fairly satisfactory from discussions in the Zulip thread for the
+  newest version of the MCP [^12]. At the time of writing, this is yet to be
+  merged, so it's not yet possible to use it in rust-lang/libc.
+
+- [rust-lang/libc#4867][4867]
+  _Change type of `AF_INET` and `AF_INET6` to `sa_family_t`_
+
+  This PR was one of the stale PRs I picked up after week 7. I rebased it to
+  latest `main` and ensured it still did what it was meant to (as our current
+  bindings could have changed since it was first opened.)
+
+  This one is not included directly in the 1.0 milestone but does try to solve an
+  issue [^13] in the 1.0 milestone. I've yet to receive a response from the
+  original author and to get further approval from maintainers to move it forward.
+
+  My work can be found in the latest patch of this commit history [^14].
+
+- [rust-lang/libc#5008][5008]
+  _Fix: Replace sighandler_t with sig_t for Apple and BSDs_
+
+  This PR was one I initially believed to be stale as it tried to solve one of the
+  issues in the 1.0 release milestone [^15], but seemed to not have been touched
+  in almost six months.
+
+  I rebased it to latest tip-of-tree and commented on it, but the author mentioned
+  that they were actually waiting for a review. I then decided to simply leave
+  some possible improvements to the patchset, and called it.
+
+  Recently, the author got back from one of the rust-lang/libc maintainers, and
+  has modified the patch I rebased and tweaked back when I first commented on the
+  PR thread. For details, see their work on that in the above link.
+
+- [rust-lang/libc#5010][5010] _feat: add support for 32 bit `time_t` in Windows_
+
+  This was one of the PRs I originally submitted before GSoC to rust-lang/libc
+  concerning the fact `time_t` was only exposed as 32-bits wide on Windows.
+  There's a macro in Windows that can be used to toggle the old behavior.
+
+  Granted, the whole point of the transition I eventually settled on for one of
+  my GSoC goals was to move towards full 64-bit `time_t` and LFS types. This PR
+  was closed shortly after one of the maintainers made that clear to me.
+
+  Still, it serves as good recollection.
+
+- [rust-lang/libc#5032][5032] _Deprecate windows `time64_t`_
+
+  This was one of the PRs I originally opened before I even got accepted into
+  GSoC to familirize myself with the repo. It addressed the fact that we still
+  had a 64-suffixed `time_t` in Windows.
+
+  Because the whole point of the transition is to have a single, 64-bits wide
+  `time_t`, providing a "variant" of this data type that is guaranteed to be
+  64-bits wide becomes redundant.
+
+  This PR is currently on hold and will continue being so until we see whether
+  the 1.0 release is really nearing. There's similar patchsets that are also on
+  hold for the same reason.
+
+  It'll be easier to justify the mass deprecations on a proper breaking release.
+
+- [rust-lang/libc#5050][5050] _feat: add back support for GNU Windows x86 in CI_
+
+  This PR I opened while solving other Windows issues and testing on each of our
+  supported Rust targets. I found that there didn't seem to be any issues with
+  Windows x86 running with a GNU-based libc implementation.
+
+  The CI job for this target had been disabled in CI due to some segfaults
+  caused by the generated C tests, but the only apparent issue was that a
+  certain data type, `max_align_t`, had the wrong alignment requirement.
+
+  This added back support for this target in CI, and it seems to have been
+  stable ever since then.
+
+- [rust-lang/libc#5059][5059]
+  _windows(gnu): link to 32-bit time routines in x86 and add test_
+
+  This issue is one of the Windows patchsets I prepared after initially working on
+  `time_t` matters to introduce myself to the repository. While looking through
+  both MSVC and MinGW headers, I noticed that there were mismatches.
+
+  For about ten years, the bindings for MinGW on x86 targets have been reflecting
+  a `time_t` that dfeaults to having a 32-bit bit width. This was wrong, but we
+  couldn't just break users with a change in the data type of a type alias.
+
+  This PR ensured that at least the routines that use this data type link to the
+  right (also 32-bit) symbols. This is necessary because Windows has variants for
+  certain functions involving `time_t` that expect a 32-bit integer.
+
+  Without this fix, we wouldn't have run into any issues so long as the argument
+  passed to the routine were not part of an input-output parameter whose effective
+  address were taken.
+
+  Now, for routines like `time()`, this does mean that a load on the `time_t`
+  value will attempt to write 64-bits worth of data instead of only 32. This could
+  have potentially unsound consequences, and this patch solved that.
+
+  While testing the changes in this PR, I also started digging into what seemed to
+  have been long-standing issues on Windows concerning function pointer comparison
+  tests for bindings to UCRT routines.
+
+  Further comments on that PR can be found in another item of this section of the
+  report.
+
+- [rust-lang/libc#5062][5062] _windows: expose `cfg` for 64-bit `time_t`_
+
+  This PR was one of the Windows PRs that followed up from my work before being
+  selected for GSoC. It addressed the fact Windows x86 targets using GNU's libc
+  implementation exposed a 32-bit `time_t` instead of a 64-bit `time_t`.
+
+  We can't just break users by changing this data type, a few PRs (including
+  this one and others commented on in this report) ensured users both had a way
+  to opt in to the correct behavior or otherwise had 32-bit routines linked.
+
+  The former was the goal of this patch. It reused one of the existing `cfg`s we
+  had for similar purposes under GNU/Linux systems, such that users could toggle
+  that by passing it to an invocation of the Rust compiler.
+
+- [rust-lang/libc#5127][5127] _fuchsia: clean up module_
+
+  This was a fairly large patchset that I initially set out on as part of my
+  `time_t` and LFS goals, but that easily went on to be a partial verification
+  of most of the bindings we provide for the Fuchsia operating system.
+
+  There's not much to comment here. This was possibly the PR that took longest
+  to merge, as it had to go through multiple reviews, painful source control
+  history clean ups, and had to get approval from the target maintainer.
+
+  For details on the specific changes, see the PR and the each patch's
+  accompanying message.
+
+- [rust-lang/libc#5128][5128] _build: add `rust-toolchain.toml` file_
+
+  This was a PR I opened while working on other stuff in the repo, and noticing
+  that the build setup for contributors wasn't quite as declarative as I would
+  like it to be.
+
+  I myself build a bunch of software from source through the Nix build system
+  and package manager. It takes a declarative approach to package management
+  that ensures you get reproducible builds across runs and (sometimes) machines.
+
+  In rust-lang/libc, though, we contributors seemed to be needing to set up
+  manual toolchain overrides to get scripts using `nightly` to pass. I thought
+  this could be improved by having a `rust-toolchain` file.
+
+  `rustup` (the Rust toolchain and component manager) can detect this file and
+  either switch or otherwise install the toolchain specified in that file. This
+  is automatic and ensures the user doesn't have to worry about overrides.
+
+  What I failed to realize was that this file is also considered to be a form of
+  commitment to downstream users on the required toolchain that the project
+  requires to even build any library object files at all.
+
+  Users also clone this repo by virtue of this being open source without
+  necessarily wanting to hack on it, so using that file as a form of developer
+  tooling wouldn't quite cut it. That's why this PR got closed without merging.
 
 [657]: <https://github.com/rust-lang/libc/issues/657>
 [938]: <https://github.com/rust-lang/libc/issues/938>
@@ -423,6 +593,13 @@ wrong?_
 [3661]: <https://github.com/rust-lang/libc/issues/3661>
 [4080]: <https://github.com/rust-lang/libc/issues/4080>
 [916]: <https://github.com/rust-lang/compiler-team/issues/916>
+[4867]: <https://github.com/rust-lang/libc/issues/4867>
+[5008]: <https://github.com/rust-lang/libc/issues/5008>
+[5050]: <https://github.com/rust-lang/libc/issues/5050>
+[5059]: <https://github.com/rust-lang/libc/issues/5059>
+[5062]: <https://github.com/rust-lang/libc/issues/5062>
+[5127]: <https://github.com/rust-lang/libc/issues/5127>
+[5128]: <https://github.com/rust-lang/libc/issues/5128>
 [^2]: <https://github.com/rust-lang/libc/issues/5265>
 [^3]: <https://github.com/rust-lang/libc/issues/5384>
 [^4]: <https://github.com/rust-lang/libc/issues/5325>
@@ -430,5 +607,12 @@ wrong?_
 [^6]: <https://github.com/rust-lang/libc/issues/5375>
 [^7]: <https://github.com/rust-lang/libc/issues/5390>
 [^8]: <https://github.com/rust-lang/libc/issues/570>
+[^9]: <https://github.com/rust-lang/libc/issues/1018>
+[^10]: <https://rust-lang.zulipchat.com/#narrow/stream/233931-xxx/topic/Split.20the.20.60-openbsd.2A.60.20targets.20by.20version.20compiler-team.23916>
+[^11]: <https://github.com/rust-lang/rust/issues/160739>
+[^12]: <https://rust-lang.zulipchat.com/#narrow/stream/233931-xxx/topic/Encode.20OpenBSD.20.60-current.60.20version.20in.20tar.E2.80.A6.20compiler-team.231018/with/611628084>
+[^13]: <https://github.com/rust-lang/libc/issues/468>
+[^14]: <https://github.com/dybucc/libc/commits/change-type/>
+[^15]: <https://github.com/rust-lang/libc/issues/1273>
 
 ## Challenges and the learning experience
