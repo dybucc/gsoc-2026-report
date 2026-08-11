@@ -582,6 +582,269 @@ wrong?_
   necessarily wanting to hack on it, so using that file as a form of developer
   tooling wouldn't quite cut it. That's why this PR got closed without merging.
 
+- [rust-lang/libc#5129][5129]
+  _vxworks: add `cfg` to definition of `off64_t` and `off_t`_
+
+  This PR was initially part of my main goals during GSoC to address LFS types. In
+  this case, it affected VxWorks targets, but the target maintainer eventually
+  said that they would prefer to keep these symbols.
+
+  This patch got repurposed into a small clean up. It removed some stubbed symbols
+  that returned errors in our bindings because they didn't really exist in the SDK
+  shipped by upstream.
+
+  It also removed symbols that were only available when programming against the
+  kernel. The target maintainer confirmed that, at least in the short term, Rust
+  support in VxWorks would be limited to RTPs (Real Time Processes.).
+
+- [rust-lang/libc#5130][5130]
+  _TEEOS: Change the definition of `time_t` to `i64`_
+
+  This PR was another one of the the changes that I made as I went through all
+  supported targets looking for deffects in the types we used in our bindings
+  for both `time_t` and LFS.
+
+  There's not much to comment here. What I initially submitted was what exactly
+  what got merged in the end.
+
+- [rust-lang/libc#5131][5131] _refactor: adjust definition of `off_t` in wasi_
+
+  This PR was another one of the changes that I deemed necessary while verifying
+  that all of our LFS-related types fit those exposed usptream. There's not much
+  to discuss here; What I initially submitted was merged as-is.
+
+- [rust-lang/libc#5132][5132] _newlib: fix definition of `time_t` and `off_t`_
+
+  This PR submitted another patchset to more accurately map the types used in
+  our bindings to those used in upstream projects using newlib. This PR took a
+  while to merge and it went through multiple revisions.
+
+  The issue was two-fold; (1) I submitted too large a patch and that had to
+  undergo multiple source control history clean ups, and (2) newlib is not tied
+  to any particular target but rather used by multiple targets.
+
+  newlib is a minimal libc implementation that is used by a number of tier 2 and
+  tier 3 Rust targets often working in either embedded environments or otherwise
+  slightly exotic contexts. Getting confirmation on all the changes took a
+  while.
+
+  On my side of things, I realized as time went on that I had made a few
+  mistakes on the bindings, and so had to both go back and fix those, as well as
+  report on the issue thread clarifying what the new set of changes were.
+
+  The changes that eventually got merged were a mix of clean ups unrelated to
+  LFS, and of a small change to both RTEMS targets and PS Vita targets
+  concerning LFS.
+
+- [rust-lang/libc#5142][5142] _emscripten: deprecate file offset types_
+
+  This PR was part of my two initial goals on GSoC for verifying the
+  "correctness" ofthe types we used in LFS bindings. Between this patch being
+  submitted and it getting merged, discussions took place across other issues
+  and PRs.
+
+  We eventually settled for "marker" comments instead of deprecation notices, so
+  the initial patch only got modified in that respect. The plan here (and in
+  other similar PRs) is to avoid mass deprecation from forcing users into
+  allowing warnings.
+
+  The solution my mentor came up with was to instead have them all annotated
+  with a simple `FIXME` comment that would be used later on to find+replace
+  those with actual deprecations once we neared the 1.0 release.
+
+  Otherwise, having these deprecations scattered throughout stable 0.2.x
+  releases just doesn't quite make for an easy time updating dependencies in
+  downstream crates.
+
+- [rust-lang/libc#5144][5144] _linux(uclibc): move definition of `time_t`_
+
+  This PR was remade from an older patch I submitted making extensive changes to
+  our bindings to the uClibc implementation of liblibc. The changes were aimed
+  at having an accurate definition for `time_t` fitting upstream's build-time
+  options.
+
+  This got eventually refactored into a patch that used a recent patch by
+  another contributor adding support for the one build option that I used in my
+  initial patch. That PR got merged first, and addressed only a subset of uClibc
+  targets.
+
+  I remade my PR into extending that to support all uClibc targets, as the
+  afore-mentioned build-time option is available no matter the target triple
+  combination.
+
+- [rust-lang/libc#5164][5164] _fix: remove conflicting items in L4Re uClibc_
+
+  This PR I submitted while working on reviewing all targets, and more
+  specifically, once I hit the Linux-like targets. I noticed some mismatches
+  between the types that we made available under L4Re, as we share some of those
+  with Linux.
+
+  Thankfully, another contributor noticed that there was already a larger PR
+  addressing some L4Re-specific facts, and among the changes in that patchset,
+  mine were already included. I closed the PR after checking that one out.
+
+- [rust-lang/libc#5165][5165]
+  _linux(uclibc): remove redundant records and explicit linking to `libutil`_
+
+  This PR I initially submitted a patchset for that didn't quite pass muster. I
+  added support for a new `cfg` that mapped to an upstream build option, but
+  that was something we eventually decided against.
+
+  Among our final discussions, we settled for splitting the patchset into two;
+  One containing uncontroversial changes that would ensure our bindings fit
+  those of a defualt build of uClibc, and another one necessitating maintainer
+  approval.
+
+  The latter one is still pending at [^16]. The target maintainers are yet to
+  answer to that one, and I'm currently assuming this to be low priority as our
+  current bindings work just fine with the default build options.
+
+- [rust-lang/libc#5170][5170] _linux(musl): deprecate LFS64 bindings_
+
+  This PR deprecated the LFS types we used in our musl libc bindings, such that
+  we could soon remove them altogether. Upstream makes no difference whatsoever
+  between targets with a 64- or 32-bit machine word size, so they're always 64
+  bits.
+
+  This, like many other PRs, got refactored into using `FIXME` comments instead
+  of adding deprecation warnings. These are part of a larger plan to mark the
+  items that we plan on removing, but only deprecate them once we near 1.0.
+
+- [rust-lang/libc#5173][5173] _l4re: change bit widths of file offset types_
+
+  This PR was originally held off alsmost as soon as it was submitted because we
+  thought it best to first address the other uClibc PR. That one got eventually
+  merged (though the larger part of the patch got split into another, still
+  open, PR.)
+
+  The latest revision of this PR adds deprecation notices to types, and at least
+  at the time of writing, it seems like these are actually getting deprecated
+  and not just marked for future deprecation.
+
+  Still, some stuff around testing and symbol availability on the C side of
+  things needs further discussion with that target maintainer. That's currently
+  ongoing.
+
+- [rust-lang/libc#5178][5178]
+  _android: deprecate file offset types in targets with 64-bit abis_
+
+  This PR addressed the fact that Android targets with a 64-bit machine word
+  size are getting LFS-suffixed types exposed even though their unsuffixed types
+  are already equivalent.
+
+  The initial patch added deprecation warnings, but the revision that eventually
+  got merged uses `FIXME` comments to ensure we can easily deprecate those items
+  once we actually near the 1.0 release.
+
+- [rust-lang/libc#5180][5180] _feat: add macro to declare unstable constants_
+
+  This PR I submitted while working on deprecating constants. Back when this was
+  submitted, the plan was still to deprecate in the next stable release, and not
+  to delay that until 1.0.
+
+  I thought it would be best if the type of unstable symbol I went through in
+  the PRs concerned with constants got a dedicated macro with which to
+  automatically annotate it with a documentation comment to indicate its
+  unstable guarantees.
+
+  This wasn't quit a great idea, and the increased maintenance burden was deemed
+  not worth it. The PR got subsequently closed. The dicussion for this, though,
+  took place in a separate issue/PR thread.
+
+- [rust-lang/libc#5213][5213] _fuchsia: propose `sigaction` definition_
+
+  This PR I submitted while working on the Fuchsia PR. It stemmed off of
+  discussions on its comments with both my mentor. The goal here was to propose
+  another solution for the to this day still faulty bindings we have for
+  `sigaction`.
+
+  This type is one that we've had trouble with across most Unix-based targets,
+  and we've yet to find a good solution for it. The main issue is in that almost
+  every target has some symbol that casts `0` to this type.
+
+  In theory, this type is an alias to a function pointer in C, but that means a
+  cast such as the above would get you a null function pointer. In Rust, there's
+  no way of getting that without immediate Undefined Behavior.
+
+  Matters concerning "raw function pointers," akin to the existing raw pointers
+  Rust already has to deal with, among others, situations like this one, are
+  being discussedi in rust-lang/rust. They're still a WIP, though.
+
+- [rust-lang/libc#5219][5219] _freebsd: fix docs links and wording_
+
+  This PR I submitted while we were finally merging the patchsets concerning
+  constant deprecations. Those eventually settled for documentation, such that
+  users would be advised against expecting any form of stability.
+
+  As those PRs were being merged, both me and my mentor noticed some issues in
+  the wording of those docs. This PR was submitted fixed most of those.
+
+- [rust-lang/libc#5227][5227] _Windows MSVC/GNU function pointer check issues_
+
+  This issue I opened as part of my initial work on Windows. After testing out
+  the changes I made for those PRs concerning `time_t`, I started looking into
+  why is it that function pointer tests had been failing for some time now.
+
+  I didn't quite find out much until two other contributors came in and further
+  explained the potential reason behind the failures. As it turns out, Windows
+  has some funny ways of handling calls to symbols defined in external DLLs.
+
+  By default (without enabling global optimization) in MSVC, a call to a symbol
+  in an external DLL will be lowered to essentially two instruction jumps. The
+  first one goest to the Import Adress Table of the executable.
+
+  This table is akin to the Global Offset Table in ELF and basically serves to
+  have the loader switch fewer pages when resolving the addresses of symbols
+  that can only be determined at runtime (like DLLs.)
+
+  This table contains a set of stubs that don't point to jack, but to which
+  there's pointers from each call site in the binary containing the table. At
+  runtime, the loader ensures those slots get filled in with the function
+  pointers from the DLL.
+
+  This doesn't quite cause any issues for users, but when comparing function
+  pointer addresses, we end up comparing the address of the stub instead of the
+  value stored in the stub (which contains the address of the function pointer
+  in the DLL.)
+
+  The solution to this is to explicitly link with a dynamic library in Windows,
+  such that the resulting codegen on the Rust side of things gets things right.
+  The issue is that we would like to avoid that for the 1.0 release.
+
+  Currently, in Rust we need to always explicitly link with a library to be able
+  to specify the codegen we want once each call site gets lowered to assembly.
+  That conflicts with our eventual goal of getting rid of all explicit linking
+  in rust-lang/libc.
+
+  After reading through some issues and possible solutions in rust-lang/rust, I
+  found a two-year-old proposal that tried to add support for specifying the
+  library kind without specifying a library with which to link in the target
+  system.
+
+  This is currently pending language team approval. Both my mentor and the
+  original author of that proposal have shown interest in solving things this
+  way, so it's likely this will eventually become the solution.
+
+- [rust-lang/libc#5242][5242] _hurd: clean up module_
+
+  This was one of the PRs I opened as part of my going through all targets'
+  bindings, ensuring there were no issues with their LFS types nor `time_t`.
+  This patchset, though, like some others, eventually become a general clean-up.
+
+  As I went through the bindings and cross-referenced them with those of the
+  upstream repo, I noticed there were some other issues in the way we handled
+  certain bindings and types used in those bindings. Those also got included in
+  this patch.
+
+  This took quite a while to merge because it went through a bunch of
+  back-and-forth with the target maintainer, as well as with my mentor. Multiple
+  reviews later and a bunch of source control history clean ups later, it got
+  merged.
+
+  Admittedly, this would have taken far less work on the reviewers' side of
+  things if I had started off by splitting the patchset into smaller chunks
+  (possibly across different PRs.)
+
 [657]: <https://github.com/rust-lang/libc/issues/657>
 [938]: <https://github.com/rust-lang/libc/issues/938>
 [1036]: <https://github.com/rust-lang/libc/issues/1036>
@@ -600,6 +863,21 @@ wrong?_
 [5062]: <https://github.com/rust-lang/libc/issues/5062>
 [5127]: <https://github.com/rust-lang/libc/issues/5127>
 [5128]: <https://github.com/rust-lang/libc/issues/5128>
+[5129]: <https://github.com/rust-lang/libc/issues/5129>
+[5130]: <https://github.com/rust-lang/libc/issues/5130>
+[5131]: <https://github.com/rust-lang/libc/issues/5131>
+[5132]: <https://github.com/rust-lang/libc/issues/5132>
+[5142]: <https://github.com/rust-lang/libc/issues/5142>
+[5164]: <https://github.com/rust-lang/libc/issues/5164>
+[5165]: <https://github.com/rust-lang/libc/issues/5165>
+[5170]: <https://github.com/rust-lang/libc/issues/5170>
+[5173]: <https://github.com/rust-lang/libc/issues/5173>
+[5178]: <https://github.com/rust-lang/libc/issues/5178>
+[5180]: <https://github.com/rust-lang/libc/issues/5180>
+[5213]: <https://github.com/rust-lang/libc/issues/5213>
+[5219]: <https://github.com/rust-lang/libc/issues/5219>
+[5227]: <https://github.com/rust-lang/libc/issues/5227>
+[5242]: <https://github.com/rust-lang/libc/issues/5242>
 [^2]: <https://github.com/rust-lang/libc/issues/5265>
 [^3]: <https://github.com/rust-lang/libc/issues/5384>
 [^4]: <https://github.com/rust-lang/libc/issues/5325>
@@ -614,5 +892,6 @@ wrong?_
 [^13]: <https://github.com/rust-lang/libc/issues/468>
 [^14]: <https://github.com/dybucc/libc/commits/change-type/>
 [^15]: <https://github.com/rust-lang/libc/issues/1273>
+[^16]: <https://github.com/rust-lang/libc/issues/5315>
 
 ## Challenges and the learning experience
