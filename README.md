@@ -1151,6 +1151,8 @@ report I prepared for it.
 [916]: <https://github.com/rust-lang/compiler-team/issues/916>
 [4867]: <https://github.com/rust-lang/libc/issues/4867>
 [5008]: <https://github.com/rust-lang/libc/issues/5008>
+[5010]: <https://github.com/rust-lang/libc/issues/5010>
+[5032]: <https://github.com/rust-lang/libc/issues/5032>
 [5050]: <https://github.com/rust-lang/libc/issues/5050>
 [5059]: <https://github.com/rust-lang/libc/issues/5059>
 [5062]: <https://github.com/rust-lang/libc/issues/5062>
@@ -1161,6 +1163,7 @@ report I prepared for it.
 [5131]: <https://github.com/rust-lang/libc/issues/5131>
 [5132]: <https://github.com/rust-lang/libc/issues/5132>
 [5142]: <https://github.com/rust-lang/libc/issues/5142>
+[5044]: <https://github.com/rust-lang/libc/issues/5044>
 [5164]: <https://github.com/rust-lang/libc/issues/5164>
 [5165]: <https://github.com/rust-lang/libc/issues/5165>
 [5170]: <https://github.com/rust-lang/libc/issues/5170>
