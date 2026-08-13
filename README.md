@@ -1163,7 +1163,7 @@ report I prepared for it.
 [5131]: <https://github.com/rust-lang/libc/issues/5131>
 [5132]: <https://github.com/rust-lang/libc/issues/5132>
 [5142]: <https://github.com/rust-lang/libc/issues/5142>
-[5044]: <https://github.com/rust-lang/libc/issues/5044>
+[5144]: <https://github.com/rust-lang/libc/issues/5144>
 [5164]: <https://github.com/rust-lang/libc/issues/5164>
 [5165]: <https://github.com/rust-lang/libc/issues/5165>
 [5170]: <https://github.com/rust-lang/libc/issues/5170>
