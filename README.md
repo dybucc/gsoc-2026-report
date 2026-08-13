@@ -220,9 +220,9 @@ process of getting approved by some of the Rust teams.
 More work on other issues is commented on in Section
 [Code that got merged][a].
 
-[^1]: pending
+[^1]: <https://www.openwall.com/lists/musl/2020/02/03/20>
 
-[a]: <code-that-got-merged>
+[a]: #code-that-got-merged
 
 ## Current state
 
@@ -281,8 +281,8 @@ report I prepared for it.
   it's either way bound to be removed in 1.0. That is now tracked in
   another issue [^2].
 
-- [rust-lang/libc#938][938]
-  _Outdated non-POSIX FreeBSD API used by tests_
+- [rust-lang/libc#938][938] _Outdated non-POSIX FreeBSD API used by
+  tests_
 
   This issue reported that a certain FreeBSD routine was not providing
   bindings for the latest upstream version. Ever since then, we've had
@@ -293,8 +293,8 @@ report I prepared for it.
   latest version on all supported FreeBSD versions. We presently
   support FreeBSD 11-15.
 
-- [rust-lang/libc#1036][1036]
-  _ioctl request arg size for Android aarch64 is wrong?_
+- [rust-lang/libc#1036][1036] _ioctl request arg size for Android
+  aarch64 is wrong?_
 
   This issue reported that there were issues in the way we handled a
   certain argument for Android targets, and possibly some other libc
@@ -346,9 +346,9 @@ report I prepared for it.
 - [rust-lang/libc#2971][2971]
   _msghdr.msg_iovlen is inconsistently declared in gnu and musl_
 
-  This issue reported some incorrect bindings a few years ago. Much like
-  other unsolved issues, it wasn't up-to-date with our current bindings
-  and was closed shortly after I reported so.
+  This issue reported some incorrect bindings a few years ago. Much
+  like other unsolved issues, it wasn't up-to-date with our current
+  bindings and was closed shortly after I reported so.
 
 - [rust-lang/libc#3131][3131] _Remove "placeholder constants"_
 
@@ -413,8 +413,8 @@ report I prepared for it.
 
   My two associated PRs can be found in [^4] and [^5].
 
-- [rust-lang/libc#3661][3661]
-  _linux_like: unify SIGEV_THREAD_ID support_
+- [rust-lang/libc#3661][3661] _linux_like: unify SIGEV_THREAD_ID
+  support_
 
   This was a stale PR in the 1.0 milestone that I picked up on and got
   merged quite easily. There's not much to comment here, it's simply a
@@ -422,8 +422,8 @@ report I prepared for it.
 
   My associated PR can be found in [^6].
 
-- [rust-lang/libc#4080][4080]
-  _Mark all structs `non_exhaustive` for 1.0_
+- [rust-lang/libc#4080][4080] _Mark all structs `non_exhaustive` for
+  1.0_
 
   This issue initially attempted to further improve the usage
   guidelines by having most of our public types be marked with the
@@ -458,8 +458,8 @@ report I prepared for it.
   We'd prefer it if users had a stronger "no-guarantees" guarantee
   once we reach 1.0.
 
-- [rust-lang/compiler-team#916][916]
-  _Split the `-openbsd*` targets by version_
+- [rust-lang/compiler-team#916][916] _Split the `-openbsd*` targets by
+  version_
 
   This issue was the one that I originally found after digging through
   the possible solutions to this other issue [^8]. That one tried to
@@ -502,35 +502,37 @@ report I prepared for it.
   _Change type of `AF_INET` and `AF_INET6` to `sa_family_t`_
 
   This PR was one of the stale PRs I picked up after week 7. I rebased
-  it to latest `main` and ensured it still did what it was meant to (as
-  our current bindings could have changed since it was first opened.)
+  it to latest `main` and ensured it still did what it was meant to
+  (as our current bindings could have changed since it was first
+  opened.)
 
-  This one is not included directly in the 1.0 milestone but does try to
-  solve an issue [^13] in the 1.0 milestone. I've yet to receive a
+  This one is not included directly in the 1.0 milestone but does try
+  to solve an issue [^13] in the 1.0 milestone. I've yet to receive a
   response from the original author and to get further approval from
   maintainers to move it forward.
 
-  My work can be found in the latest patch of this commit history [^14].
+  My work can be found in the latest patch of this commit history
+  [^14].
 
 - [rust-lang/libc#5008][5008]
   _Fix: Replace sighandler_t with sig_t for Apple and BSDs_
 
-  This PR was one I initially believed to be stale as it tried to solve
-  one of the issues in the 1.0 release milestone [^15], but seemed to
-  not have been touched in almost six months.
+  This PR was one I initially believed to be stale as it tried to
+  solve one of the issues in the 1.0 release milestone [^15], but
+  seemed to not have been touched in almost six months.
 
-  I rebased it to latest tip-of-tree and commented on it, but the author
-  mentioned that they were actually waiting for a review. I then decided
-  to simply leave some possible improvements to the patchset, and called
-  it.
+  I rebased it to latest tip-of-tree and commented on it, but the
+  author mentioned that they were actually waiting for a review. I
+  then decided to simply leave some possible improvements to the
+  patchset, and called it.
 
   Recently, the author got back from one of the rust-lang/libc
   maintainers, and has modified the patch I rebased and tweaked back
   when I first commented on the PR thread. For details, see their work
   on that in the above link.
 
-- [rust-lang/libc#5010][5010]
-  _feat: add support for 32 bit `time_t` in Windows_
+- [rust-lang/libc#5010][5010] _feat: add support for 32 bit `time_t`
+  in Windows_
 
   This was one of the PRs I originally submitted before GSoC to
   rust-lang/libc concerning the fact `time_t` was only exposed as
@@ -561,8 +563,8 @@ report I prepared for it.
   It'll be easier to justify the mass deprecations on a proper
   breaking release.
 
-- [rust-lang/libc#5050][5050]
-  _feat: add back support for GNU Windows x86 in CI_
+- [rust-lang/libc#5050][5050] _feat: add back support for GNU Windows
+  x86 in CI_
 
   This PR I opened while solving other Windows issues and testing on
   each of our supported Rust targets. I found that there didn't seem
@@ -580,39 +582,39 @@ report I prepared for it.
 - [rust-lang/libc#5059][5059]
   _windows(gnu): link to 32-bit time routines in x86 and add test_
 
-  This issue is one of the Windows patchsets I prepared after initially
-  working on `time_t` matters to introduce myself to the repository.
-  While looking through both MSVC and MinGW headers, I noticed that
-  there were mismatches.
+  This issue is one of the Windows patchsets I prepared after
+  initially working on `time_t` matters to introduce myself to the
+  repository. While looking through both MSVC and MinGW headers, I
+  noticed that there were mismatches.
 
   For about ten years, the bindings for MinGW on x86 targets have been
-  reflecting a `time_t` that dfeaults to having a 32-bit bit width. This
-  was wrong, but we couldn't just break users with a change in the data
-  type of a type alias.
+  reflecting a `time_t` that dfeaults to having a 32-bit bit width.
+  This was wrong, but we couldn't just break users with a change in
+  the data type of a type alias.
 
   This PR ensured that at least the routines that use this data type
   link to the right (also 32-bit) symbols. This is necessary because
   Windows has variants for certain functions involving `time_t` that
   expect a 32-bit integer.
 
-  Without this fix, we wouldn't have run into any issues so long as the
-  argument passed to the routine were not part of an input-output
+  Without this fix, we wouldn't have run into any issues so long as
+  the argument passed to the routine were not part of an input-output
   parameter whose effective address were taken.
 
   Now, for routines like `time()`, this does mean that a load on the
-  `time_t` value will attempt to write 64-bits worth of data instead of
-  only 32. This could have potentially unsound consequences, and this
-  patch solved that.
+  `time_t` value will attempt to write 64-bits worth of data instead
+  of only 32. This could have potentially unsound consequences, and
+  this patch solved that.
 
-  While testing the changes in this PR, I also started digging into what
-  seemed to have been long-standing issues on Windows concerning
+  While testing the changes in this PR, I also started digging into
+  what seemed to have been long-standing issues on Windows concerning
   function pointer comparison tests for bindings to UCRT routines.
 
   Further comments on that PR can be found in another item of this
   section of the report.
 
-- [rust-lang/libc#5062][5062]
-  _windows: expose `cfg` for 64-bit `time_t`_
+- [rust-lang/libc#5062][5062] _windows: expose `cfg` for 64-bit
+  `time_t`_
 
   This PR was one of the Windows PRs that followed up from my work
   before being selected for GSoC. It addressed the fact Windows x86
@@ -678,8 +680,8 @@ report I prepared for it.
 - [rust-lang/libc#5129][5129]
   _vxworks: add `cfg` to definition of `off64_t` and `off_t`_
 
-  This PR was initially part of my main goals during GSoC to address LFS
-  types. In this case, it affected VxWorks targets, but the target
+  This PR was initially part of my main goals during GSoC to address
+  LFS types. In this case, it affected VxWorks targets, but the target
   maintainer eventually said that they would prefer to keep these
   symbols.
 
@@ -688,9 +690,9 @@ report I prepared for it.
   didn't really exist in the SDK shipped by upstream.
 
   It also removed symbols that were only available when programming
-  against the kernel. The target maintainer confirmed that, at least in
-  the short term, Rust support in VxWorks would be limited to RTPs (Real
-  Time Processes.).
+  against the kernel. The target maintainer confirmed that, at least
+  in the short term, Rust support in VxWorks would be limited to RTPs
+  (Real Time Processes.).
 
 - [rust-lang/libc#5130][5130]
   _TEEOS: Change the definition of `time_t` to `i64`_
@@ -699,19 +701,19 @@ report I prepared for it.
   through all supported targets looking for deffects in the types we
   used in our bindings for both `time_t` and LFS.
 
-  There's not much to comment here. What I initially submitted was what
-  exactly what got merged in the end.
+  There's not much to comment here. What I initially submitted was
+  what exactly what got merged in the end.
 
-- [rust-lang/libc#5131][5131]
-  _refactor: adjust definition of `off_t` in wasi_
+- [rust-lang/libc#5131][5131] _refactor: adjust definition of `off_t`
+  in wasi_
 
   This PR was another one of the changes that I deemed necessary while
   verifying that all of our LFS-related types fit those exposed
   usptream. There's not much to discuss here; What I initially
   submitted was merged as-is.
 
-- [rust-lang/libc#5132][5132]
-  _newlib: fix definition of `time_t` and `off_t`_
+- [rust-lang/libc#5132][5132] _newlib: fix definition of `time_t` and
+  `off_t`_
 
   This PR submitted another patchset to more accurately map the types
   used in our bindings to those used in upstream projects using
@@ -737,8 +739,8 @@ report I prepared for it.
   unrelated to LFS, and of a small change to both RTEMS targets and PS
   Vita targets concerning LFS.
 
-- [rust-lang/libc#5142][5142]
-  _emscripten: deprecate file offset types_
+- [rust-lang/libc#5142][5142] _emscripten: deprecate file offset
+  types_
 
   This PR was part of my two initial goals on GSoC for verifying the
   "correctness" ofthe types we used in LFS bindings. Between this
@@ -759,8 +761,8 @@ report I prepared for it.
   0.2.x releases just doesn't quite make for an easy time updating
   dependencies in downstream crates.
 
-- [rust-lang/libc#5144][5144]
-  _linux(uclibc): move definition of `time_t`_
+- [rust-lang/libc#5144][5144] _linux(uclibc): move definition of
+  `time_t`_
 
   This PR was remade from an older patch I submitted making extensive
   changes to our bindings to the uClibc implementation of liblibc. The
@@ -776,8 +778,8 @@ report I prepared for it.
   the afore-mentioned build-time option is available no matter the
   target triple combination.
 
-- [rust-lang/libc#5164][5164]
-  _fix: remove conflicting items in L4Re uClibc_
+- [rust-lang/libc#5164][5164] _fix: remove conflicting items in L4Re
+  uClibc_
 
   This PR I submitted while working on reviewing all targets, and more
   specifically, once I hit the Linux-like targets. I noticed some
@@ -789,23 +791,22 @@ report I prepared for it.
   in that patchset, mine were already included. I closed the PR after
   checking that one out.
 
-- [rust-lang/libc#5165][5165]
-  _linux(uclibc): remove redundant records and explicit linking to
-  `libutil`_
+- [rust-lang/libc#5165][5165] _linux(uclibc): remove redundant records
+  and explicit linking to `libutil`_
 
   This PR I initially submitted a patchset for that didn't quite pass
   muster. I added support for a new `cfg` that mapped to an upstream
   build option, but that was something we eventually decided against.
 
   Among our final discussions, we settled for splitting the patchset
-  into two; One containing uncontroversial changes that would ensure our
-  bindings fit those of a defualt build of uClibc, and another one
+  into two; One containing uncontroversial changes that would ensure
+  our bindings fit those of a defualt build of uClibc, and another one
   necessitating maintainer approval.
 
   The latter one is still pending at [^16]. The target maintainers are
   yet to answer to that one, and I'm currently assuming this to be low
-  priority as our current bindings work just fine with the default build
-  options.
+  priority as our current bindings work just fine with the default
+  build options.
 
 - [rust-lang/libc#5170][5170] _linux(musl): deprecate LFS64 bindings_
 
@@ -819,8 +820,8 @@ report I prepared for it.
   larger plan to mark the items that we plan on removing, but only
   deprecate them once we near 1.0.
 
-- [rust-lang/libc#5173][5173]
-  _l4re: change bit widths of file offset types_
+- [rust-lang/libc#5173][5173] _l4re: change bit widths of file offset
+  types_
 
   This PR was originally held off alsmost as soon as it was submitted
   because we thought it best to first address the other uClibc PR.
@@ -839,16 +840,16 @@ report I prepared for it.
 - [rust-lang/libc#5178][5178]
   _android: deprecate file offset types in targets with 64-bit abis_
 
-  This PR addressed the fact that Android targets with a 64-bit machine
-  word size are getting LFS-suffixed types exposed even though their
-  unsuffixed types are already equivalent.
+  This PR addressed the fact that Android targets with a 64-bit
+  machine word size are getting LFS-suffixed types exposed even though
+  their unsuffixed types are already equivalent.
 
   The initial patch added deprecation warnings, but the revision that
   eventually got merged uses `FIXME` comments to ensure we can easily
   deprecate those items once we actually near the 1.0 release.
 
-- [rust-lang/libc#5180][5180]
-  _feat: add macro to declare unstable constants_
+- [rust-lang/libc#5180][5180] _feat: add macro to declare unstable
+  constants_
 
   This PR I submitted while working on deprecating constants. Back
   when this was submitted, the plan was still to deprecate in the next
@@ -864,8 +865,8 @@ report I prepared for it.
   dicussion for this, though, took place in a separate issue/PR
   thread.
 
-- [rust-lang/libc#5213][5213]
-  _fuchsia: propose `sigaction` definition_
+- [rust-lang/libc#5213][5213] _fuchsia: propose `sigaction`
+  definition_
 
   This PR I submitted while working on the Fuchsia PR. It stemmed off
   of discussions on its comments with both my mentor. The goal here
@@ -898,8 +899,8 @@ report I prepared for it.
   issues in the wording of those docs. This PR was submitted fixed
   most of those.
 
-- [rust-lang/libc#5227][5227]
-  _Windows MSVC/GNU function pointer check issues_
+- [rust-lang/libc#5227][5227] _Windows MSVC/GNU function pointer check
+  issues_
 
   This issue I opened as part of my initial work on Windows. After
   testing out the changes I made for those PRs concerning `time_t`, I
@@ -1023,8 +1024,8 @@ report I prepared for it.
   target maintainer (see [^20] for the other pending PR and [^21] for
   the patchset that got merged.)
 
-- [rust-lang/libc#5276][5276]
-  _memchr signature invites mutability bugs_
+- [rust-lang/libc#5276][5276] _memchr signature invites mutability
+  bugs_
 
   This issue I hadn't initially planned on tackling as it's quite new
   and I've been so far addressing fairly old issues. I don't remember
@@ -1137,13 +1138,6 @@ report I prepared for it.
 
   Those are merged now.
 
-- [rust-lang/libc#5375][5375] _linux_like: finish unifying
-  `SIGEV_THREAD_ID` support_
-
-  This PR followed up on another old stale PR that was part of the 1.0
-  release milestone. The patchset was solely concerned with getting a
-  symbol to have the same definition across Linux bindings.
-
 [657]: <https://github.com/rust-lang/libc/issues/657>
 [938]: <https://github.com/rust-lang/libc/issues/938>
 [1036]: <https://github.com/rust-lang/libc/issues/1036>
@@ -1244,3 +1238,25 @@ were ready or could be immediately executed upon, were proven to
 require more careful thinking.
 
 Hopefully, I'll keep getting better at this patience business.
+
+This summer I also learnt about the _Compile Farm_ project and the
+AnyVM CI service. The former allowed me to cross-reference headers
+from closed-source platforms like AIX and to test on more exotic
+platforms like the GNU Hurd.
+
+The latter is now another tool I can keep under my belt to consider
+for testing on target OSs such as the GNU Hurd or any modern flavor of
+the BSDs.
+
+I also got to properly set up SSH authentication as I had to use this
+to access the remote machines that cfarm provided. That was overall
+quite fun to mess with.
+
+The things I learnt from researching the Windows function pointer
+issues were also quite interesting. My knowledge thus far had been
+limited to the way ELF does things, so this was my first exposition to
+both the COFF and PE formats.
+
+Beyond that, I can only thank enough my org admin, Jakub Beránek, my
+mentor, Trevor Gross, and Google for giving me this chance to be
+involved and work with a Rust Foundation project.
