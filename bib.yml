@@ -1,0 +1,76 @@
+musl-lfs-statement:
+  type: thread
+  title: "musl - Re: Cross-compiling and -D_LARGEFILE64_SOURCE"
+  author:
+    - given-name: Rich
+      name: Felker
+  date: 2020-02-03
+  url:
+    value: "https://www.openwall.com/lists/musl/2020/02/03/20"
+    date: 2026-08-16
+
+github-remove-link-std:
+  type: thread
+  title: "1.0: Remove all instances of `link(name = ...)` and delete the `std` feature"
+  author:
+    - given-name: Trevor
+      name: Gross
+  date: 2026-07-09
+  url:
+    value: "https://github.com/rust-lang/libc/issues/5265"
+    date: 2026-08-16
+
+github-skip-ioctl:
+  type: thread
+  title: "android: stop skipping `ioctl` in tests"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-08-07
+  url:
+    value: "https://github.com/rust-lang/libc/pull/5384"
+    date: 2026-08-16
+
+github-ifmib-to-new:
+  type: thread
+  title: "freebsd: move `net/if_mib.h` to `src/new` module"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-07-24
+  url:
+    value: "https://github.com/rust-lang/libc/pull/5325"
+    date: 2026-08-16
+
+github-netlink-support:
+  type: thread
+  title: "freebsd(13.2): add `netlink/netlink.h` support"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-07-24
+  url:
+    value: "https://github.com/rust-lang/libc/pull/5326"
+    date: 2026-08-16
+
+github-sigevthreadid-unify:
+  type: thread
+  title: "linux_like: finish unifying `SIGEV_THREAD_ID` support"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-08-06
+  url:
+    value: "https://github.com/rust-lang/libc/pull/5375"
+    date: 2026-08-16
+
+github-exhaustive-macro:
+  type: thread
+  title: "macros: add support for `exhaustive` attribute"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-08-08
+  url:
+    value: "https://github.com/rust-lang/libc/pull/5390"
+    date: 2026-08-16
