@@ -1,6 +1,11 @@
 # GSoC 2026 work product: The Rust Foundation's `libc` crate
 
-<!-- [todo]: add a TOC. -->
+- [Short description]
+- [What I did]
+- [Current state]
+- [What's left to do]
+- [Code that got merged]
+- [Challenges and the learning experience]
 
 ## Short description
 
@@ -41,7 +46,8 @@ need of work for a few years.
 
 The proposal plan was followed to the letter, and the timeline was
 even improved by finishing up work on the main two issues I intended
-on tackling earlier than expected.
+on tackling earlier than expected. A daily report of all my activities
+was submitted on the Zulip thread associated with this project [^23].
 
 The first three weeks were spent on the issue concernig constant
 deprecation. That issue consisted of going through all supported
@@ -1184,7 +1190,6 @@ actions to be performed on any codebase.
 [5345]: <https://github.com/rust-lang/libc/issues/5345>
 [5347]: <https://github.com/rust-lang/libc/issues/5347>
 [5351]: <https://github.com/rust-lang/libc/issues/5351>
-[5375]: <https://github.com/rust-lang/libc/issues/5375>
 [^2]: <https://github.com/rust-lang/libc/issues/5265>
 [^3]: <https://github.com/rust-lang/libc/issues/5384>
 [^4]: <https://github.com/rust-lang/libc/issues/5325>
@@ -1206,6 +1211,7 @@ actions to be performed on any codebase.
 [^20]: <https://github.com/rust-lang/libc/issues/5380>
 [^21]: <https://github.com/rust-lang/libc/issues/5382>
 [^22]: <https://github.com/dybucc/libc-constant-deprecator>
+[^23]: <https://rust-lang.zulipchat.com/#narrow/channel/421156-gsoc/topic/Project.3A.20libc.3A.20transition.20differing.20bit-width.20time/with/616718790>
 
 ## Challenges and the learning experience
 
