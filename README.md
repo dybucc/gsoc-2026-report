@@ -1,11 +1,11 @@
 # GSoC 2026 work product: The Rust Foundation's `libc` crate
 
-- [Short description][short-description]
-- [What I did][what-i-did]
-- [Current state][current-state]
-- [What's left to do][whats-left-to-do]
-- [Code that got merged][code-that-got-merged]
-- [Challenges and the learning experience][challenges-and-the-learning-experience]
+- [Short description][#short-description]
+- [What I did][#what-i-did]
+- [Current state][#current-state]
+- [What's left to do][#whats-left-to-do]
+- [Code that got merged][#code-that-got-merged]
+- [Challenges and the learning experience][#challenges-and-the-learning-experience]
 
 ## Short description
 
