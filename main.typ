@@ -3,7 +3,6 @@
   author: "Adam Martinez",
   date: none,
 )
-
 #set heading(numbering: "1.")
 
 #title()

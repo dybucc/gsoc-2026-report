@@ -137,7 +137,7 @@ github-safamilyt-issue:
 
 github-safamilyt-fork:
   type: repository
-  title: "Commits · dybucc/libc:change-type"
+  title: "dybucc/libc:change-type"
   author:
     - given-name: Adam
       name: Martinez
