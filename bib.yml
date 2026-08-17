@@ -1,3 +1,29 @@
+ms-docs-dllimport:
+  type: entry
+  title: "Importing function calls using __declspec(dllimport) | Microsoft Learn"
+  url:
+    value: "https://learn.microsoft.com/en-us/cpp/build/importing-function-calls-using-declspec-dllimport?view=msvc-170"
+    date: 2026-08-17
+  parent:
+    type: reference
+    title: "Importing and Exporting | Microsoft Learn"
+    url:
+      value: "https://learn.microsoft.com/en-us/cpp/build/importing-and-exporting?view=msvc-170"
+      date: 2026-08-17
+
+llvm-interface-exports:
+  type: entry
+  title: "LLVM Interface Export Annotations - LLVM"
+  url:
+    value: "https://llvm.org/docs/InterfaceExportAnnotations.html"
+    date: 2026-08-17
+  parent:
+    type: reference
+    title: "Reference - LLVM"
+    url:
+      value: "https://llvm.org/docs/Reference.html"
+      date: 2026-08-17
+
 musl-lfs-statement:
   type: thread
   title: "musl - Re: Cross-compiling and -D_LARGEFILE64_SOURCE"
@@ -141,7 +167,6 @@ github-safamilyt-fork:
   author:
     - given-name: Adam
       name: Martinez
-  date: 2026-07-13
   url:
     value: "https://github.com/dybucc/libc/commits/change-type/"
     date: 2026-08-17
@@ -207,7 +232,6 @@ github-bonding-period-project:
   author:
     - given-name: Adam
       name: Martinez
-  date: 2026-03-13
   url:
     value: "https://github.com/dybucc/libc-constant-deprecator"
     date: 2026-08-17

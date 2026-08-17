@@ -10,21 +10,21 @@
 #html.style(
   `
 body{
-	color:#fff;background:#000;
-	margin:40px auto;
-	max-width:650px;
-	line-height:1.4;
-	font-size:18px;
-	padding:0 10px;}
+  color:#fff;background:#000;
+  margin:40px auto;
+  max-width:650px;
+  line-height:1.4;
+  font-size:18px;
+  padding:0 10px;}
 h1{line-height:1.2; text-align:center}
 h2,h3{line-height:1.2; border-bottom: 1px solid;}
 pre,blockquote,.signature{
-	padding: 1em;
-	background:#444;
+  padding: 1em;
+  background:#444;
 }
 blockquote,.signature{
-	font-style: italic;
-	margin: 2em 1em;}
+  font-style: italic;
+  margin: 2em 1em;}
 p,ul,ol { list-style-type: circle;}
 a { color:#169;text-decoration:none; padding:0.5em 0;}
 a:hover { text-decoration:underline;}
@@ -38,9 +38,9 @@ figcaption{ font-style: italic; font-size: 90%; text-align: center;}
 aside{ font-size:50%;}
 code{ font-size:80%;}
 .header{
-	margin: 1em 0;
-	display: block;
-	width:100%;
+  margin: 1em 0;
+  display: block;
+  width:100%;
 }
 .horizontal { text-align: center; padding:10px 40px;}
 .horizontal li{display: inline-block; margin: 0 0.5em;}
@@ -65,11 +65,11 @@ is a project that provides Rust bindings to `liblibc` and system libraries.
 
 The rust-lang/libc project has had relatively stable but not completely
 well-defined release semantics. Especially when compared with the rest of the
-Rust ecosystem, its release versioning sometimes leads to some confusion.
+Rust ecosystem, its release versioning has sometimes lead to confusion.
 
 Its stability largely relies on upstream C projects for which it provides
-bindings to maintain such stability. To a large extent, exposing interfaces that
-don't break across minor or patch SemVer releases is not feasible.
+bindings to maintain such stability. Ofttimes, exposing interfaces that don't
+break across minor or patch SemVer releases is not feasible.
 
 Reaching a 1.0 release will allow having a number of notably breaking changes be
 finally made to the bindings. We currently have two branches on the repository;
@@ -81,8 +81,8 @@ users be warned of expected breakage.
 
 = What I did
 My initial proposal outlined two main goals; I intended on solving a
-long-standing issue concerning certain constant symbols, then solving some
-doubts and issues around matters Y2038.
+long-standing issue concerning certain constant symbols, to then go on and solve
+some doubts and issues around matters Y2038.
 
 If time allowed, I would follow through with other issues included in the 1.0
 milestone. The above two seemed to be the more pressing concerns from a first
@@ -130,8 +130,8 @@ potentially _not_ deprecating the symbols. I didn't quite participate in that
 conversation, as it was resolved fairly quickly.
 
 We eventually ended up settling for adding documentation notes to those symbols,
-such that users be advised about upstream potentially breaking these symbols. I
-simply found+replaced the deprecation attribute for a doc comment.
+such that users be advised about upstream potentially breaking these. I simply
+found+replaced the deprecation attribute for a doc comment.
 
 I then moved on to doing another pass through all our bindings to ensure we
 correctly handled the Y2038 issue. Y2038 refers to a widespread C issue about
@@ -147,7 +147,7 @@ others using composite data types containing `time_t` like `ctime()`.
 
 Notably, another issue that was also tackled in parallel to this one was
 concerned with LFS bindings. Back in the late 1990s, the _Large File Summit_
-specification started allowed handling files larger than 2 GiB.
+specification started allowing the handling of files larger than 2 GiB.
 
 These days, providing LFS bindings is often redundant. The musl (a libc
 implementation) maintainer themselves could not care less about LFS
@@ -222,8 +222,9 @@ right symbol, but will only the perform the first jump in the equivalent MSVC
 codegen.
 
 This isn't an issue to users becaues the codegen is right whether we specify the
-library kind or not. It just so happens that Windows can optimize out a double
-jump in the codegen if the attribute is there.
+library kind or not. It just so happens that Windows' MSVC can optimize out a
+double jump in the codegen if the attribute is there @ms-docs-dllimport
+@llvm-interface-exports.
 
 Granted, when comparing function pointer addresses, whether there's one jump or
 two makes all the difference. That's why tests had been failing. But annotating
@@ -271,7 +272,7 @@ maintainers themselves ensuring something that popped up while solving another
 issue isn't forgotten, even though solving it is not a current priority.
 
 = Code that got merged <pr-list>
-The following is a list of PRs/issues that got merged/solved during GSoC. It's
+Following I include a set of PRs/issues that got merged/solved during GSoC. It's
 ordered from oldest to newest, where the creation date of the issue or PR itself
 is used to sort it in the list.
 
@@ -287,7 +288,14 @@ Following my mentor's suggestion, I plan on eventually refactoring that tool
 into a more modular tool to allow a number of LSP-like code actions to be
 performed on any codebase.
 
-== _Remove use_std feature_ <657>
+#let h(issue, which: "rust-lang/libc", body) = {
+  heading(
+    link("https://github.com/" + which + "/issues/" + str(issue), body),
+    level: 2,
+  )
+}
+
+#h(657)[_Remove use_std feature_]
 This issue was one of the older ones. It tried to remove the `use_std` feature
 that was once part of rust-lang/libc. This is because the Rust API guidelines
 expect features not to be named `use_*`, but rather `*`.
@@ -296,13 +304,15 @@ We've had that feature renamed to `std` for a few years now, and it's either way
 bound to be removed in 1.0. That is now tracked in another issue
 @github-remove-link-std.
 
-== _Outdated non-POSIX FreeBSD API used by tests_ <938>
+#h(938)[_Outdated non-POSIX FreeBSD API used by tests_]
 This issue reported that a certain FreeBSD routine was not providing bindings
 for the latest upstream version. Ever since then, we've had a splitting of the
 FreeBSD versions into separate modules (outside of GSoC.)
 
 That specific API is also fixed and now correctly refletcs the latest version on
 all supported FreeBSD versions. We presently support FreeBSD 11-15.
+
+// [todo]: finish up replacing the headings with the `h` function.
 
 == _ioctl request arg size for Android aarch64 is wrong?_ <1036>
 This issue reported that there were problems in the way we handled a certain
@@ -1058,4 +1068,4 @@ Beyond that, I can only thank enough my org admin, Jakub Beránek, my mentor,
 Trevor Gross, and Google for giving me this chance to be involved and work with
 a Rust Foundation project.
 
-#bibliography("bib.yml")
+#bibliography("bib.yml", title: [References])
