@@ -1197,7 +1197,7 @@ actions to be performed on any codebase.
 [^6]: <https://github.com/rust-lang/libc/issues/5375>
 [^7]: <https://github.com/rust-lang/libc/issues/5390>
 [^8]: <https://github.com/rust-lang/libc/issues/570>
-[^9]: <https://github.com/rust-lang/libc/issues/1018>
+[^9]: <https://github.com/rust-lang/compiler-team/issues/1018>
 [^10]: <https://rust-lang.zulipchat.com/#narrow/stream/233931-xxx/topic/Split.20the.20.60-openbsd.2A.60.20targets.20by.20version.20compiler-team.23916>
 [^11]: <https://github.com/rust-lang/rust/issues/160739>
 [^12]: <https://rust-lang.zulipchat.com/#narrow/stream/233931-xxx/topic/Encode.20OpenBSD.20.60-current.60.20version.20in.20tar.E2.80.A6.20compiler-team.231018/with/611628084>

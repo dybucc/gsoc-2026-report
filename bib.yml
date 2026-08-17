@@ -74,3 +74,162 @@ github-exhaustive-macro:
   url:
     value: "https://github.com/rust-lang/libc/pull/5390"
     date: 2026-08-16
+
+github-openbsd-breakage:
+  type: thread
+  title: "How to deal with breaking changes on platform ? [BSDs related]"
+  author:
+    - given-name: Sebastien
+      name: Marie
+  date: 2017-04-07
+  url:
+    value: "https://github.com/rust-lang/libc/issues/570"
+    date: 2026-08-17
+
+github-openbsd-new-mcp:
+  type: thread
+  title: "Encode OpenBSD `-current` version in targets' `target_env`"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-07-20
+  url:
+    value: "https://github.com/rust-lang/compiler-team/issues/1018"
+    date: 2026-08-17
+
+zulip-openbsd-old-mcp:
+  type: thread
+  title: "Split the `-openbsd*` targets by version compiler-team#916"
+  date: 2025-09-19
+  url:
+    value: "https://rust-lang.zulipchat.com/#narrow/stream/233931-xxx/topic/Split.20the.20.60-openbsd.2A.60.20targets.20by.20version.20compiler-team.23916"
+    date: 2026-08-17
+
+github-openbsd-mcp-impl:
+  type: thread
+  title: "Add OpenBSD `-current` release version to `target_env`"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-08-08
+  url:
+    value: "https://github.com/rust-lang/rust/pull/160739"
+    date: 2026-08-17
+
+zulip-openbsd-new-mcp:
+  type: thread
+  title: "Encode OpenBSD `-current` version in targets' `target_env` compiler-team#1018"
+  date: 2026-08-08
+  url:
+    value: "https://rust-lang.zulipchat.com/#narrow/stream/233931-xxx/topic/Encode.20OpenBSD.20.60-current.60.20version.20in.20tar.E2.80.A6.20compiler-team.231018/with/611628084"
+    date: 2026-08-17
+
+github-safamilyt-issue:
+  type: thread
+  title: "AF_INET and AF_INET6 should be of type sa_family_t"
+  author:
+    - name:
+      alias: Yamakaky
+  date: 2016-12-12
+  url:
+    value: "https://github.com/rust-lang/libc/issues/468"
+    date: 2026-08-17
+
+github-safamilyt-fork:
+  type: repository
+  title: "Commits · dybucc/libc:change-type"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-07-13
+  url:
+    value: "https://github.com/dybucc/libc/commits/change-type/"
+    date: 2026-08-17
+
+github-sigt-bsd-issue:
+  type: thread
+  title: "Incorrect type name sighandler_t should be sig_t on apple targets"
+  author:
+    - name:
+      alias: gnzlbg
+  date: 2019-02-22
+  url:
+    value: "https://github.com/rust-lang/libc/issues/1273"
+    date: 2026-08-17
+
+github-aix-powerpc64-pr:
+  type: thread
+  title: "aix(powerpc64): clean up module"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-08-06
+  url:
+    value: "https://github.com/rust-lang/libc/pull/5380"
+    date: 2026-08-17
+
+github-aix-lfs-pr:
+  type: thread
+  title: "aix: annotate LFS types as slated for deprecation"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-08-06
+  url:
+    value: "https://github.com/rust-lang/libc/pull/5382"
+    date: 2026-08-17
+
+github-ctest-header-conflict:
+  type: thread
+  title: "ctest support for conflicting headers"
+  author:
+    - given-name: Trevor
+      name: Gross
+  date: 2026-07-31
+  url:
+    value: "https://github.com/rust-lang/libc/issues/5344"
+    date: 2026-08-17
+
+github-siginfot-issue:
+  type: thread
+  title: "Problem in implementing siginfo_t for Linux"
+  author:
+    - given-name: Yi
+      name: Lin
+  date: 2017-08-09
+  url:
+    value: "https://github.com/rust-lang/libc/issues/716"
+    date: 2026-08-17
+
+github-bonding-period-project:
+  type: repository
+  title: "dybucc/libc-constant-deprecator"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-03-13
+  url:
+    value: "https://github.com/dybucc/libc-constant-deprecator"
+    date: 2026-08-17
+
+github-uclibc-lfs-pr:
+  type: thread
+  title: "linux(uclibc): add `cfg` for LFS bindings"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-07-22
+  url:
+    value: "https://github.com/rust-lang/libc/pull/5315"
+    date: 2026-08-17
+
+zulip-daily-report:
+  type: thread
+  title: "Project: libc: transition differing bit-width time"
+  author:
+    - given-name: Adam
+      name: Martinez
+  date: 2026-05-02
+  url:
+    value: "https://rust-lang.zulipchat.com/#narrow/channel/421156-gsoc/topic/Project.3A.20libc.3A.20transition.20differing.20bit-width.20time/with/616718790"
+    date: 2026-08-17
