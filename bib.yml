@@ -128,7 +128,7 @@ github-safamilyt-issue:
   type: thread
   title: "AF_INET and AF_INET6 should be of type sa_family_t"
   author:
-    - name:
+    - name: Yamakaky
       alias: Yamakaky
   date: 2016-12-12
   url:
@@ -150,7 +150,7 @@ github-sigt-bsd-issue:
   type: thread
   title: "Incorrect type name sighandler_t should be sig_t on apple targets"
   author:
-    - name:
+    - name: gnzlbg
       alias: gnzlbg
   date: 2019-02-22
   url:

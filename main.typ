@@ -1,16 +1,64 @@
 #set document(
-  title: [GSoC 2026 work product: The Rust Foundation's `libc` crate],
+  title: [GSoC 2026 work product --- The Rust Foundation's `libc` crate],
   author: "Adam Martinez",
   date: none,
 )
 #set heading(numbering: "1.")
+#set text(lang: "en", region: "us")
+#set footnote(numbering: "*")
 
-#title()
+#html.style(
+  `
+body{
+	color:#fff;background:#000;
+	margin:40px auto;
+	max-width:650px;
+	line-height:1.4;
+	font-size:18px;
+	padding:0 10px;}
+h1{line-height:1.2; text-align:center}
+h2,h3{line-height:1.2; border-bottom: 1px solid;}
+pre,blockquote,.signature{
+	padding: 1em;
+	background:#444;
+}
+blockquote,.signature{
+	font-style: italic;
+	margin: 2em 1em;}
+p,ul,ol { list-style-type: circle;}
+a { color:#169;text-decoration:none; padding:0.5em 0;}
+a:hover { text-decoration:underline;}
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+aside{ font-size:50%;}
+code{ font-size:80%;}
+.header{
+	margin: 1em 0;
+	display: block;
+	width:100%;
+}
+.horizontal { text-align: center; padding:10px 40px;}
+.horizontal li{display: inline-block; margin: 0 0.5em;}
+a[href^="mailto"]::after {content:' 📧';}
+a[href^="gemini"]::after {content:' 🚀';}`.text,
+)
+
+#let css-credits = [CSS blatantly copied from #link(
+    "https://offpunk.net/",
+  )[Offpunk]'s site with some modifications.]
+
+#title[GSoC 2026 work product\ The Rust Foundation's `libc` crate\ #html.aside(
+    css-credits,
+  )]
 
 #outline()
 
 = Short description
-
 My work has consisted of moving forward the list of issues and stale PRs that
 the rust-lang/libc project needs solving before reaching its 1.0 release. This
 is a project that provides Rust bindings to `liblibc` and system libraries.
@@ -32,7 +80,6 @@ we also improved on some aspects of our usage guidelines policies, such that
 users be warned of expected breakage.
 
 = What I did
-
 My initial proposal outlined two main goals; I intended on solving a
 long-standing issue concerning certain constant symbols, then solving some
 doubts and issues around matters Y2038.
@@ -194,11 +241,9 @@ I found out about a two-year old proposal and revived discussion on it as it
 seemed to fit our purposes just fine. It's currently in the process of getting
 approved by some of the Rust teams.
 
-More work on other issues is commented on in Section Code that got merged
-@pr-list.
+More work on other issues is commented on in @pr-list.
 
 = Current state
-
 All of the issues I intended on solving have been solved. The new ones I tackled
 from week 7 on are either solved, or in the process of being solved. I've not
 once dropped an issue without completely solving it.
@@ -213,7 +258,6 @@ breakage across theoretically non-breaking SemVer releases. This wasn't done by
 me, but it did happen as part of discussion for some of the issues I tackled.
 
 = What's left to do
-
 There's still a ton of issues to either close as solved because they've been
 sitting there gathering dust for years, or to finally find a solution for. I
 expect these to take at least another year's worth of work.
@@ -227,7 +271,6 @@ maintainers themselves ensuring something that popped up while solving another
 issue isn't forgotten, even though solving it is not a current priority.
 
 = Code that got merged <pr-list>
-
 The following is a list of PRs/issues that got merged/solved during GSoC. It's
 ordered from oldest to newest, where the creation date of the issue or PR itself
 is used to sort it in the list.
@@ -245,7 +288,6 @@ into a more modular tool to allow a number of LSP-like code actions to be
 performed on any codebase.
 
 == _Remove use_std feature_ <657>
-
 This issue was one of the older ones. It tried to remove the `use_std` feature
 that was once part of rust-lang/libc. This is because the Rust API guidelines
 expect features not to be named `use_*`, but rather `*`.
@@ -255,7 +297,6 @@ bound to be removed in 1.0. That is now tracked in another issue
 @github-remove-link-std.
 
 == _Outdated non-POSIX FreeBSD API used by tests_ <938>
-
 This issue reported that a certain FreeBSD routine was not providing bindings
 for the latest upstream version. Ever since then, we've had a splitting of the
 FreeBSD versions into separate modules (outside of GSoC.)
@@ -264,7 +305,6 @@ That specific API is also fixed and now correctly refletcs the latest version on
 all supported FreeBSD versions. We presently support FreeBSD 11-15.
 
 == _ioctl request arg size for Android aarch64 is wrong?_ <1036>
-
 This issue reported that there were problems in the way we handled a certain
 argument for Android targets, and possibly some other libc implementations used
 on Linux.
@@ -288,7 +328,6 @@ it so that tests passed again, and we know have _some_ better guarantees.
 The PR for that patch can be found here @github-skip-ioctl.
 
 == _Libc-test fails on NetBSD_ <1197>
-
 This issue reported that there were issues in our test infrastructure a few
 years ago, as tests for NetBSD were not passing. This has not been the case for
 the last ten months, as there's been a CI job set up since.
@@ -298,19 +337,16 @@ always guaranteed to pass in NetBSD. And even if they don't, most targets using
 that OS are tier 2, which means they're only guaranteed to build.
 
 == _wchar_t is i32 for all bsd targets_ <1282>
-
 This issue was another one of the old issues that was not up to date with the
 current bindings. I verified the problem reported there was fixed, and the issue
 got closed shortly after.
 
 == _msghdr.msg_iovlen is inconsistently declared in gnu and musl_ <2971>
-
 This issue reported some incorrect bindings a few years ago. Much like other
 unsolved issues, it wasn't up-to-date with our current bindings and was closed
 shortly after I reported so.
 
 == _Remove "placeholder constants"_ <3131>
-
 This issue was the original issue regarding the first goal in my proposal;
 Namely, the deprecation of bug-prone and SemVer-breaking constants. Following I
 include the associated list of PRs.
@@ -335,7 +371,6 @@ left for later, as the maintenance efforts then wouldn't be too high. The work
 of finding which to remove was done and the doc comment could be found+replaced.
 
 == _Netlink support on FreeBSD 13.2+_ <3194>
-
 This issue originally both reported that there were missing interfaces for the
 netlink interface in our FreeBSD bindings, and proposed a patchset for those in
 what is now a stale PR.
@@ -368,7 +403,6 @@ My two associated PRs can be found in @github-ifmib-to-new and
 @github-netlink-support.
 
 == _linux_like: unify SIGEV_THREAD_ID support_ <3661>
-
 This was a stale PR in the 1.0 milestone that I picked up on and got merged
 quite easily. There's not much to comment here, it's simply a symbol that we
 were not exposing on our bindings to musl libc.
@@ -376,7 +410,6 @@ were not exposing on our bindings to musl libc.
 My associated PR can be found in @github-sigevthreadid-unify.
 
 == _Mark all structs `non_exhaustive` for 1.0_ <4080>
-
 This issue initially attempted to further improve the usage guidelines by having
 most of our public types be marked with the `non_exhaustive` attribute. This
 forces downstream consumers to initialize them field-by-field.
@@ -407,7 +440,6 @@ then immediately reverting them in the 1.0 branch. We'd prefer it if users had a
 stronger "no-guarantees" guarantee once we reach 1.0.
 
 == _Split the `-openbsd*` targets by version_ <916>
-
 This issue was the one that I originally found after digging through the
 possible solutions to this other issue @github-openbsd-breakage. That one tried
 to solve the fact that we've had a bit of a hard time dealing with platforms
@@ -443,7 +475,6 @@ newest version of the MCP @zulip-openbsd-new-mcp. At the time of writing, this
 is yet to be merged, so it's not yet possible to use it in rust-lang/libc.
 
 == _Change type of `AF_INET` and `AF_INET6` to `sa_family_t`_ <4867>
-
 This PR was one of the stale PRs I picked up after week 7. I rebased it to
 latest `main` and ensured it still did what it was meant to (as our current
 bindings could have changed since it was first opened.)
@@ -457,7 +488,6 @@ My work can be found in the latest patch of this commit history
 @github-safamilyt-fork.
 
 == _Fix: Replace sighandler_t with sig_t for Apple and BSDs_ <5008>
-
 This PR was one I initially believed to be stale as it tried to solve one of the
 issues in the 1.0 release milestone @github-sigt-bsd-issue, but seemed to not
 have been touched in almost six months.
@@ -471,7 +501,6 @@ has modified the patch I rebased and tweaked back when I first commented on the
 PR thread. For details, see their work on that in the above reference.
 
 == _feat: add support for 32 bit `time_t` in Windows_ <5010>
-
 This was one of the PRs I originally submitted before GSoC to rust-lang/libc
 concerning the fact `time_t` was only exposed as 32-bits wide on Windows.
 There's a macro in Windows that can be used to toggle the old behavior.
@@ -483,7 +512,6 @@ closed shortly after one of the maintainers made that clear to me.
 Still, it serves as good recollection.
 
 == _Deprecate windows `time64_t`_ <5032>
-
 This was one of the PRs I originally opened before I even got accepted into GSoC
 to familirize myself with the repo. It addressed the fact that we still had a
 64-suffixed `time_t` in Windows.
@@ -500,7 +528,6 @@ It'll be easier to justify the mass deprecations on a proper SemVer breaking
 release.
 
 == _feat: add back support for GNU Windows x86 in CI_ <5050>
-
 This PR I opened while solving other Windows issues and testing on each of our
 supported Rust targets. I found that there didn't seem to be any issues with
 Windows x86 running with a GNU-based libc implementation.
@@ -513,7 +540,6 @@ This added back support for this target in CI, and it seems to have been stable
 ever since.
 
 == _windows(gnu): link to 32-bit time routines in x86 and add test_ <5059>
-
 This issue is one of the Windows patchsets I prepared after initially working on
 `time_t` matters to introduce myself to the repository. While looking through
 both MSVC and MinGW headers, I noticed that there were mismatches.
@@ -542,7 +568,6 @@ Further comments on that PR can be found in another item of this section of the
 report.
 
 == _windows: expose `cfg` for 64-bit `time_t`_ <5062>
-
 This PR was one of the Windows PRs that followed up from my work before being
 selected for GSoC. It addressed the fact Windows x86 targets using GNU's libc
 implementation exposed a 32-bit `time_t` instead of a 64-bit `time_t`.
@@ -556,7 +581,6 @@ had for similar purposes under GNU/Linux systems, such that users could toggle
 that by passing it to an invocation of the Rust compiler.
 
 == _fuchsia: clean up module_ <5127>
-
 This was a fairly large patchset that I initially set out on as part of my
 `time_t` and LFS goals, but that easily went on to be a partial verification of
 most of the bindings we provide for the Fuchsia operating system.
@@ -569,7 +593,6 @@ For details on the specific changes, see the PR and the each patch's
 accompanying message.
 
 == _build: add `rust-toolchain.toml` file_ <5128>
-
 This was a PR I opened while working on other stuff in the repo, and noticing
 that the build setup for contributors wasn't quite as declarative as I would
 like it to be.
@@ -595,7 +618,6 @@ necessarily wanting to hack on it, so using that file as a form of developer
 tooling wouldn't quite cut it. That's why this PR got closed without merging.
 
 == _vxworks: add `cfg` to definition of `off64_t` and `off_t`_ <5129>
-
 This PR was initially part of my main goals during GSoC to address LFS types. In
 this case, it affected VxWorks targets, but the target maintainer eventually
 expressed that they would rather keep these symbols.
@@ -610,7 +632,6 @@ support in VxWorks would be limited to RTPs (Real Time Processes) and not kernel
 applications.
 
 == _TEEOS: Change the definition of `time_t` to `i64`_ <5130>
-
 This PR was another one of the the changes that I made as I went through all
 supported targets looking for defects in the types we used in our bindings for
 both `time_t` and LFS.
@@ -619,13 +640,11 @@ There's not much to comment here. What I initially submitted was exactly what
 got merged in the end.
 
 == _refactor: adjust definition of `off_t` in wasi_ <5131>
-
 This PR was another one of the changes that I deemed necessary while verifying
 that all of our LFS-related types fit those exposed usptream. There's not much
 to discuss here; What I initially submitted was merged as-is.
 
 == _newlib: fix definition of `time_t` and `off_t`_ <5132>
-
 This PR submitted another patchset to more accurately map the types used in our
 bindings to those used in upstream projects using newlib. This PR took a while
 to merge and it went through multiple revisions.
@@ -646,7 +665,6 @@ The changes that eventually got merged were a mix of clean ups unrelated to LFS,
 and of a small change to both RTEMS targets and PS Vita targets concerning LFS.
 
 == _emscripten: deprecate file offset types_ <5142>
-
 This PR was part of my two initial goals on GSoC for verifying the "correctness"
 of the types we used in LFS bindings. Between this patch being submitted and it
 getting merged, discussions took place across other issues and PRs.
@@ -665,7 +683,6 @@ just doesn't quite make for an easy time updating dependencies in downstream
 crates.
 
 == _linux(uclibc): move definition of `time_t`_ <5144>
-
 This PR was remade from an older patch I submitted making extensive changes to
 our bindings to the uClibc implementation of libc. The changes were aimed at
 having an accurate definition for `time_t` fitting upstream's build-time
@@ -680,7 +697,6 @@ afore-mentioned build-time option is available no matter the target triple
 combination.
 
 == _fix: remove conflicting items in L4Re uClibc_ <5164>
-
 This PR I submitted while working on reviewing all targets, and more
 specifically, once I reached the Linux-like targets. I noticed some mismatches
 between the types that we made available under L4Re, as we share some of those
@@ -692,7 +708,6 @@ mine were already included. I closed the PR after checking that one out.
 
 == _linux(uclibc): remove redundant records and explicit linking to
 `libutil`_ <5165>
-
 This PR I initially submitted a patchset for that didn't quite pass muster. I
 added support for a new `cfg` that mapped to an upstream build option, but that
 was something we eventually decided against.
@@ -707,7 +722,6 @@ priority as our current bindings work just fine with the default uClibc build
 options.
 
 == _linux(musl): deprecate LFS64 bindings_ <5170>
-
 This PR deprecated the LFS types we used in our musl libc bindings, such that we
 could soon remove them altogether. Upstream makes no difference whatsoever
 between targets with a 64- or 32-bit machine word size, so they're always 64
@@ -718,7 +732,6 @@ adding deprecation warnings. These are part of a larger plan to mark the items
 that we plan on removing, but only deprecate them once we near 1.0.
 
 == _l4re: change bit widths of file offset types_ <5173>
-
 This PR was originally held off almost as soon as it was submitted because we
 thought it best to first address the other uClibc PR. That one got eventually
 merged (though the larger part of the patch got split into another, still open,
@@ -732,7 +745,6 @@ Still, some stuff around testing and symbol availability on the C side of things
 needs further discussion with the target maintainers. That's currently ongoing.
 
 == _android: deprecate file offset types in targets with 64-bit abis_ <5178>
-
 This PR addressed the fact that Android targets with a 64-bit machine word size
 are getting LFS-suffixed types exposed even though their unsuffixed types are
 already equivalent.
@@ -742,7 +754,6 @@ got merged uses `FIXME` comments to ensure we can easily deprecate those items
 once we actually near the 1.0 release.
 
 == _feat: add macro to declare unstable constants_ <5180>
-
 This PR I submitted while working on deprecating constants. Unlike the LFS
 matters, these we didn't plan on ever deprecating, but rather on documenting for
 downstream users to take note of potential breakage.
@@ -756,7 +767,6 @@ worth it. The PR got subsequently closed. The discussion for this, though, took
 place in a separate issue/PR thread.
 
 == _fuchsia: propose `sigaction` definition_ <5213>
-
 This PR I submitted while working on the Fuchsia PR. It stemmed off of
 discussions on its comments with my mentor. The goal here was to propose another
 solution for the, to this day, still faulty bindings we have for `sigaction`.
@@ -774,7 +784,6 @@ Rust has to deal with, among others, situations like this one, are being
 discussed in rust-lang/rust. They're still a WIP, though.
 
 == _freebsd: fix docs links and wording_ <5219>
-
 This PR I submitted while we were finally merging the patchsets concerning
 constant deprecations. Those eventually settled for documentation, such that
 users would be advised against expecting any form of stability.
@@ -783,7 +792,6 @@ As those PRs were being merged, both me and my mentor noticed some issues in the
 wording of those docs. This PR fixed most of those.
 
 == _Windows MSVC/GNU function pointer check issues_ <5227>
-
 This issue I opened as part of my initial work on Windows. After testing out the
 changes I made for those PRs concerning `time_t`, I started looking into why is
 it that function pointer tests had been failing for some time now.
@@ -829,7 +837,6 @@ original author of that proposal have shown interest in solving things this way,
 so it's likely this will eventually become the solution.
 
 == _hurd: clean up module_ <5242>
-
 This was one of the PRs I opened as part of my going through all targets'
 bindings, ensuring there were no issues with their LFS types nor `time_t`. This
 patchset, though, like some others, eventually became a general clean-up.
@@ -848,7 +855,6 @@ if I had started off by splitting the patchset into smaller chunks (possibly
 across different PRs.)
 
 == _nuttx: clean up module_ <5245>
-
 This PR was part of the my review of bindings for all supported targets and, in
 this instance, affected Apache's NuttX operating system. Most the bindings here
 were unaffected.
@@ -866,7 +872,6 @@ target supports.
 
 == _build: replace checking for host `cfg` with checking for target
 `cfg`_ <5248>
-
 This PR I opened while working on other patchsets and noticing that there was
 something odd with the way in which we were setting up a target-dependent piece
 of logic in our test crate's build script.
@@ -876,7 +881,6 @@ machine's instead of in the target, which thus far hadn't given us any issues
 but would've quite surely bitten us back later on.
 
 == _aix: clean up module_ <5259>
-
 This was one of the patchsets I submitted while going through all supported
 targets, ensuring they didn't have mismatched `time_t` definitions and that LFS
 functionality was correctly bound.
@@ -897,7 +901,6 @@ maintainer (see @github-aix-powerpc64-pr for the other pending PR and
 @github-aix-lfs-pr for the patchset that got merged.)
 
 == _memchr signature invites mutability bugs_ <5276>
-
 This issue I hadn't initially planned on tackling as it's quite new and I've
 been so far addressing fairly old issues. I don't remember why I decided to pick
 this one up.
@@ -927,7 +930,6 @@ This is pending an answer from my mentor or some other rust-lang/libc
 maintainer.
 
 == _freebsd: move `net/if_mib.h` to `src/new` module_ <5325>
-
 This PR is a follow up to another stale PR that added support for `netlink`
 bindings in FreeBSD targets. The stale PR's author didn't mind me picking it up
 and they still had interest in this getting merged.
@@ -967,7 +969,6 @@ their items is limited in ctest, has sparked some debate in this issue
 @github-ctest-header-conflict. I also discussed it some there.
 
 == _linux: complete `siginfo_t` definition_ <5345>
-
 This PR I submitted while solving another old-time issue @github-siginfot-issue.
 This one was fairly simple to solve, but it's not yet merged because we're
 trying to move the definition to our `new` submodule.
@@ -989,13 +990,11 @@ We keep there a module structure that more closely matches that of each upstream
 repo for a given target's libc implementaion.
 
 == _t1 t2 lookup in ctest-test_ <5347>
-
 This PR I didn't author myself but did get pinged on to provide some feedback as
 some other contributor had been redirected to me. I gave what little advice I
 could, and pinged back my mentor.
 
 == _crate: clean up leftovers from pre-rustc 1.19 without `unions`_ <5351>
-
 This PR solved another old-time issue concerning the transition towards using
 native Rust `union` types instead of workarounds for C `union`s.
 
@@ -1006,7 +1005,6 @@ breaking changes.
 Those are merged now.
 
 = Challenges and the learning experience
-
 This summer was quite definitely the one in which I learnt the most about
 project maintenance. Back when I first started off, I thought all that mattered
 was delivering correctness in the implementation.
