@@ -288,7 +288,7 @@ Following my mentor's suggestion, I plan on eventually refactoring that tool
 into a more modular tool to allow a number of LSP-like code actions to be
 performed on any codebase.
 
-#let h(issue, which: "rust-lang/libc", body) = {
+#let h(which: "rust-lang/libc", issue, body) = {
   heading(
     link("https://github.com/" + which + "/issues/" + str(issue), body),
     level: 2,
@@ -314,7 +314,7 @@ all supported FreeBSD versions. We presently support FreeBSD 11-15.
 
 // [todo]: finish up replacing the headings with the `h` function.
 
-== _ioctl request arg size for Android aarch64 is wrong?_ <1036>
+#h(1036)[_ioctl request arg size for Android aarch64 is wrong?_]
 This issue reported that there were problems in the way we handled a certain
 argument for Android targets, and possibly some other libc implementations used
 on Linux.
@@ -329,15 +329,13 @@ one argument neither has well-defined semantics.
 
 The solution basically went through praying some driver implementor didn't
 decide in favor of using a 64-bit constant. I got a PR merged for this one that
-also removed the skip we have in our test infrastructure.
+also removed the skip we have in our test infrastructure @github-skip-ioctl.
 
 In that patch, I also added a `#define` for a certain symbol that makes, at
 least in Bionic libc, a certain overload for that routine unavailable. This made
-it so that tests passed again, and we know have _some_ better guarantees.
+it so that tests passed again.
 
-The PR for that patch can be found here @github-skip-ioctl.
-
-== _Libc-test fails on NetBSD_ <1197>
+#h(1197)[_Libc-test fails on NetBSD_]
 This issue reported that there were issues in our test infrastructure a few
 years ago, as tests for NetBSD were not passing. This has not been the case for
 the last ten months, as there's been a CI job set up since.
@@ -346,17 +344,17 @@ We don't often merge some PR until it passes all CI jobs, so tests are almost
 always guaranteed to pass in NetBSD. And even if they don't, most targets using
 that OS are tier 2, which means they're only guaranteed to build.
 
-== _wchar_t is i32 for all bsd targets_ <1282>
+#h(1282)[_wchar_t is i32 for all bsd targets_]
 This issue was another one of the old issues that was not up to date with the
 current bindings. I verified the problem reported there was fixed, and the issue
 got closed shortly after.
 
-== _msghdr.msg_iovlen is inconsistently declared in gnu and musl_ <2971>
+#h(2971)[_msghdr.msg_iovlen is inconsistently declared in gnu and musl_]
 This issue reported some incorrect bindings a few years ago. Much like other
 unsolved issues, it wasn't up-to-date with our current bindings and was closed
 shortly after I reported so.
 
-== _Remove "placeholder constants"_ <3131>
+#h(3131)[_Remove "placeholder constants"_]
 This issue was the original issue regarding the first goal in my proposal;
 Namely, the deprecation of bug-prone and SemVer-breaking constants. Following I
 include the associated list of PRs.
@@ -376,13 +374,12 @@ There were also analogous PRs I opened right after deprecation were I completely
 removed them, expecting the deprecation to be backported to the next stable
 release, while the removal would stay in store for the 1.0 release.
 
-Those were eventually closed because it was decided that removing them could be
-left for later, as the maintenance efforts then wouldn't be too high. The work
-of finding which to remove was done and the doc comment could be found+replaced.
+That was before deciding that these constants would be kept without deprecating
+them. Currently, the afore mentioned doc comment is good enough to advise users.
 
-== _Netlink support on FreeBSD 13.2+_ <3194>
+#h(3194)[_Netlink support on FreeBSD 13.2+_] <netlink-original-issue>
 This issue originally both reported that there were missing interfaces for the
-netlink interface in our FreeBSD bindings, and proposed a patchset for those in
+Netlink interface in our FreeBSD bindings, and proposed a patchset for those in
 what is now a stale PR.
 
 I picked up the original patchset and tweaked it some to get the tests to pass.
@@ -390,12 +387,11 @@ This hasn't been merged yet because there's some nifty item resolution conflicts
 that remain to be solved.
 
 These mostly consist of the `netlink/netlink.h` interfaces interfering with
-those of `net/if_mib.h`. In C, there's sort of "scoping" set in place for this
+those of `net/if_mib.h`. In C, there's a sort of "scoping" set in place for this
 by simply having each of those exist in separate header files.
 
 In rust-lang/libc, though, we reexport all items that a given platform provides
-at the crate root level, which means we end up with item resolution conflicts on
-the Rust side of things.
+at the crate root level, which means we end up with item resolution conflicts.
 
 The initial solution I came up with was to set up some hacky workarounds in our
 test infrastructure that would let us run multiple times the test suite for
@@ -412,14 +408,14 @@ this usecase (though it has been during GSoC.)
 My two associated PRs can be found in @github-ifmib-to-new and
 @github-netlink-support.
 
-== _linux_like: unify SIGEV_THREAD_ID support_ <3661>
-This was a stale PR in the 1.0 milestone that I picked up on and got merged
-quite easily. There's not much to comment here, it's simply a symbol that we
-were not exposing on our bindings to musl libc.
+#h(3661)[_linux_like: unify SIGEV_THREAD_ID support_]
+This was a stale PR in the 1.0 milestone that I picked up and got merged quite
+easily. There's not much to comment here, it's simply a symbol that we were not
+exposing on our bindings to musl libc.
 
 My associated PR can be found in @github-sigevthreadid-unify.
 
-== _Mark all structs `non_exhaustive` for 1.0_ <4080>
+#h(4080)[_Mark all structs `non_exhaustive` for 1.0_]
 This issue initially attempted to further improve the usage guidelines by having
 most of our public types be marked with the `non_exhaustive` attribute. This
 forces downstream consumers to initialize them field-by-field.
@@ -449,7 +445,8 @@ This is so that we can backport those changes to the next stable release, while
 then immediately reverting them in the 1.0 branch. We'd prefer it if users had a
 stronger "no-guarantees" guarantee once we reach 1.0.
 
-== _Split the `-openbsd*` targets by version_ <916>
+#h(916, which: "rust-lang/compiler-team")[_Split the `-openbsd*` targets by
+version_]
 This issue was the one that I originally found after digging through the
 possible solutions to this other issue @github-openbsd-breakage. That one tried
 to solve the fact that we've had a bit of a hard time dealing with platforms
@@ -469,7 +466,7 @@ though, was deemed too heavy a maintenance burden.
 
 The solution I proposed in a separate MCP at @github-openbsd-new-mcp followed
 from comments by my mentor and comments left by the compiler team in the
-accompanying Zulip @zulip-openbsd-old-mcp. That MCP got approved and I've
+accompanying Zulip thread @zulip-openbsd-old-mcp. That MCP got approved and I've
 submitted a reference implementation in @github-openbsd-mcp-impl.
 
 This solution instead embeds OpenBSD's `-current` release channel version into
@@ -484,7 +481,7 @@ This seemed fairly satisfactory from discussions in the Zulip thread for the
 newest version of the MCP @zulip-openbsd-new-mcp. At the time of writing, this
 is yet to be merged, so it's not yet possible to use it in rust-lang/libc.
 
-== _Change type of `AF_INET` and `AF_INET6` to `sa_family_t`_ <4867>
+#h(4867)[_Change type of `AF_INET` and `AF_INET6` to `sa_family_t`_]
 This PR was one of the stale PRs I picked up after week 7. I rebased it to
 latest `main` and ensured it still did what it was meant to (as our current
 bindings could have changed since it was first opened.)
@@ -497,7 +494,7 @@ to move it forward.
 My work can be found in the latest patch of this commit history
 @github-safamilyt-fork.
 
-== _Fix: Replace sighandler_t with sig_t for Apple and BSDs_ <5008>
+#h(5008)[_Fix: Replace sighandler_t with sig_t for Apple and BSDs_]
 This PR was one I initially believed to be stale as it tried to solve one of the
 issues in the 1.0 release milestone @github-sigt-bsd-issue, but seemed to not
 have been touched in almost six months.
@@ -510,7 +507,7 @@ Recently, the author got back from one of the rust-lang/libc maintainers, and
 has modified the patch I rebased and tweaked back when I first commented on the
 PR thread. For details, see their work on that in the above reference.
 
-== _feat: add support for 32 bit `time_t` in Windows_ <5010>
+#h(5010)[_feat: add support for 32 bit `time_t` in Windows_]
 This was one of the PRs I originally submitted before GSoC to rust-lang/libc
 concerning the fact `time_t` was only exposed as 32-bits wide on Windows.
 There's a macro in Windows that can be used to toggle the old behavior.
@@ -521,7 +518,7 @@ closed shortly after one of the maintainers made that clear to me.
 
 Still, it serves as good recollection.
 
-== _Deprecate windows `time64_t`_ <5032>
+#h(5032)[_Deprecate windows `time64_t`_]
 This was one of the PRs I originally opened before I even got accepted into GSoC
 to familirize myself with the repo. It addressed the fact that we still had a
 64-suffixed `time_t` in Windows.
@@ -537,7 +534,7 @@ for the same reason.
 It'll be easier to justify the mass deprecations on a proper SemVer breaking
 release.
 
-== _feat: add back support for GNU Windows x86 in CI_ <5050>
+#h(5050)[_feat: add back support for GNU Windows x86 in CI_]
 This PR I opened while solving other Windows issues and testing on each of our
 supported Rust targets. I found that there didn't seem to be any issues with
 Windows x86 running with a GNU-based libc implementation.
@@ -546,10 +543,11 @@ The CI job for this target had been disabled due to some segfaults caused by the
 generated C tests, but the only apparent issue was that a certain data type,
 `max_align_t`, had the wrong alignment requirement.
 
-This added back support for this target in CI, and it seems to have been stable
-ever since.
+This patch added back support for this target in CI, and it seems to have been
+stable ever since.
 
-== _windows(gnu): link to 32-bit time routines in x86 and add test_ <5059>
+#h(5059)[_windows(gnu): link to 32-bit time routines in x86 and add
+test_] <windows-timet-first>
 This issue is one of the Windows patchsets I prepared after initially working on
 `time_t` matters to introduce myself to the repository. While looking through
 both MSVC and MinGW headers, I noticed that there were mismatches.
@@ -574,23 +572,22 @@ While testing the changes in this PR, I also started digging into what seemed to
 have been long-standing issues on Windows concerning function pointer comparison
 tests for bindings to UCRT routines.
 
-Further comments on that PR can be found in another item of this section of the
-report.
+Further comments on that issue can be found in @windows-fn-ptr.
 
-== _windows: expose `cfg` for 64-bit `time_t`_ <5062>
+#h(5062)[_windows: expose `cfg` for 64-bit `time_t`_]
 This PR was one of the Windows PRs that followed up from my work before being
 selected for GSoC. It addressed the fact Windows x86 targets using GNU's libc
 implementation exposed a 32-bit `time_t` instead of a 64-bit `time_t`.
 
-We can't just break users by changing this data type, a few PRs (including this
-one and others commented on in this report) ensured users both had a way to opt
-in to the correct behavior or otherwise had 32-bit routines linked.
+We can't just break users by changing this data type. This PR and the one
+commented @windows-timet-first on ensured users both had a way to opt in to the
+correct behavior or otherwise had 32-bit routines linked.
 
 The former was the goal of this patch. It reused one of the existing `cfg`s we
 had for similar purposes under GNU/Linux systems, such that users could toggle
 that by passing it to an invocation of the Rust compiler.
 
-== _fuchsia: clean up module_ <5127>
+#h(5127)[_fuchsia: clean up module_] <fuchsia-cleanup>
 This was a fairly large patchset that I initially set out on as part of my
 `time_t` and LFS goals, but that easily went on to be a partial verification of
 most of the bindings we provide for the Fuchsia operating system.
@@ -599,10 +596,10 @@ There's not much to comment here. This was possibly the PR that took the longest
 to merge, as it had to go through multiple reviews, painful source control
 history clean ups, and had to get approval from the target maintainer.
 
-For details on the specific changes, see the PR and the each patch's
-accompanying message.
+For details on the specific changes, see PR and the each patch's accompanying
+message.
 
-== _build: add `rust-toolchain.toml` file_ <5128>
+#h(5128)[_build: add `rust-toolchain.toml` file_]
 This was a PR I opened while working on other stuff in the repo, and noticing
 that the build setup for contributors wasn't quite as declarative as I would
 like it to be.
@@ -627,21 +624,21 @@ Users also clone this repo by virtue of this being open source without
 necessarily wanting to hack on it, so using that file as a form of developer
 tooling wouldn't quite cut it. That's why this PR got closed without merging.
 
-== _vxworks: add `cfg` to definition of `off64_t` and `off_t`_ <5129>
+#h(5129)[_vxworks: add `cfg` to definition of `off64_t` and `off_t`_]
 This PR was initially part of my main goals during GSoC to address LFS types. In
 this case, it affected VxWorks targets, but the target maintainer eventually
 expressed that they would rather keep these symbols.
 
 This patch then got repurposed into a small clean up. It removed some stubbed
 symbols that returned errors in our bindings because they didn't really exist in
-the SDK shipped upstream.
+the SDK shipped upstream. The PR title, though, didn't get renamed.
 
 It also removed symbols that were only available when programming against the
 kernel. The target maintainer confirmed that, at least in the short term, Rust
 support in VxWorks would be limited to RTPs (Real Time Processes) and not kernel
 applications.
 
-== _TEEOS: Change the definition of `time_t` to `i64`_ <5130>
+#h(5130)[_TEEOS: Change the definition of `time_t` to `i64`_]
 This PR was another one of the the changes that I made as I went through all
 supported targets looking for defects in the types we used in our bindings for
 both `time_t` and LFS.
@@ -649,12 +646,12 @@ both `time_t` and LFS.
 There's not much to comment here. What I initially submitted was exactly what
 got merged in the end.
 
-== _refactor: adjust definition of `off_t` in wasi_ <5131>
+#h(5131)[_refactor: adjust definition of `off_t` in wasi_]
 This PR was another one of the changes that I deemed necessary while verifying
 that all of our LFS-related types fit those exposed usptream. There's not much
 to discuss here; What I initially submitted was merged as-is.
 
-== _newlib: fix definition of `time_t` and `off_t`_ <5132>
+#h(5132)[_newlib: fix definition of `time_t` and `off_t`_]
 This PR submitted another patchset to more accurately map the types used in our
 bindings to those used in upstream projects using newlib. This PR took a while
 to merge and it went through multiple revisions.
@@ -672,9 +669,10 @@ on the bindings, and so had to both go back and fix those, as well as report on
 the issue thread clarifying what the new set of changes were.
 
 The changes that eventually got merged were a mix of clean ups unrelated to LFS,
-and of a small change to both RTEMS targets and PS Vita targets concerning LFS.
+and of a small change to both the RTEMS target and the PS Vita target concerning
+LFS.
 
-== _emscripten: deprecate file offset types_ <5142>
+#h(5142)[_emscripten: deprecate file offset types_]
 This PR was part of my two initial goals on GSoC for verifying the "correctness"
 of the types we used in LFS bindings. Between this patch being submitted and it
 getting merged, discussions took place across other issues and PRs.
@@ -692,7 +690,7 @@ Otherwise, having these deprecations scattered throughout stable 0.2.x releases
 just doesn't quite make for an easy time updating dependencies in downstream
 crates.
 
-== _linux(uclibc): move definition of `time_t`_ <5144>
+#h(5144)[_linux(uclibc): move definition of `time_t`_]
 This PR was remade from an older patch I submitted making extensive changes to
 our bindings to the uClibc implementation of libc. The changes were aimed at
 having an accurate definition for `time_t` fitting upstream's build-time
@@ -706,7 +704,7 @@ I remade my PR into extending that to support all uClibc targets, as the
 afore-mentioned build-time option is available no matter the target triple
 combination.
 
-== _fix: remove conflicting items in L4Re uClibc_ <5164>
+#h(5164)[_fix: remove conflicting items in L4Re uClibc_]
 This PR I submitted while working on reviewing all targets, and more
 specifically, once I reached the Linux-like targets. I noticed some mismatches
 between the types that we made available under L4Re, as we share some of those
@@ -716,22 +714,22 @@ Thankfully, another contributor noticed that there was already a larger PR
 addressing some L4Re-specific facts, and among the changes in that patchset,
 mine were already included. I closed the PR after checking that one out.
 
-== _linux(uclibc): remove redundant records and explicit linking to
-`libutil`_ <5165>
+#h(5165)[_linux(uclibc): remove redundant records and explicit linking to
+`libutil`_] <uclibc-original-pr>
 This PR I initially submitted a patchset for that didn't quite pass muster. I
 added support for a new `cfg` that mapped to an upstream build option, but that
 was something we eventually decided against.
 
 Among our final discussions, we settled for splitting the patchset into two; One
 containing uncontroversial changes that would ensure our bindings fit those of a
-defualt build of uClibc, and another one necessitating maintainer approval.
+default build of uClibc, and another one necessitating maintainer approval.
 
 The latter one is still pending at @github-uclibc-lfs-pr. The target maintainers
 are yet to answer to that one, and I'm currently assuming this to be low
 priority as our current bindings work just fine with the default uClibc build
 options.
 
-== _linux(musl): deprecate LFS64 bindings_ <5170>
+#h(5170)[_linux(musl): deprecate LFS64 bindings_]
 This PR deprecated the LFS types we used in our musl libc bindings, such that we
 could soon remove them altogether. Upstream makes no difference whatsoever
 between targets with a 64- or 32-bit machine word size, so they're always 64
@@ -739,13 +737,13 @@ bits.
 
 This, like many other PRs, got refactored into using `FIXME` comments instead of
 adding deprecation warnings. These are part of a larger plan to mark the items
-that we plan on removing, but only deprecate them once we near 1.0.
+that we intend on removing, but only deprecate them once we near 1.0.
 
-== _l4re: change bit widths of file offset types_ <5173>
+#h(5173)[_l4re: change bit widths of file offset types_]
 This PR was originally held off almost as soon as it was submitted because we
-thought it best to first address the other uClibc PR. That one got eventually
-merged (though the larger part of the patch got split into another, still open,
-PR.)
+thought it best to first address the other uClibc PR (commented on in
+@uclibc-original-pr.) That one got eventually merged (though the larger part of
+the patch got split into another, still open, PR @github-uclibc-lfs-pr.)
 
 The latest revision of this PR adds deprecation notices to types, and at least
 at the time of writing, it seems like these are actually getting deprecated and
@@ -754,32 +752,33 @@ not just marked for future deprecation.
 Still, some stuff around testing and symbol availability on the C side of things
 needs further discussion with the target maintainers. That's currently ongoing.
 
-== _android: deprecate file offset types in targets with 64-bit abis_ <5178>
+#h(5178)[_android: deprecate file offset types in targets with 64-bit abis_]
 This PR addressed the fact that Android targets with a 64-bit machine word size
 are getting LFS-suffixed types exposed even though their unsuffixed types are
 already equivalent.
 
 The initial patch added deprecation warnings, but the revision that eventually
 got merged uses `FIXME` comments to ensure we can easily deprecate those items
-once we actually near the 1.0 release.
+once we're actually nearing the 1.0 release.
 
-== _feat: add macro to declare unstable constants_ <5180>
+#h(5180)[_feat: add macro to declare unstable constants_]
 This PR I submitted while working on deprecating constants. Unlike the LFS
 matters, these we didn't plan on ever deprecating, but rather on documenting for
 downstream users to take note of potential breakage.
 
 I thought it would be best if the type of unstable symbol I went through in the
 PRs concerned with constants got a dedicated macro with which to automatically
-annotate it with a documentation comment to indicate its unstable guarantees.
+annotate them with a documentation comment to indicate their unstable
+guarantees.
 
 This wasn't quite a great idea, and the increased maintenance burden was not
-worth it. The PR got subsequently closed. The discussion for this, though, took
-place in a separate issue/PR thread.
+worth it.
 
-== _fuchsia: propose `sigaction` definition_ <5213>
-This PR I submitted while working on the Fuchsia PR. It stemmed off of
-discussions on its comments with my mentor. The goal here was to propose another
-solution for the, to this day, still faulty bindings we have for `sigaction`.
+#h(5213)[_fuchsia: propose `sigaction` definition_]
+This PR I submitted while working on the Fuchsia PR (commented on in
+@fuchsia-cleanup.) It stemmed off of discussions on its comment thread with my
+mentor. The goal here was to propose another solution for the, to this day,
+still faulty bindings we have for `sigaction`.
 
 This type is one that we've had trouble with across most Unix-based targets, and
 we've yet to find a good solution for it. The main issue is in that almost every
@@ -793,15 +792,15 @@ Matters concerning "raw function pointers," akin to the existing raw pointers
 Rust has to deal with, among others, situations like this one, are being
 discussed in rust-lang/rust. They're still a WIP, though.
 
-== _freebsd: fix docs links and wording_ <5219>
+#h(5219)[_freebsd: fix docs links and wording_]
 This PR I submitted while we were finally merging the patchsets concerning
 constant deprecations. Those eventually settled for documentation, such that
 users would be advised against expecting any form of stability.
 
 As those PRs were being merged, both me and my mentor noticed some issues in the
-wording of those docs. This PR fixed most of those.
+wording of those docs. This patch fixed most of those.
 
-== _Windows MSVC/GNU function pointer check issues_ <5227>
+#h(5227)[_Windows MSVC/GNU function pointer check issues_] <windows-fn-ptr>
 This issue I opened as part of my initial work on Windows. After testing out the
 changes I made for those PRs concerning `time_t`, I started looking into why is
 it that function pointer tests had been failing for some time now.
@@ -816,7 +815,7 @@ one goes to the Import Adress Table of the executable.
 
 This table is akin to the Global Offset Table in ELF and basically serves to
 have the loader switch fewer pages when resolving the addresses of symbols that
-can only be determined at runtime (like DLLs.)
+can only be determined at runtime (like those provided by DLLs.)
 
 This table contains a set of stubs that don't point to jack, but to which
 there's pointers from each call site in the binary containing the table. At
@@ -846,7 +845,7 @@ This is currently pending language team approval. Both my mentor and the
 original author of that proposal have shown interest in solving things this way,
 so it's likely this will eventually become the solution.
 
-== _hurd: clean up module_ <5242>
+#h(5242)[_hurd: clean up module_]
 This was one of the PRs I opened as part of my going through all targets'
 bindings, ensuring there were no issues with their LFS types nor `time_t`. This
 patchset, though, like some others, eventually became a general clean-up.
@@ -864,7 +863,7 @@ Admittedly, this would have taken far less work on the reviewers' side of things
 if I had started off by splitting the patchset into smaller chunks (possibly
 across different PRs.)
 
-== _nuttx: clean up module_ <5245>
+#h(5245)[_nuttx: clean up module_]
 This PR was part of the my review of bindings for all supported targets and, in
 this instance, affected Apache's NuttX operating system. Most the bindings here
 were unaffected.
@@ -880,8 +879,8 @@ The fact those were non-standard meant we decided against supporting them, as it
 isn't libc's place to take into account all possible build-time options a given
 target supports.
 
-== _build: replace checking for host `cfg` with checking for target
-`cfg`_ <5248>
+#h(5248)[_build: replace checking for host `cfg` with checking for target
+`cfg`_]
 This PR I opened while working on other patchsets and noticing that there was
 something odd with the way in which we were setting up a target-dependent piece
 of logic in our test crate's build script.
@@ -890,7 +889,7 @@ Apparently, we had been checking for a compile-time property in the host
 machine's instead of in the target, which thus far hadn't given us any issues
 but would've quite surely bitten us back later on.
 
-== _aix: clean up module_ <5259>
+#h(5259)[_aix: clean up module_]
 This was one of the patchsets I submitted while going through all supported
 targets, ensuring they didn't have mismatched `time_t` definitions and that LFS
 functionality was correctly bound.
@@ -910,7 +909,7 @@ The other ones, including this one, need further review from the target
 maintainer (see @github-aix-powerpc64-pr for the other pending PR and
 @github-aix-lfs-pr for the patchset that got merged.)
 
-== _memchr signature invites mutability bugs_ <5276>
+#h(5276)[_memchr signature invites mutability bugs_]
 This issue I hadn't initially planned on tackling as it's quite new and I've
 been so far addressing fairly old issues. I don't remember why I decided to pick
 this one up.
@@ -921,7 +920,7 @@ soundness.
 
 But then I read through all major draft proposals in the C ISO standards, and
 realized that there were some issues in the way we handled the `memchr()`
-signature with respecto the latest C23 revision.
+signature with respect to the latest C23 revision.
 
 In C23, ISO WG15 decided it would be best to address the fact that this routine
 takes and returns a pointer to the same allocation, without specifying the
@@ -936,21 +935,21 @@ But the signature doesn't encode those semantics, and it's unlikely that users
 have read through the relevant sections of the C standard. I proposed three
 solutions in the issue thread.
 
-This is pending an answer from my mentor or some other rust-lang/libc
-maintainer.
+This is pending approval from some rust-lang/libc maintainer.
 
-== _freebsd: move `net/if_mib.h` to `src/new` module_ <5325>
-This PR is a follow up to another stale PR that added support for `netlink`
+#h(5325)[_freebsd: move `net/if_mib.h` to `src/new` module_]
+This PR is a follow up to another stale PR that added support for Netlink
 bindings in FreeBSD targets. The stale PR's author didn't mind me picking it up
-and they still had interest in this getting merged.
+and they still had interest in this getting merged. For some further commentary
+on the original issue, see @netlink-original-issue.
 
 The reason why this PR got stalled in the first place was that it needed more
 than just adding the bindings to make things work. This one introduced a symbol
 resolution conflict.
 
-The `netlink` bindings in FreeBSD provide symbols that effectively map to the
-same symbols as those of the `if_mib` interface. In C, you can just take care of
-not including the two headers at once.
+The `netlink/netlink.h` bindings in FreeBSD provide symbols that effectively map
+to the same symbols as those of the `if_mib` interface. In C, you can just take
+care of not including the two headers at once.
 
 In Rust, that won't do; We reexport at the crate root all items declared in
 private submodules. My mentor outlined a plan for this not too long ago on the
@@ -963,12 +962,12 @@ with the same structure as used upstream.)
 This PR carried the patch that did that.
 
 The other change (which didn't yet get merged) lives at @github-netlink-support.
-That one deals with the `netlink` bindings. It also implements a bit of a
+That one deals with the Netlink bindings. It also implements a bit of a
 workaround in our test infrastructure to get both interfaces tested.
 
-Once the above is merged, the `netlink` interfaces will be exposed in a public
-submodule, while the `if_mib` interfaces will continue living as the "default"
-crate-root-exported interfaces.
+Once the above is merged, the `netlink/netlink.h` interfaces will be exposed in
+a public submodule, while the `net/if_mib.h` interfaces will continue living as
+the "default" crate-root-exported interfaces.
 
 As 1.0 approaches, we'll switch to having both the `if_mib` and `netlink`
 modules be public submodules, and once we hit 1.0, the default set of
@@ -978,7 +977,7 @@ The fact that our current support for testing submodules without reexporting
 their items is limited in ctest, has sparked some debate in this issue
 @github-ctest-header-conflict. I also discussed it some there.
 
-== _linux: complete `siginfo_t` definition_ <5345>
+#h(5345)[_linux: complete `siginfo_t` definition_]
 This PR I submitted while solving another old-time issue @github-siginfot-issue.
 This one was fairly simple to solve, but it's not yet merged because we're
 trying to move the definition to our `new` submodule.
