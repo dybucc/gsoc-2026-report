@@ -1,3 +1,24 @@
+github-unions-issue:
+  type: thread
+  title: "Use Rust union types"
+  author:
+    - given-name: Alan
+      name: Somers
+  date: 2018-06-08
+  url:
+    value: "https://github.com/rust-lang/libc/issues/1020"
+    date: 2026-08-18
+
+zulip-notmine:
+  type: thread
+  title: "libc CI red 07/30 nightly cargo &doc check fails"
+  author:
+    - name: Souravxcd
+      alias: Souravxcd
+  url:
+    value: "https://rust-lang.zulipchat.com/#narrow/channel/122651-general/topic/libc.20CI.20red.2007.2F30.20nightly.20cargo.20.26doc.20check.20fails"
+    date: 2026-08-18
+
 ms-docs-dllimport:
   type: entry
   title: "Importing function calls using __declspec(dllimport) | Microsoft Learn"
@@ -37,7 +58,7 @@ musl-lfs-statement:
 
 github-remove-link-std:
   type: thread
-  title: "1.0: Remove all instances of `link(name = ...)` and delete the `std` feature"
+  title: "1.0: Remove all instances of link(name = ...) and delete the std feature"
   author:
     - given-name: Trevor
       name: Gross
@@ -48,7 +69,7 @@ github-remove-link-std:
 
 github-skip-ioctl:
   type: thread
-  title: "android: stop skipping `ioctl` in tests"
+  title: "android: stop skipping ioctl in tests"
   author:
     - given-name: Adam
       name: Martinez
@@ -59,7 +80,7 @@ github-skip-ioctl:
 
 github-ifmib-to-new:
   type: thread
-  title: "freebsd: move `net/if_mib.h` to `src/new` module"
+  title: "freebsd: move net/if_mib.h to src/new module"
   author:
     - given-name: Adam
       name: Martinez
@@ -70,7 +91,7 @@ github-ifmib-to-new:
 
 github-netlink-support:
   type: thread
-  title: "freebsd(13.2): add `netlink/netlink.h` support"
+  title: "freebsd(13.2): add netlink/netlink.h support"
   author:
     - given-name: Adam
       name: Martinez
@@ -81,7 +102,7 @@ github-netlink-support:
 
 github-sigevthreadid-unify:
   type: thread
-  title: "linux_like: finish unifying `SIGEV_THREAD_ID` support"
+  title: "linux_like: finish unifying SIGEV_THREAD_ID support"
   author:
     - given-name: Adam
       name: Martinez
@@ -92,7 +113,7 @@ github-sigevthreadid-unify:
 
 github-exhaustive-macro:
   type: thread
-  title: "macros: add support for `exhaustive` attribute"
+  title: "macros: add support for exhaustive attribute"
   author:
     - given-name: Adam
       name: Martinez
@@ -114,7 +135,7 @@ github-openbsd-breakage:
 
 github-openbsd-new-mcp:
   type: thread
-  title: "Encode OpenBSD `-current` version in targets' `target_env`"
+  title: "Encode OpenBSD -current version in targets' target_env"
   author:
     - given-name: Adam
       name: Martinez
@@ -133,7 +154,7 @@ zulip-openbsd-old-mcp:
 
 github-openbsd-mcp-impl:
   type: thread
-  title: "Add OpenBSD `-current` release version to `target_env`"
+  title: "Add OpenBSD -current release version to target_env"
   author:
     - given-name: Adam
       name: Martinez
@@ -144,7 +165,7 @@ github-openbsd-mcp-impl:
 
 zulip-openbsd-new-mcp:
   type: thread
-  title: "Encode OpenBSD `-current` version in targets' `target_env` compiler-team#1018"
+  title: "Encode OpenBSD `-current` version in tar… compiler-team#1018"
   date: 2026-08-08
   url:
     value: "https://rust-lang.zulipchat.com/#narrow/stream/233931-xxx/topic/Encode.20OpenBSD.20.60-current.60.20version.20in.20tar.E2.80.A6.20compiler-team.231018/with/611628084"
@@ -238,7 +259,7 @@ github-bonding-period-project:
 
 github-uclibc-lfs-pr:
   type: thread
-  title: "linux(uclibc): add `cfg` for LFS bindings"
+  title: "linux(uclibc): add cfg for LFS bindings"
   author:
     - given-name: Adam
       name: Martinez

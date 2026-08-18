@@ -6,6 +6,7 @@
 #set heading(numbering: "1.")
 #set text(lang: "en", region: "us")
 #set footnote(numbering: "*")
+#set cite(style: "alphanumeric")
 
 #html.style(
   `
@@ -25,7 +26,7 @@ pre,blockquote,.signature{
 blockquote,.signature{
   font-style: italic;
   margin: 2em 1em;}
-p,ul,ol { list-style-type: circle;}
+p,ul,ol { list-style-type: circle; text-align: justify;}
 a { color:#169;text-decoration:none; padding:0.5em 0;}
 a:hover { text-decoration:underline;}
 .center {
@@ -37,6 +38,7 @@ a:hover { text-decoration:underline;}
 figcaption{ font-style: italic; font-size: 90%; text-align: center;}
 aside{ font-size:50%;}
 code{ font-size:80%;}
+.ref li{ margin: auto auto 1em; text-align: start;}
 .header{
   margin: 1em 0;
   display: block;
@@ -998,20 +1000,21 @@ moves it to the `new` submodule.
 We keep there a module structure that more closely matches that of each upstream
 repo for a given target's libc implementaion.
 
-== _t1 t2 lookup in ctest-test_ <5347>
+#h(5347)[_t1 t2 lookup in ctest-test_]
 This PR I didn't author myself but did get pinged on to provide some feedback as
 some other contributor had been redirected to me. I gave what little advice I
 could, and pinged back my mentor.
 
-== _crate: clean up leftovers from pre-rustc 1.19 without `unions`_ <5351>
-This PR solved another old-time issue concerning the transition towards using
-native Rust `union` types instead of workarounds for C `union`s.
+Initial discussion for this had started off on this @zulip-notmine Zulip thread.
+
+#h(5351)[_crate: clean up leftovers from pre-rustc 1.19 without `unions`_]
+This PR solved another old-time issue @github-unions-issue concerning the
+transition towards using native Rust `union` types instead of workarounds for C
+`union`s.
 
 For a few years now, Rust has had support `union`s as built-in data structures,
 so the issue really only needed some small-time clean-ups and some unfortunate
 breaking changes.
-
-Those are merged now.
 
 = Challenges and the learning experience
 This summer was quite definitely the one in which I learnt the most about
@@ -1067,4 +1070,4 @@ Beyond that, I can only thank enough my org admin, Jakub Beránek, my mentor,
 Trevor Gross, and Google for giving me this chance to be involved and work with
 a Rust Foundation project.
 
-#bibliography("bib.yml", title: [References])
+#html.div(class: "ref")[#bibliography("bib.yml", title: [References])]
