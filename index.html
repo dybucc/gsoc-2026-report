@@ -121,7 +121,8 @@
     <h2 id="loc-2">2. What I did</h2>
     <p>My initial proposal outlined two main goals; I intended on solving a long-standing issue concerning certain constant symbols, to then go on and solve some doubts and issues around matters Y2038.</p>
     <p>If time allowed, I would follow through with other issues included in the 1.0 milestone. The above two seemed to be the more pressing concerns from a first approximation, and had been stale or largely in need of work for a few years.</p>
-    <p>The proposal plan was followed to the letter, and the timeline was even improved by finishing up work on the main two issues I intended on tackling earlier than expected. A daily report of all my activities was submitted on the Zulip thread associated with this project <span id="loc-3">[</span><a href="#loc-71" role="doc-biblioref">Mar26a</a>].</p>
+    <p>The proposal plan was followed to the letter, and the timeline was even improved by finishing up work on the main two issues I intended on tackling earlier than expected.</p>
+    <p>Throughout GSoC, a report of all my activities each day was submitted on the Zulip thread associated with this project <span id="loc-3">[</span><a href="#loc-71" role="doc-biblioref">Mar26a</a>].</p>
     <p>The first three weeks were spent on the issue concernig constant deprecation. That issue consisted of going through all supported targets, ensuring there were no un-deprecated constants left that fit a given criteria.</p>
     <p>Such criteria was not completely well-defined from prior discussion, but it generally included symbols often used in C to denote the “last” or “limit” value in a list of other constants and/or enumeration variants.</p>
     <p>Notably, I further narrowed down the “limit” constants to those classified by the POSIX and SUS standards as being pathname variable or runtime increasable values under their section on header file <code>limits.h</code>.</p>

@@ -92,8 +92,10 @@ approximation, and had been stale or largely in need of work for a few years.
 
 The proposal plan was followed to the letter, and the timeline was even improved
 by finishing up work on the main two issues I intended on tackling earlier than
-expected. A daily report of all my activities was submitted on the Zulip thread
-associated with this project @zulip-daily-report.
+expected.
+
+Throughout GSoC, a report of all my activities each day was submitted on the
+Zulip thread associated with this project @zulip-daily-report.
 
 The first three weeks were spent on the issue concernig constant deprecation.
 That issue consisted of going through all supported targets, ensuring there were
