@@ -1,0 +1,22 @@
+(lang dune 3.24)
+
+(name zulip-scraper)
+
+(generate_opam_files true)
+
+(source
+ (github dybucc/gsoc-2026-report))
+
+(authors "Adam Martinez")
+
+(maintainers "Adam Martinez")
+
+(license MIT)
+
+(package
+ (name zulip-scraper)
+ (synopsis "A Zulip scraper.")
+ (description "Scraping my daily reports from Rust's Zulip server")
+ (depends ocaml))
+
+; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html
