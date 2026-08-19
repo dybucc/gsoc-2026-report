@@ -1,0 +1,5 @@
+version = 0.29.0
+profile = janestreet
+margin-check = true
+margin = 80
+wrap-comments = true
