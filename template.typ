@@ -47,7 +47,7 @@
       width: 100%;
     }
     .horizontal { text-align: center; padding: 10px 40px;}
-    .horizontal li{display: inline-block; margin: 0 0.5em;}
+    .horizontal li{ display: inline-block; margin: 0 0.5em;}
     a[href^="mailto"]::after {content:' 📧';}
     a[href^="gemini"]::after {content:' 🚀';}```
       .text
