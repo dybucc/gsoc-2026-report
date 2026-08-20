@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-03)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color:#fff;background:#000;
+        margin:40px auto;
+        max-width:650px;
+        line-height:1.4;
+        font-size:18px;
+        padding:0 10px;}
+      h1{line-height:1.2; text-align:center}
+      h2,h3{line-height:1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color:#169;text-decoration:none; padding:0.5em 0;}
+      a:hover { text-decoration:underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size:50%;}
+      code{ font-size:80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width:100%;
+      }
+      .horizontal { text-align: center; padding:10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-03)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>The code for the binary got implemented the pre-rendering logic concerning how should the terminal layout be manipulated prior to actually entering the rendering loop. This, as mentioned in yesterday’s report, was fairly simple to execute on. The code for the library also got refactored to reflect the changes I proposed yesterday in the daily report regarding the storage of constant symbols. These required being mutable and accessible through a borrowed view, while also allowing methods taking an exclusive receiver on the owning container. I’ve iterated on a few approaches throughout the day that used wrapper types to leverage certain guarantees about the implicit relationship between these types, but eventually settled for a bunch of <code>Arc</code>s for each pair of symbol and modified flag, that then uses some <code>unsafe</code> to mutate the values, even with a strong count larger than 1. The reasoning here is that the only real point of mutation for the container of constants is the borrowed view, as mutation of the overaching container only invovles the regex cache. Surely this could have been implemented with some wrappers against raw pointers, but I eventually settled for the simplest way out, knowing it still encodes my intentions just fine, even if not completely at the type system level.</p>
+    <p>Beyond that, I also slightly optimized the process of parsing constants from disk, which happened to be using multiple potential allocations for each set of constants parsed from a single source file. Now, at a smaller cost of keeping a type-erased <code>Box</code> into an iterator of constants for each file, only a single explicit allocation for the final container of symbols is kept around; On each end of iteration (once all constants of a given file are parsed,) the resulting iterator extends the explicit allocation. I believe in this instance relying on more opaque choices by the underlying <code>std</code> calls should improve the overall memory cost.</p>
+    <p>Progress on the PRs continues as mentioned yesterday.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>By the end of next week, I should have finished the rendering logic. I expect this to mean that the on-screen rendering can already display constants with the expected layout, and the prompt is rendered, but I don’t think I will make much progress just yet in setting up events to react to bindings for symbol selection and toggling of their deprecated state. The deadline on my proposal for the binary is between the first and second weeks of the GSoC “coding period,” and I believe that to be feasible at my current pace. The week after the next one should already have me working on the prompt and bindings for selection, which I should wrap up in the next two weeks to that one.</p>
+  </body>
+</html>

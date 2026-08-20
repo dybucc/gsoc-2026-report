@@ -1,0 +1,63 @@
+#import "../template.typ": *
+
+#show: template.with([Daily report (2026-06-10)])
+
+#title(context [#document.title \ #html.aside(css-credits)])
+
+= Summary
+Today efforts were centered around continuing yesterdy's uClibc file offset
+bit-width transitions, and attempting to build a toolchain with which to test
+those changes in MIPS targets.
+
+Yesterday's efforts have gone on to complete half of the regex search results
+from yesterday's logged search for the symbols `__USE_FILE_OFFSET64` and
+`__USE_LARGEFILE64`. This is going well, and the changes made thus far have been
+committed to a public branch of my fork of the `libc` crate. No further comments
+will be made here because there were quite a few changes involving restructuring
+different records and deprecating some routines. All of this will be part of the
+write up that will accompany the PR once it's open. Suffice to say there were a
+bunch of type definitions that were either redundant (appearing in both parent
+and child modules) or were otherwise wrong (and often lacking full record
+fields.) Much like yesterday, some of the changes instead attempt to fully
+transition the (possibly) 32-bit file offset types (such as `off_t` or `ino_t`)
+to their LFS64 variants by default. See yesterday's report for a justification
+on this.
+
+Beyond that, work on fixing the linking issues in the toolchain built with
+OpenADK has altogether stopped. In my search for alternative solutions, multiple
+other tools were found and currently efforts are centered around the Buildroot
+tool. This seems to provide similar functionality to OpenADK, but is (solely
+judging from upstream activity and the docs) more active/supported. other
+alternatives like the bootlin repo with toolchains were also found, but have so
+far not been used as they require manually setting up the shipped toolchain in
+an emulated environment. they also don't seem to ship with actual images one can
+emulate, which is the whole point here (for MIPS.)
+
+Two days ago, a hard cap had been set concerning the attempts to build uClibc in
+MIPS to emulate it and test the `time_t` patch's changes. After today's changes
+in the file offset patch and the ones coming up throughout the rest of the week,
+this just won't do it. The new time limit for this task is now set to the end of
+the week. Of course, that does not mean the actual bit-width transitioning
+efforts are being put on halt.
+
+While reading through the Buildroot docs, a few attempts were made at setting it
+up through Hashicorp's Vagrant to avoid having to manage a VM. This was, for the
+most part, met with failure. Efforts on this front will now switch to building
+in another VM that I can at least launch (unlike those booted with Vagrant,
+which oddly seem to hang during guest SSH authentication.)
+
+There's no news on the currently open PRs.
+
+= Blockers
+None at present.
+
+= Plan for the week
+Yesterday's report set up two new goals for the week; Namely, reviewing the file
+offset changes in Linux musl and continuing the (considerably larger) uClibc
+file offset changes. This will likely have to change, to reflect the now
+(relatively) new need for Buildroot to work and produce a bootable QEMU image
+with a bootloader, a linux kernel and uclibc-ng as the default c standard
+implementation, such that testing of the uclibc patch can take place in MIPS.
+This will have to either replace the goal concerning the musl review for the
+rest of the week or otherwise take up a few days of it. The change still makes
+the proposal timeline feasible.

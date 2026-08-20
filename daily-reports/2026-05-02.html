@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-02)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color:#fff;background:#000;
+        margin:40px auto;
+        max-width:650px;
+        line-height:1.4;
+        font-size:18px;
+        padding:0 10px;}
+      h1{line-height:1.2; text-align:center}
+      h2,h3{line-height:1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color:#169;text-decoration:none; padding:0.5em 0;}
+      a:hover { text-decoration:underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size:50%;}
+      code{ font-size:80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width:100%;
+      }
+      .horizontal { text-align: center; padding:10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-02)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <p>This daily report reflects the current progress of my proposal plan as of today, focusing on three main sections that I gathered from GSoC guides and readings; A summary on today’s work, a list of possible blockers, and the expected outcome of the week.</p>
+    <p>This structure is not set in stone, though, as the first report reached my mentor yesterday but no conversations on it have taken place just yet. A message following this one should provide an archived version of that report, as this channel did not exist yesterday at this same time.</p>
+    <h2>1. Summary</h2>
+    <p>Today I kept staring at the code of the binary that will back the second part of my proposal; Namely, the constant symbol deprecator. This binary is meant to be implemented as a fzf-like picker to ease interactive and bulk deprecation of such symbols in the <code>libc</code> codebase, and currently I have developed a library to back the core functionality of parsing the codebase and getting set up basic utilities to filter out symbols from regexes.</p>
+    <p>Work on the rendering logic in the binary is progressing slowly. I realized that the way constants were fetched from the underlying container when getting a borrowed, disjoint view of some regex-filtered symbols was not quite efficient. Inspired by the capture groups of the <code>regex</code> crate itself, I implemented similar functionality to allow reusing the same borrowed view of the overarching container. This has yet to yield acceptable results when used in the implementation of the actual picker, as I didn’t think through Rust’s need for a single point of mutability for a given type, so yielding a borrowed view from a mutable routine that does not fill the view with any exclusive references already conflicts with calling the routine (with a mutable receiver) that actually filters and fetches a set of constants into the borrowed view. A possible solution might be to replace the use of references with shared pointers, though that would also require changing the way such symbols are stored in the overarching <code>ConstContainer</code>.</p>
+    <p>Beyond that, I have thought through the pre-rendering logic, which should be a simple one-off <code>crossterm</code> command to set up 11 lines down the user shell’s prompt with the filtered symbols, and the prompt. The idea is to replicate the fish prompt you get when you toggle command search mode in the regular prompt. Nothing fancy, but just useful enough to get the job done.</p>
+    <p>Work on the first part of my proposal is still pending further review/comments by other <code>libc</code> contributors. The three relevant PRs on GitHub currently address the transition into a single <code>time_t</code> value in Windows while also solving other platform issues that were uncovered along the way. My plan, as outlined in the proposal, is to keep working on the constant deprecator and only once I’m finished, continue with the transition on other platforms.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present. I have been sick today, so other than the usual long sessions of code staring, my thinking was slowed down, which resulted in overall subpar performance.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Considering the reports started by the end of this week, I plan that the rendering logic should be fully done by the end of next week. This seems achievable, but the only reason for that is that I have faith in the power of code staring and thinking to yield the right answers for the problems I require solving. The plan for the TUI is already decided, and should be relatively simple to execute without having to use something like <code>ratatui</code>. My proposal expects the binary to be done by the first or second week of the actual “coding period” in GSoC, and I still believe that to be possible.</p>
+  </body>
+</html>
