@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-28)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-28)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work focused mostly on one thing; Getting the patch to make tests pass on the FreeBSD PR finished. I’ve also looked a bit into the CI failures of the other FreeBSD PR, which has been approved.</p>
+    <p>I started off by reading through the logs of the PR that got approved, to see whether it was a mistake on my side. That didn’t turn out to be the case, as it seemed the real issue was in the peer connection that curl opened disconnecting over 5 times (which is the configured set of attempts for the FreeBSD scripts.) That’s pending but I don’t think I will be looking any more into it as it’s happened in the past (hence the 5 attempts) and no fix was found.</p>
+    <p>The next thing I did was to continue working on the FreeBSD PR that had the tests failing because of the new (and only) public submodule. This is now completely fixed, and the final solution has been almost the same as the one I proposed yesterday. Still, new errors popped up in the ctest-generated tests, as those are generated onto a file that gets <code>include!</code>d into another Rust file that we manually provide where there’s a glob import of the sort <code>libc::*</code>. This, of course, meant that it wasn’t enough to simply get the right symbols included (and excluded.) So I simply added a <code>cfg</code> that runs in those files to gate a new import using a more fine-grained path to the public submodules. This is good enough because having all items at the root level is alright in those tests; We avoid conlifcts by excluding symbols altogether from being considered in the automatically generated tests. It’s also the simplest thing to get rid of; Remove the import and <code>cfg</code>, and remove the code that adds the <code>cfg</code> to the list of recognized check-cfg <code>cfg</code>s, as well as the <code>cfg</code> setting itself.</p>
+    <p>While doing this, I found out about some major but fairly idiotic mistake. I noticed that I was completely skipping through all items that were <em>not</em> part of the affected bindings. The fix was simple enough, though.</p>
+    <p>I’ve not looked into avoiding running the tests twice, but I’d prefer to get outside input on whether this way things are working just fine.</p>
+    <p>I also squashed all commits and remade the commit history on the above PR a bit to get the thing nicely tidied up.</p>
+    <p>Other issues I’ve looked into remain mostly unanswered. The MCP hasn’t received any new feedback. The Windows function pointer issue thread also remains silent.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>I expect to get new comments on the Windows issue thread and the MCP Zulip thread throughout the week. This should align fairly well with the schedule I had planned for, as the FreeBSD PRs are fundamentally ready now. I don’t know yet what I’m going to be working through tomorrow but I do know that there’s more issues that remain to be solved in the 1.0 milestone, so I’ll keep going with those.</p>
+  </body>
+</html>

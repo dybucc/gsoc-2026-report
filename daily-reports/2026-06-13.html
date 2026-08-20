@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-13)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-13)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on finally opening the PR concerning file offset bitwidths in Linux uClibc, and on getting a toolchain compiled to test those out in MIPS targets.</p>
+    <p>The only thing that was left from yesterday concerning the file offset patch was to gather the list of sources that justify the submitted changes. This was tedious work, but fairly simple in essence. The PR is now open and on draft mode as testing on affected MIPS platforms is pending.</p>
+    <p>Yesterday’s PR regarding symbol conflicts across modules from the bindings to the <code>langinfo</code> header file got a comment from another <code>libc</code> contributor. As it turns out, an older but still unmerged PR already addressed this and more. This makes yesterday’s PR a duplicate, so it has been closed.</p>
+    <p>On the testing side of things, building the toolchain by following bootlin’s training manuals with crosstool-ng has failed once again. After mounting a case senstive file system on my host machine and getting all required GNU-specific utilities forwarded in my <code>PATH</code>, things were still not working. This time, the issue is truly quite odd.</p>
+    <p>Everything compiles just fine, except zlib. The build steps for this library make use of aliases to my host compiler. But for some reason, the produced object files are not Mach-O object files so packaging them back in a static archive and linking them into the test programs that have to be run just doesn’t work. This is still being investigated, as all paths to the compiler and other build tools seem to point to correct versions. it really does not make any sense that the produced object files would not be in Mach-O when the compiler driver interface is made for Mach-O targets.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>This weekend was meant to provide the last few attempts at building the toolchain and testing on MIPS targets. If the toolchain builds by tomorrow, then those efforts will be followed up next week with the actual tests. Otherwise, testing on those platforms will be put on halt to continue working through other child modules to the <code>unix</code> module requiring file offset type/routine transitions.</p>
+  </body>
+</html>

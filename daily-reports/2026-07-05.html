@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-05)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-05)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has centered on finishing up the <code>aix</code> module and on attempting to test out the changes.</p>
+    <p>Quite unexpectedly, I finished the <code>aix</code> module work earlier than expected. The initial patch is done. Work on the PR write up is also finished. The sources ended up only consisting of two files under <code>/usr/include</code> in an AIX 7.3 machine. They’re not public so that’s lightened the workload. Most of the changes ended up consisting of bindings to new types and records. I’ve also had time to divide all of the changes into separate commits.</p>
+    <p>There were also three new <code>cfg</code>s added. AIX seems to allow configuring the system with either one of a signed or unsigned <code>time64_t</code>. That needed a <code>cfg</code>on our side. They also have feature test macros to expose LFS bindings and to make 64-bits be the default width on non-“64”-suffixed types. Those also needed separate <code>cfg</code>s. Though one of those could very well be replaced with the existing <code>cfg</code> to expose equivalent behavior on targets using glibc. I decided against that to keep things tidy.</p>
+    <p>Currently work is focused on attempting to build an AIX rustc. That should let me clone the <code>libc</code> crate to the remote AIX machine and test things out directly there. This is a WIP.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The AIX work is almost done. The initial patch is done. It’s also been split into separate commits and the PR write up is also done. Only two things remain; running the <code>libc-test</code> test suite, and removing certain redundant types. The only supported target using this operating system has 64-bit machine word size. It makes no sense to expose both suffixed and unsuffixed types in the cases where their effective bit width is equivalent.</p>
+  </body>
+</html>

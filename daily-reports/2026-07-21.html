@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-21)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-21)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on two things; Trying to clear up some doubts I had on the goal of the MCP, and reviewing some feedback I had received on the Fuchsia PR.</p>
+    <p>I started off by reviewing some feedback I had gotten on the MCP in the associated Zulip thread. I was very unsure about whether this could be backported to older <code>rustc</code> versions or if otherwise we were just meant to start using it in newer releases without care for bindings that will become gated behind the new chechs using the <code>cfg</code>. My concerns are not completely resolved but I have at least better understood what the original author of MCP 916 meant. I’ve not yet answered to all feedback because I was working on other stuff (both related and unrelated to rust-lang/libc.)</p>
+    <p>While doing this, I also evaluated different options for getting this into the <code>rustc_target</code> crate. I initially thought that we would have to extensively refactor the macro in charge of generating trivial enumerated types for target <code>cfg</code>s. Then I realized that if this change is not meant to be backportable, then surely we can skip adding new OpenBSD versions to instead only update/change/break the prior version with the newly supported version. Of course, the degree of Rust support for some newly released version would have to be left to the target maintainer’s discretion. I’m not completely done on this side of things, but I believe the solution should be fairly straightforward on the implementation side of things; The high level details are the ones I’m not entirely sure about.</p>
+    <p>I then went on to review some new feedback I got on the Fuchsia PR. This time I had gotten back from my mentor; It was mostly about minor fixes, and a small point of contention that I believe will have to wait until the target maintainer answers back. The minor fixes are mostly done. There’s some that I haven’t yet gotten to.</p>
+    <p>I’ve also received a bunch of new feedback on other PRs, but I’ve not yet answered back.</p>
+    <p>Other issues I’ve commented on remain mostly unanswered. The one issue where my mentor commented on (concerning the older issues/stale PRs I had reviews over last week) has been answered by the original PR author. They seem busy so I will be taking over.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The plan continues as expected. The implementation details, as mentioned in today’s report, should be fairly simple. The high-level details I expect to have ironed out in the next two days if conversation follows relatively smoothly. Once I’m done with that, I’ll put the MCP matters on halt and look into pending feedback I’ve gotten on PRs. The chances I work on both things in parallel are high, though. Waiting for answers in Zulip should give me enough time to address the latter task.</p>
+  </body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-06)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-06)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on a bunch of stuff; I can’t quite enumerate anything because I didn’t take note of it as I usually do. There’s probably stuff I did today that won’t be included in this report.</p>
+    <p>I’m done with yesterday’s PR and I’m almost done reviewing all of the feedback I had received thus far. I’ve only got 5 emails left, not counting the Zulip messages (which, with all due respect, I’m going to leave last.)</p>
+    <p>I’m not sure what’s the next thing I did. I know I worked on the AIX PR to clean it up and get it separated into three separate PRs as it’s individually a bit much. I can thank my (post-yesterday) leveled-up Git skills for that.</p>
+    <p>I also worked on the L4Re PR to get the simple stuff out of the way. I was actually looking into the test failures that the target maintainer reported right before starting today’s report, but that’s still a WIP.</p>
+    <p>The FreeBSD <code>netlink</code> PR needs some attention but it will require more than just a medium amount of work. This is because I’ve got to implement a so-called <code>TestGroup</code> for ctest’s new functionality concerning testing submodules.</p>
+    <p>Then I also rebased the musl PR removing support for LFS, which seemed to be the only thing left for it to get merged. Upstream already intended on removing support, to this one should be fairly straightforward.</p>
+    <p>Then I worked on getting the non-exhaustive macro refactored into using the new macros for implementing more traits. The set up logic there for attribute munching was not of any use to me, but the job is mostly done.</p>
+    <p>The one blocker here (which I’ve yet to think more thoroughly about) is concerned with getting one of the recursive macro invocations to match on the right subtree.</p>
+    <p>According to the Rust reference, there’s no specified order in which the expander will go through each of the subtrees in the macro body. It simply mentions that it will “try each macro rule in turn.”</p>
+    <p>Thus far, I’ve had success in assuming this meant a subtree that uses a literal token and not an NT will take priority over some other subtree coming up later on that has a simple NT that could stand in for the <code>tt</code> in the above match.</p>
+    <p>But for some reason, this does not work the same way with token trees that are equivalent to a <code>meta</code> fragment specifier. This I’ve been staring at for more time than I’d like to admit, but as per the usual, I’ll figure it out.</p>
+    <p>The Android issue concerning the request parameter to <code>ioctl</code> also got some comments, but I’ve yet to look into that one.</p>
+    <h2>2. Blockers</h2>
+    <p>None.</p>
+    <h2>3. Plan for the week</h2>
+    <p>I’m mostly done with all of the new feedback I got. I estimate I should be capable of finishing up work tomorrow. In the best case scenario, I’ll finish up half-way through the day, and so I’ll have some more time for the MCP.</p>
+    <p>Beyond that, I have no other plans for the week. Once the MCP is done, I’ll keep going with the <code>TestGroup</code> stuff in the FreeBSD <code>netlink</code> PR and we’ll see about submodule support in ctest.</p>
+    <p>That could very well be solved, but I’m not up-to-date on that front.</p>
+  </body>
+</html>

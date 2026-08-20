@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-26)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-26)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today we worked on finishing yesterday’s refactor concerning the tracing logic that the core library features, as well as a few other refactors regarding the error handling module and some of the async logic. All throughout this, we also tweaked some documentation on the public interface to make it clearer that there’s certain things that may become a source of <code>Result::Err</code>s.</p>
+    <p>Efforts were initially focused on finishing the refactor that gated behind the <code>tracing</code> feature flag all statements and attribute annotations that required running under <code>tracing</code>. This meant continuing yesteday’s work on the <code>scanner</code> and <code>parser</code> modules. Overall, this was fairly simple, and I believe I can say the end result looks quite satisfactory. Most of the changes were concerned with adding a bunch of conditionally-compiled <code>cfg</code> attribute annotations and decreasing the total sum of information we forward to the logs (last week’s debugging had been brutal.)</p>
+    <p>Once I was done with those modules, the only ones left were the <code>ConstContainer</code> methods and the <code>error</code> module. The latter also got a fairly large refactor where I (want to believe) improved the implementation ergonomics for code on the reporting side of things. This has no impact whatsoever to the public interface, but did make the code in the <code>parser</code> module quite a bit cleaner. The changes themselves were concerned with using dedicated constructor methods, without reyling at all on internal types used by the error types.</p>
+    <p>All along the way, I replaced a bunch of (boring) imperative logic with (beautiful) combinator chains and single-expression evaluations on both iterators and streams. This mostly meant replacing straight liners with iterators over small ranges that check the iteration counter to perform some functionality in a reduction operation, but also included more involved logic with streams over synchronization channel receivers. The one notable change here was some tweaking I made to the scanner logic to decrease the resource consumption of the program when the repo was to be cloned locally and not just parsed.</p>
+    <p>This was genuinely engaging as I’ve personally had a recent interest in array programming languages and have started to feel an apprehension towards coding in semicolon-separated statements that aren’t just a cascade of single-expression reductions and transformations. I have not yet finished this latest refactor but I’m almost there.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>As mentioned yesterday, today’s goal was to finish the tracing refactor and start working on actual research and deprecation of relevant symbols. I have accomplished the former, and will likely not immediately start with the latter until the current refactor concerning the combinator-based logic is done. This I know will not take more than a half hour, so tomorrow will be _deprecation day_. I expect the rest of the week to continue being a back-and-forth between deprecation, possibly fixing bugs, and more refactors. This fits in well with the expected timeline in the proposal, where the tool was to be finished this week.</p>
+  </body>
+</html>

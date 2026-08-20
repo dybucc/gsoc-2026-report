@@ -11,8 +11,10 @@ Today work was focused on three things.
   happens in the `libc` crate's test suite. It ensures the function pointers we
   get from C are equivalent to those we bind to in Rust. This makes it possible
   to catch mismatches in identifier link names and expected ABIs.
+
 - Trying to test on Fuchsia. This follows from yesterday's attempts. The goal
   here is to make sure the changes in my Fuchsia PR are relatively correct.
+
 - Trying to find the AIX headers. This is part of ongoing efforts to check
   `time_t` and file offset types across all supported targets.
 

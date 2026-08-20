@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-30)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-30)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has focused on three things.</p>
+    <ul>
+      <li>Finishing up work on the <code>nuttx</code> module.</li>
+      <li>Attempting to test libc with the NuttX “simulator.”</li>
+      <li>Fixing up some stuff in the GNU Hurd patch and attempting to test it.</li>
+    </ul>
+    <p>The <code>nuttx</code> module should be done. Everything that I could make better in the allotted time has been improved. Yesterday’s attempts at providing a <code>cfg</code> to expose the number of CPUs on the host machine have not been followed through. Upstream just produces a compilation error when that happens. I have decided to unconditionally expose <code>cpu_set_t</code>. This may or may not be the right choice. A new NuttX-specific <code>cfg</code> has been added to allow configuring <code>size_t</code> and <code>ssize_t</code> for a small memory model. Upstream allows configuration of this through Kconfig. It makes those two be 16-bit unsigned and signed integers, respectively. They would otherwise default to the pre-defined compiler macro <code>__SIZE_TYPE__</code>. At least under NuttX targets in clang, this macro expands to one of <code>c_ulong</code> or <code>c_int</code> depending on the target’s machine word size.</p>
+    <p>I also decided to make those types be <code>isize</code> and <code>usize</code> when building as a dependency of <code>std</code>.</p>
+    <p>i then tried to test things out. I first followed the documentation to build NuttX images that I could launch in QEMU. They seem to have certain more convenient configurations to do that. They package a custom shell that lets you interactively run the programs once the system’s booted up. i couldn’t get past the toolchain configuration step. There’s some Kconfig tool that I don’t seem to have on my user <code>PATH</code>. I’ve tried both with kconfiglib (a python implementation) and with a port of the Linux upstream Kconfig implementation. None seem to provide me with the tool NuttX uses in one of the build-step shell scripts.</p>
+    <p>I looked through the GNU Hurd patch again. I fixed some stuff that broke the <code>libc</code> build. Then I went on to attempt a build in the cfarm machine i SSHed into. I then realized that there was no Rust shipped on that machine. So I went back to my local machine to attempt to cross-compile Rust from source for the GNU Hurd. I should then have the redistributable tarball pushed to some repo and cloned from the SSH remote. I’ve so far been met with failure when building Rust from source.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The NuttX testing efforts will halt tomorrow if no progress is made. A PR will be opened either tomorrow or the day after. GNU Hurd testing seems more promising. There has been some struggle with building Rust from source but I can see a path forward. Attempts will resume tomorrow. Unlike yesterday’s outlook for the week, the NuttX PR will likely be opened before the GNU Hurd PR.</p>
+  </body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-23)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-23)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today we worked on finishing yesterday’s refactor (at least the most critical areas, like all the uses of <code>unsafe</code> I made throughout the development process.) This has lead into a more neatly organized public interface exposed by the core library, that does not divide responsibilities between associated functions and traits, but solely centralizes traversal of constants (and potential mutation) to the methods offered by the <code>Visit</code> and <code>VisitMut</code> traits.</p>
+    <p>To this extent, one of the most notable changes has been the removal of the <code>BorrowedContainer::deprecate</code> and <code>BorrowedContainer::undeprecate</code> methods, as the same functionality was already being implemented for a subset of the non-owning view through the afore mentioned traits. This meant implementing equivalent trait methods for the <code>VisitMut</code> trait, as well as cleaning up uses of it in the binary. Now there’s two new methods, <code>VisitMut::deprecate</code> and <code>VisitMut::select_deprecate</code>, in charge of deprecating either one of all constants in the <code>BorrowedContainer</code> (fitting the toggle action while in normal mode) or a subset of those symbols (in accordance with the toggling action while in select mode.) This is still pending testing, but I don’t think there should be any issues arising from this specific change, as the implementation is fundamentally the same, only now it’s all centralized under the traversal trait.</p>
+    <p>Beyond that, we cleaned up all uses of <code>unsafe</code> in the core library and in the binary except for the <code>Spinner</code> type, which is still pending and may be left for next week. This was actually motivated by another refactor of the <code>effect_changes</code> routine that attempted to shorten and further use tasks to parallelize its workflow. That refactor enforced a <code>'static</code> lifetime on the items that were borrowed by the future the task drove, and that just wouldn’t do it with a mutable reference to <code>Self</code> as the method receiver. At first, I implemented a dirty little fix with some <code>unsafe</code> as I was sure I didn’t really need to enforce those lifetime bounds in this instance. But then I thought better and realized it would be best if I put in the time to change the overarching infrastructure around uses of <code>ConstContainer</code> in the binary to have it wrapped in an <code>Arc</code> pointer, and thus be capable of using <code>self: Arc&lt;Self></code> as the method receiver. Of course, this spiraled out into converting all inner types of the <code>ConstContainer</code> type into concurrency-friendly types that I could mutate through a pattern of interior mutability, such that I never required a mutable receiver of type <code>ConstContainer</code> in its interface. Up to that point, the <code>filter</code> method had been needing that because the hashmap of cached regexes that the container keeps needed modification there. That ended up being replaced with a <code>DashMap</code> (to which I took the liberty of changing the default hasher to that exposed in the <code>rustc-hash</code> crate.)</p>
+    <p>Beyond that, the refactor also modified the type of I/O-bound operation being performed within the routine that actually saved each bucket of same-file constants to disk. Previously, it was using blocking operations as it had been running within a sync iterator with no synchronization involved. That has been modified such that the iterator is transformed into a <code>Stream</code>, from which we yield items outside a closure and within an async context (the routine in which this is taking place) to use async I/O (which was the whole point of spawning separate tasks in the first place.)</p>
+    <p>This refactor also lead to solving the less-than-ideal solution I had fabricated for the purposes of having a <code>'static</code> <code>ConstContainer</code> moved to the task that effected changes to disk in the binary. It also voids uses of <code>ThreadePtr</code>, the quick and unsafe solution I implemented for this initially.</p>
+    <p>The two last notable changes included caching the number of regex-matched elements in the non-owning view within the binary’s running state. This was an expensive operation that was being computed in way too many places without need. Beyond that, the <code>ConstContainer::filter</code> method got refactored to be the only filtering operation possible. Previously, both <code>filter_with</code> and <code>filter</code> were offered to either produce a new <code>BorrowedContainer</code> or reuse one. This stopped being useful a few patches ago when this type stopped being used as a resizable container, so there’s that.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Yesterday’s plans for the refactor have been completed and a few more changes have also been implemented. I would like to keep refactoring some more stuff, but tomorrow I will be solely focusing on improving path display of constants in the TUI, as that was the last (revised) goal of the week. Next week, I will continue doing refactors and actually deprecating items to see ways this tool can be improved for wider use.</p>
+  </body>
+</html>

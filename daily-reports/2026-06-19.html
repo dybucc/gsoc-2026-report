@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-19)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-19)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today efforts were centered around solving all of the new feedback I got on my open PRs. This was both great and unexpected, as I initially thought that I would have finished with it before the end of the day, but things turned out differently.</p>
+    <p>The bulk of it consisted of trying to understand the feedback, answering back if I didn’t quite get what was my mentor getting at, or just getting to work and fixing stuff.</p>
+    <p>One of the simplest things to fix was incorrect naming of commits and pull requests. Admittedly, at some point along the way, I just submitted everything tagged as a refactor, when ofttimes it was a modification that would considerably alter behavior. That was not as high priorty as other fixes, so I’ve been going through it as I fixed/answered pull requests that I had gotten other types of feedback from.</p>
+    <p>Beyond that, there were quite a few cases where the patch submitted in the PR was deprecating the symbols but not necessarily providing a way of easily backporting this to the stable release. Some of these PRs actually did solve the issue simply because the upstream libc implementation was already providing 64-bit types by default, and only aliasing the suffixed types to the unsuffixed types. An example of this is musl or Android (the latter of which only applies for targets with a 64-bit ABI.) These should only make downstream code depending on the <code>libc</code> crate get some warnings from having deprecated LFS types, but no breakage is expected.</p>
+    <p>Then there were some documentation fixes that I have not gone through in full just yet, but should be fairly simple to fix. Work is currently focused on implementing <code>cfg</code>s and possibly integrating them with both the build script and CI. I say “possibly,” because some of the target triples that would need those (such as the tier 3 targets using uClibc) are not tested in CI, so I only have to worry about correctly exposing the <code>cfg</code> (the <code>libc</code> crate does not use feature flags for making this particular type of functionality available.) There’s also some missing docs on current <code>cfg</code>s (meaning I didn’t add them, but it’d be nice to have some usage indications) that I have to add on a separate PR.</p>
+    <p>On that note, I also found out that thoroughly testing on tier 3 targets was not really necessary, so I’ve relaxed those requirements on my open PRs. Now I can breath easier knowing the issue I had with building a toolchain to test tier 3 mips targets with uClibc does not need immediate solving.</p>
+    <p>I also got feedback on my original (pre-GSoC bonding period) PRs on Windows, but those I’ve yet to go through.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present. Testing on MIPS platforms with Linux uClibc is pending and input would be very much welcome on setting up a cross-compilation toolchain for this. Thus far, all efforts on this front have failed. This is low-priority, though.</p>
+    <h2>3. Plan for the week</h2>
+    <p>For the third time in a row this week, I found myself with an unexpected work load. Tuesday and Wednesday brought me great news from both <code>android</code> and <code>bsd</code> modules seeming simple to go through, but today I just got new work from the open PRs. This means this week will quite definitely not be the week I finish up the <code>bsd</code> module. Hopefully, I can get all of the <code>cfg</code>s set up by the start of next week and possibly round up answering/fixing PR reviews halfway through next week. If nothing comes up then, i’ll move on to the <code>bsd</code> module.</p>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-07)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-07)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on three things; Getting stuff on the L4Re PR a bit more sorted out, looking through the Android issue and (possibly) solving it, and (possibly) finishing the MCP implementation.</p>
+    <p>The L4Re PR was straightforward to look through, but the current status is not satisfactory. I have received new feedback on it, but I’ve to look into it. It’s a bit unsettling because a certain macro that should expose some symbols isn’t.</p>
+    <p>To expand some more on this, in L4Re header files, one can get LFS support by either defininig the explicit macro for that or setting some other macro that serves as a flag that enables further macros (among which we find LFS support.)</p>
+    <p>The funny part is that the “general” macro that does just that is already defined in CI test infra, and yet we’re not getting the symbols exposed. This is the reason behind the errors that the target maintainer reported on.</p>
+    <p>The Android issue was actually straightforward to solve as the target maintainer mentioned that we should just follow the POSIX definition. Following my mentor’s advice on the issue thread, I tried disabling the <code>ioctl</code> skip in ctest tests.</p>
+    <p>At present, only doing that won’t pass muster. I additionally added another <code>#define</code> for the macro that Bionic libc uses to skip the overloaded version taking a request parameter constant of differing signedness.</p>
+    <p>After another CI test run on the Cuttlefish emulator, things seem to work without skipping <code>ioctl</code> from ctest. I’ve opened a PR with this and reported back on the issue thread.</p>
+    <p>The last thing I went through today was the MCP. This was so much simpler than I had initially thought. The changes were bound to be small, so that’s expected. Still, I haven’t opened a PR just yet.</p>
+    <p>My work can be found in the <code>main</code> branch of my fork of <code>rust-lang/rust</code>.</p>
+    <p>I actually intended on doing some more stuff today, but I decided to instead spend some time switching editors to avoid issues I’ve had in the last few days. I also had some pressing real life concerns in the morning.</p>
+    <h2>2. Blockers</h2>
+    <p>None.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Things have gone better than expected. The MCP patch is ready to have a PR opened and almost everything I wanted to tackle is done. Now only the FreeBSD <code>netlink</code> stuff concerning ctest and the non-exhaustive macro remain.</p>
+    <p>I plan on working on the non-exhaustive macro tomorrow, and hopefully finishing up work on it. I initially intended that to be part of today’s work, but that ended up not being the case.</p>
+    <p>Sorry for not answering to the Zulip messages. I will be doing so promptly.</p>
+  </body>
+</html>

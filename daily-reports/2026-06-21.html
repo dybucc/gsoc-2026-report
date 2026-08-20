@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-21)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-21)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Efforts were centered around two things.</p>
+    <p>The newlib PR is done. This required going through all targets again. I wrongly used 32-bit file offset types in RTEMS. This is now fixed. I made the description more terse.</p>
+    <p>The VxWorks PR came up next. This needed more changes. I originally missed all file offset types but <code>off_t</code>. This is now fixed. A <code>cfg</code> has been added to ensure the right types are exposed. VxWorks has different bit widths depending on the compiled programs. The following are the possible programs one can compile.</p>
+    <ul>
+      <li>A real time process.</li>
+      <li>A VxWorks kernel.</li>
+    </ul>
+    <p>Work has started on reviwing the Fuchsia PR. The patch has been again extended. The original changes were insufficient. Supported Rust targets all have 64-bit machine word size. The same changes as in android should thus suffice. See the relevant pr or daily report for details on those changes.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present. Testing on MIPS targets with uClibc is pending. These are all tier 3 targets. This is low priority. Input would be welcome.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The plan is progressing as expected. The last large PR is the Fuchsia PR. That will be done tomorrow. It’s likely all PRs will be reviewed before Wednesday. This should leave time to further answer/solve related matters. These are coming from both my mentor and target maintainers. They’re mostly concerned with the musl and uClibc PRs. The goal for the first half of the week is to solve those. I should have come back to the <code>bsd</code> module half way through the week.</p>
+  </body>
+</html>

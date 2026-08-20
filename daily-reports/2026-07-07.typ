@@ -4,6 +4,12 @@
 
 #title(context [#document.title \ #html.aside(css-credits)])
 
+#html.blockquote[This was the first in a series of reports where I was
+  (probably) frustrated and decided I would forgo of minimally proper English
+  casing. If reading these reports in sequence, bear with me for a few days.]
+
+#divider()
+
 = Summary
 today work was centered around three things.
 

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-22)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-22)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was mostly centered around reviewing feedback on older PRs I had received in the past few days.</p>
+    <p>I actually started off by answering to the Zulip thread where the MCP is being discussed. I commented on some concerns I had about this proposal potentially only serving as a future-proof and not as a solution for the current OpenBSD issues. This applies equally if we end up using one of RFC 3750 or RFC 3905, because the <code>libc</code> MSRV is likely not to be bumped enough times in the next few years to reach the <code>rustc</code> version where either one of the MCP or the above RFCs get implemented. Implementation-wise, I went through it all again, and added a couple of new sections to the MCP where I both answer some questions I had myself, and provide what I believe to be a step-by-step implementation plan. Beyond that, though, no further discussion has taken place.</p>
+    <p>The next thing I did was to go through most of the PRs I had recently received new feedback on. I’m done with all of them except for the GNU/Hurd PR, which I haven’t yet taken a look at, and the issue I opened concerning function pointer mismatches under Windows GNU. There weren’t too many things to fix; It was mostly just me commenting on stuff and fiddling with the patchset. I’ve split the Linux uClibc PR so that the changes concerning LFS and the new <code>cfg</code> are now on a separate PR. I’ve also asked for feedback from current and past maintainers for Rust targets using uClibc, as it’s not entirely clear the degree to which we should support upstream build options (which is how uClibc manages LFS.)</p>
+    <p>I don’t currently remember (nor have the time to look up) which other PRs I commented on nor exactly what did I say.</p>
+    <p>Other issues I’ve commented on remain mostly unanswered. I’ve yet to open the PR where the original author approved of somebody else continuing their work, but that’s a trivial task. The actual work was done last week.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The MCP has taken up far less time than I expected, and going through the PRs has also been far easier than expected. This means I can probably finish them up by either tomorrow or the day after, assuming no relatively large changes are required in future feedback. Afterwards, I will proceed to open up PRs for the issues I had been waiting to hear back from their authors for a week. Of those, there’s already one where the original author has given thumbs up to my taking over. That will be done soon.</p>
+  </body>
+</html>

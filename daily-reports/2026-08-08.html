@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-08)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-08)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has focused on three things; Reviewing the MCP and running the tests that I thought would be fit for this change, finishing work on the non-exhaustive macro stuff, and making progress on the FreeBSD <code>netlink</code> PR.</p>
+    <p>I first started off by ensuring the MCP implementation wasn’t lacking something obvious. I ran tests for compiler/rustc_target, librustdoc and tidy. Those didn’t seem to catch any regressions so I thought it was OK to submit the PR.</p>
+    <p>Still, it seems that a test run by a bot has found some issues relating to some UI tests where the possible values of <code>target_env</code> reported in the diagnostic being tested were not up-to-date. I had missed that and it’s still not fixed.</p>
+    <p>The next thing I did was to finish up work on expanding the capabilities of the macros we use to declare records in rust-lang/libc. Past attempts had failed to get a certain macro subtree matched before another one.</p>
+    <p>Today I figured out why. As it turns out, when matching against a <code>meta</code> fragment specifier, if the macro annotates a top-level item (i.e. a type and not a field in a type) then diagnostics will be generated before expanding.</p>
+    <p>This means that non-existent attributes like the one I was trying to implement to opt out of having all records be added a private <code>__non_exhaustive</code> field were being diagnosed before expansion finished (as it is eventually removed.)</p>
+    <p>The solution I only came up after looking through the PR that my mentor linked to in some prior messages to this report. The patchset in that PR matched instead on arbitrary token trees preceded by a literal <code>#</code> token.</p>
+    <p>Using this “matcher” across all calls from nested macros to the actual recursive macro, the expander will first finish recursing and only then pass that off to the parser. TIL.</p>
+    <p>I’ve already opened a PR with these changes and have reported the results in the relevant issue thread. That other PR (by another contributor) also improves on these macros but is unrelated to the non-exhaustive stuff.</p>
+    <p>The next thing I did was to work on the FreeBSD PR concerning the header symbol conflicts between two C headers. This was the last thing pending from this week’s reviews.</p>
+    <p>I’ve been trying to solve it without implementing <code>TestGroup</code> in ctest, and that may just work. Still, it may not end up as the cleanest solution. Thus far, I’ve created a new test specifically for the <code>netlink</code> interface.</p>
+    <p>This test is just a dummy file that <code>!include</code>s the ctest Rust output from standalone tests generated in the build script when running against a FreeBSD target. These tests exclude all other bindings we expose except <code>netlink</code>’s.</p>
+    <p>This should allow keeping the same public structure, while also testing separately both the <code>netlink</code> and <code>if_mib</code> bindigns. The latter has been left to be tested as part of the rest of the full (regular) test suite.</p>
+    <p>From inspecting CI logs as I write this report, this seems to have worked. Of course, getting this to work with the SemVer tests is not going to be as simple. That’s still something I got to think about.</p>
+    <h2>2. Blockers</h2>
+    <p>None.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Today I believe I’ve made a fair amount of progress on most things. I don’t plan on continuing work on anything tomorrow, because I’ll be writing the first draft of my final work GSoC product.</p>
+    <p>This could take me the entire day or it could be done in a few hours. If I’m done earlier than expected, then I’ll just keep working the FreeBSD PR, and then move on to the MCP implementation test fixes.</p>
+    <p>The same applies to next week’s plan. Beyond those two, I’ll just keep answering and reviewing feedback I get on pending PRs/issues, as well as addressing new issues/stale PRs in the 1.0 milestone.</p>
+  </body>
+</html>

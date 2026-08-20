@@ -1,12 +1,12 @@
 #import "../template.typ": *
 
-#show: template.with([Archived daily report (2026-05-01)])
+#show: template.with([Daily report (2026-05-01)])
 
 #title(context [#document.title \ #html.aside(css-credits)])
 
-#quote[This report was the only one that was not published the same day as it
-  was written. It was first messaged to my mentor, and the day after, coupled
-  with the report for that day.]
+#html.blockquote[This report was the only one that was not published the same
+  day as it was written. It was first messaged to my mentor, and the day after,
+  coupled with the report for that day.]
 
 #divider()
 

@@ -38,10 +38,10 @@ In Rust, the Reference from latest `nightly` says the following under #link(
   "https://doc.rust-lang.org/nightly/reference/items/external-blocks.html#r-items.extern.attributes.link.empty-block",
 )[items.extern.attributes.link.empty-block].
 
-> It is valid to add the link attribute on an empty extern block. You can use >
-this to satisfy the linking requirements of extern blocks elsewhere in your >
-code (including upstream crates) instead of adding the attribute to each >
-extern block.
+#html.blockquote[It is valid to add the link attribute on an empty extern block.
+  You can use this to satisfy the linking requirements of extern blocks
+  elsewhere in your code (including upstream crates) instead of adding the
+  attribute to each extern block.]
 
 This is not completely correct in cases like Windows. That's because the way
 `rustc` (or LLVM, I'm not sure yet) lowers a call from a C function in an

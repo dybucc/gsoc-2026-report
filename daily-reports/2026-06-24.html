@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-24)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-24)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on fixing PRs.</p>
+    <p>The emscripten PR got rebased to latest <code>main</code>. The changes are fine. It needs some documentation modifications. Those are pending.</p>
+    <p>The Linux musl PR also got rebased. No changes have taken place there.</p>
+    <p>The Fuchsia PR got the most attention. It needed a few tweaks. It also needed to clarify some Fuchsia-specific definitions in commit messages. This is mostly done. Another PR stemmed from this one. It’s concerned with <code>sigaction</code>. This type seems troublesome across targets. See the relevant comments for details.</p>
+    <p>The deprecation PRs all got rebased. They also got some documentation fixes. They should be ready now.</p>
+    <p>The oldest Windows PR remains unattended. Linux uClibc and VxWorks PRs remain unattended.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present. Testing on MIPS targets with uClibc is pending. These are all tier 3 targets. This is low priority. Input would be welcome.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Work has progressed as expected. The rest of the reviews should take one to two days. I can move on to the <code>bsd</code> module then. The remaining PRs are mostly concerned with minor changes. The exception is the Linux uClibc PR. It needs splitting some changes into a separate PR. This still seems doable in the allotted time. It will be finished before the end of the week.</p>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-14)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-14)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has focused on four things; Continuing work on the MCP implementation, adding a <code>cfg</code> to possibly top off the bulk of GSoC, reviewing the L4Re PR and reviewing my GSoC work prodcut.</p>
+    <p>I started off by adding support for a <code>cfg</code> that ensured all of the existing unstable <code>cfg</code>s we expose in rust-lang/libc can be easily toggled by downstream crate consumers. This was at the request of my mentor.</p>
+    <p>That was fairly simple, and it seems like it works (based off of running CI on the test suite.) Then I went back to looking into the MCP implementation, where I’ve started making changes to the <code>check-cfg</code> system.</p>
+    <p>Thus far, I’ve noticed that the type infrastructure revolving <code>check-cfg</code> and the types of values it recognizes is a bit lacking. The type in charge of keeping each individual set of accepted values is only capable of either accepting any value or specific values.</p>
+    <p>In this instance, I need <code>check-cfg</code> to include among the well-known values (i.e. <code>target_env</code>’s values) a number larger than or equal to some value in the <code>cfg</code>’s value. This is so that older Rust compilers don’t complain in code that uses newer OpenBSD versions in <code>target_env</code>.</p>
+    <p>This has thus far meant adding a new variant to the type as well as some utilities to both produce a decimal representation of the <code>target_env</code> value and to keep that as an interned integer in the map of well-known values.</p>
+    <p>I then went on to look through <code>rustc_interface</code>, which is the only crate that makes use of the routine setting the afore-mentioned well-known values. That’s where I left if off today.</p>
+    <p>Then I reviewed the L4Re PR as the target maintainer answered back approving of my adding the <code>flock</code> and <code>flock64</code> records. These aren’t part of upstream l4re-core, but they mentioned these interfaces will be included in the future.</p>
+    <p>I also replaced most of the deprecation attributes with <code>FIXME</code> comments. Back when the PR was first opened, the plan was to deprecate and not to delay until 1.0, so that was pending.</p>
+    <p>The AIX PowerPC64 PR also got approval from the target maintainer to merge, though there seem to still be issues with some tests. We don’t test for AIX on CI, and the cfarm machines are too slow to test on them, so the target maintainer will take care of that in a follow-up.</p>
+    <p>Finally, today I reviewed the GSoC work product, and I think the first draft is officially ready to receive external feedback.</p>
+    <h2>2. Blockers</h2>
+    <p>None.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The MCP implementation plan will, as expected, take two more days. That will be the minimum time required until I can wrap my head around the logic in the <code>rustc_interface</code> crate, which seems to be the entry point after <code>rustc_driver</code>.</p>
+    <p>From the <code>run_compiler</code> function on, I’ll keep looking into places where the <code>CheckCfg</code> type is used, and see into changing the check logic to take into account this new lower bound type of limit.</p>
+    <p>The GSoC work product is ready, and I have no pending PRs on my end, so hopefully I can dedicate myself in full to the MCP implementation efforts.</p>
+  </body>
+</html>

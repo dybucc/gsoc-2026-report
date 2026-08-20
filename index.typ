@@ -44,7 +44,10 @@ by finishing up work on the main two issues I intended on tackling earlier than
 expected.
 
 Throughout GSoC, a report of all my activities each day was submitted on the
-Zulip thread associated with this project @zulip-daily-report.
+Zulip thread associated with this project @zulip-daily-report. That thread
+contains both the daily reports as well as some recurring discussion. For a list
+of the reports only, #link("./daily-reports/")[this page] contains a list of all
+reports compiled in this page.
 
 The first three weeks were spent on the issue concernig constant deprecation.
 That issue consisted of going through all supported targets, ensuring there were

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-01)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-01)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused around two things; Looking into a new issue I got pinged in Zulip, and (possibly) finishing up the new issue I set my eyes on yesterday.</p>
+    <p>At the start of the day, I noticed a ping in Zulip on a new issue concerned with ctest’s own test suite. Apparently, Cargo has changed some build internals and some code (unidiomatically) handling build paths broke.</p>
+    <p>I noticed this while I answered to the MCP thread, where I believe my concerns are now solved. I believe it’s mostly done; The only thing left should be for the target maintainer to approve the proposal.</p>
+    <p>Back to the above issue, I was pinged by my mentor as I had been recently looking into ctest internals to extend it (see prior reports on the FreeBSD PR that needed this.) Another contributor has already opened up a PR with a fix.</p>
+    <p>I simply reviewed the PR and pinged my mentor on it to get some final approval from someone presently more experienced than me. It replaced the manual code handling paths to using Cargo’s <code>CARGO_BIN_EXE_*</code>‘s environment variables.</p>
+    <p>I then went on to focus on the issue that yesterday I had only decided to take up on but didn’t quite get to read through. It tried to replace all instances of <code>struct</code>s for <code>union</code>s when a <code>union</code> was used upstream.</p>
+    <p>This dates back to Rust 1.19 and it hasn’t received any attention since it was opened and some comments were made six years ago. These days, I don’t think I’ve seen this happenning. Still, I decided to inspect further.</p>
+    <p>Following the advice on the issue, I looked through the libc-test build script and realized that there was some cruft left. It was mostly <code>struct</code>s with fields that only reflected a single field of the upstream C <code>union</code>.</p>
+    <p>I cleaned those up, but also noticed that both Haiku and Illumos targets still had more than just build script cruft left over. They had actual records that used other records instead of proper <code>union</code>s.</p>
+    <p>I fixed those and the PR is ready to be opened. I may open it after I finish writing this report or it may have to wait until tomorrow. Either way, there’s also some things to note about other targets that I need more guidance on.</p>
+    <p>Those concerns will be included in the PR description.</p>
+    <p>The Windows function pointer issue thread remains silent. Other issues I’ve commented on also remain silent.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The MCP should now be ready for the target maintainer’s review before getting merged. Other issues continue to remain silent but those I’ll just have to continue periodically pinging all subscribers on as weeks go by.</p>
+    <p>Tomorrow I’ll open the patchset I finished today, which should hopefully close that old issue. Beyond that, I think this week’s goals have been accomplished and surpassed.</p>
+    <p>I’ll message my mentor again tomorrow to see whether they’ll be inactive next week as well.</p>
+  </body>
+</html>

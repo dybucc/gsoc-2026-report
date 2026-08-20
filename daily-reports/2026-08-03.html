@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-03)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-03)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has centered mostly on answering to PR reviews I had received. I’ve also worked on the patch for a new issue.</p>
+    <p>I kicked off the day by going through some comments. A bunch of PRs got merged, which is great. The Fuchsia PR needed a little tweak to extend the functionlity of a macro we use to both declare and annotate data structures.</p>
+    <p>This was fairly simple to do because I had already come up with two possible solutions three weeks ago. I, of course, went for the simplest one (which meant the complexity of the macro subtrees is kept intact.)</p>
+    <p>The PR for getting rid of <code>union</code>s has been merged but will not reach the next stable release in full. Most of the patchset is going to be there, but there’s some patches that we didn’t backport on Linux either. Those won’t be backported.</p>
+    <p>The Android <code>ioctl</code> issue thread has also received some attention. The original poster surprisingly still answered back (even after having been dormant for 7 years.)</p>
+    <p>The solution seems fairly clear, though to some extent, it relies on praying upstream doesn’t break stuff. The short version is that <code>ioctl</code> takes a pre-defined set of constants for which there’s (mostly) no defined semantics.</p>
+    <p>Some platforms decide they’re going to extend the bitwidth of the argument taking this request constant from 32 bits wide to 64 bits wide. Now, nobody quite knows whether some driver implementor is using the full 64 bits.</p>
+    <p>According to POSIX and the Linux manpages, it should be 32 bits. So we just pray no driver implementor used a 64-bit constant and call it a day. Of course, this is still pending review from the Android target maintainer.</p>
+    <p>The only thing we might do is to switch the signedness of the integer that we take in the <code>ioctl</code> call. This would sort of be halfway through the standard (<code>c_int</code>) and the non-standard but common (<code>c_ulong</code>) behavior.</p>
+    <p>Next I answered to the PR that I had rebased to latest <code>main</code> and tweaked some yesterday. That one had been inactive for a few months so I thought I’d pick it up and resolve the issue it targeted.</p>
+    <p>The author answered back that they actually intended on finishing it all up, so I just provided some humble advice on some changes I made, and called it. It’s mostly concerned with incosistencies between C function pointers and Rust.</p>
+    <p>Finally, I looked into a new issue that has been open for seven years and tries to find some workaround for the fact we often break ABI by adding fields (at the same pace as upstream.)</p>
+    <p>These days, we have the new usage guidelines, which cover the fact our SemVer stability commitment is unlike that of other crates in the Rust ecosystem. There’s a newer issue tracking the use of <code>non_exhaustive</code> in all of our types.</p>
+    <p>I commented on the newer one whether we were still looking out to annotate most of our types with this attribute. In case we do, then I also started looking into implementing that. I believe I got it right.</p>
+    <p>We use a macro to declare all our types except type aliases. This is to ensure we have them all deriving the right traits under the right feature flags. To add this new <code>non_exhaustive</code> annotation, we also need to provide a way to opt out.</p>
+    <p>This is in the form of a non-existent attribute, <code>not_non_exhaustive</code>, that we detect by recursing through the macro subtree while keeping a packed matcher of prior attributes.</p>
+    <p>This works a bit like recursively destructuring a list in OCaml, where the cons operator gets you the head and tail of the list. In our case, we recursively extract one attribute at a time from the initially packed set of attributes.</p>
+    <p>Eventually, we reach the base case in one of the subtrees, where there’s no more attributes to be parsed. At this point, we apply all of the attributes (if any) that we kept in the other packed matcher.</p>
+    <p>All through this, if we ever detect (through another subtree) that the “head” macro we extracted from the input packed matcher is <code>not_non_exhaustive</code>, we switch to recursing with a slightly different subtree.</p>
+    <p>This alternative subtree does the same things, but keeps a different literal matcher that eventually converges to a different base case. This base case expands to the input item with <code>non_exhaustive</code> annotated on it.</p>
+    <p>The Windows function pointer issue thread remains silent. Other issues I’ve commented on also remain silent. The MCP has entered FCP, and I guess that means I’m meant to wait for further comments.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The MCP should be ready to receive an implementation in 10 days time. I’ve already gone through it so I don’t expect it to be complex in any way. The issue I tackled today concerning the macro is mostly done.</p>
+    <p>The only thing left is to extend this logic to other variants of the same macro. I don’t anticipate this to be complex at all, because the macro I worked on today is barely any different than those.</p>
+    <p>Beyond that, I’ll just keep looking through other issues and answering/commenting on issues and stale PRs. This includes older pending PRs.</p>
+  </body>
+</html>

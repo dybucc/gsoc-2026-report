@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-13)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-13)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>today efforts were centered around three things.</p>
+    <ul>
+      <li>finishing work on yesterday’s last pr.</li>
+      <li>further providing an answer to the recently opened issue i commented on.</li>
+      <li>going through other issues in the 1.0 release milestone.</li>
+    </ul>
+    <p>i finished yesterday’s work after a few hours. as noted in the last daily report, i had some concerns over whether the sa_family_t type was correctly represented in all the platforms it was being used in. as it turns out, i found two cases in which our current type definition is not completely correct. these correspond to both illumos and gnu/hurd targets. i submitted comments with citations including the upstream definitions in the already open pr (that switched the type of AF_INET and AF_INET6 from c_int to sa_family_t.) i also rebased to latest main and solved all merge conflicts.</p>
+    <p>then i answered to the issue that was opened yesterday concerning possible safety concerns in the signature of an exposed c binding. my stance remains the same in that it’s not the libc crate’s place to encode safety guarantees. the fact that this (and probably other) c library functions happen to have some funky semantics isn’t quite a -sys crate’s business’ to solve. but my opinion could very well change after i read the new answer the issue author left (which i’ve not read yet.)</p>
+    <p>then i moved on to looking through other issues in the 1.0 milestone. i looked through two issues that attempted to track breaking changes through the android module and back when the use_std feature was still a thing. the former has remained unanswered for some time and the use_std cargo feature was removed some time ago so that one really seems like a candidate for closure.</p>
+    <p>then i started reading through a long issue thread concerning breaking changes in platforms where any one of backwards or forwards compatibility is really not a concern. i’m not done yet because there’s been extensive discussion (i’ve read through all comments from 2017 through 2019 but the discussion seemed active until 2021.) this seems like the type of thing that’s going to take some time to think through even i after i finish reading everyone’s take on it.</p>
+    <p>other issues i’ve commented on remain answered. i’m ensuring this is always included in the daily report so i have an easy way of tracking when should i make a gentle ping to all issue participants.</p>
+    <h2>2. Blockers</h2>
+    <p>none at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>work continues as expected. there’s nothing to add to yesterday’s comments on my approach to these 1.0 issues. the current one, though, seems like is going to require further discussion and i’m expecting it to take up the rest of the week. this may extend for longer if it really turns out to be a huge thing. but it’s worth the time, as closing it would mean getting rid of one of the largest and oldest breakage issues.</p>
+  </body>
+</html>

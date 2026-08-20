@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-01)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-01)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has focused solely on attempting to run tests on the GNU Hurd. I’ve again failed miserably.</p>
+    <p>Efforts initially continued from yesterday’s attempts at building a Rust toolchain. I thought I had a lead on what was going on with the build errors. It was apparent that the linker used while building did not recognize certain arguments. I believed this to be due to the linker pointing to a wrong binary on my system. But the issues still persisted after I prepended a newer LLVM linker on my user PATH. I also tried to set the environment variables read by <code>cc-rs</code>. Nothing worked. The LLVM release notes for the linker version I was using mentioned they had added support for those flags in prior releases. It should have worked.</p>
+    <p>I then switched to attempting to build only the <code>libc-test</code> test suite. This was also met failure. In this instance I had to provide a GCC cross-compiler. The issue here is that I could only find precompiled artifacts for freestanding environments. So the build failed because no sysroot was provided so the system-specific headers used in <code>libc</code> were not available. I tried building a sysroot for the prebuilt cross-compiler I had found for x86_64 with ELF support. This meant building the GNU Hurd’s glibc sources. Suffice to say that went terribly bad. As it turns out the libiconv shipped with my system may be the source of issues. though I decided against any further attempts to build on my system because I ran out of disk space. I then went on to try to build a cross-compiling <code>gcc</code> from GitHub Actions following the official GCC docs. This is a WIP.</p>
+    <p>Write ups for the GNU Hurd and NuttX PRs are not yet ready.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>It seems like testing on the GNU Hurd is going to be take longer than expected. Building the <code>libc-test</code> test suite seems like the only way out. but a cross-compiling <code>gcc</code> is needed for that. I will temporarily put these efforts on halt. Tomorrow I will prepare the write ups for the NuttX and GNU Hurd PRs. Then I will resume work on building the cross-compiler. If this is not met with success in two days’ time I will put testing on the GNU Hurd on halt. This should leave two days for inspecting the AIX headers.</p>
+  </body>
+</html>

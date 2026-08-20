@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-19)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-19)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on figuring out the scraping matters and getting a third of that work done.</p>
+    <p>I first tried out experimenting with curl and the request format that Zulip expects. As it turns out, the rust-lang instance seems to have disabled bots, and apparently also API access.</p>
+    <p>I tried some more at this, thinking that the authentication error I was getting back stemmed from an issue on my side, but that didn’t go anywhere. So instead I tried coming at it from a different angle.</p>
+    <p>I wasn’t going to manually copy each message, so I figured that I could instead perform a regular GET request to the Zulip site. Granted, I first inspected the returned response body to ensure that Zulip loaded all messages in one go.</p>
+    <p>Then I automated this as much as I could. I scraped the HTML in one go and parsed it to then filter it by <code>class</code> to ensure I only kept the elements giving out the dates and the bodies of the messages.</p>
+    <p>The only unfortunate part here is that, unlike native Zulip API access, I only get access to the rendered Markdown (as HTML.) I then found a fairly good converter but I couldn’t get their API to work.</p>
+    <p>To avoid spending more time on the solution to the solution, I decided that I had automated enough and that I would do the rest of the work mostly by hand.</p>
+    <p>I now manually perform the conversion from the HTML I gathered into Markdown, but then use a macro I wrote for my editor to get that output Markdown automatically converted into Typst (which is simple, given the structured nature of my reports.)</p>
+    <p>I’m so far done with all posts from May to early June.</p>
+    <h2>2. Blockers</h2>
+    <p>None.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The scraper I was thinking on implementing has been reduced to a mere HTML filter, which has already served its purpose. This is actually great news because I estimate I should have all daily reports nicely rendered in HTML by tomorrow.</p>
+    <p>Then I’ll just mention that the reports can be found in a subpage of the main report’s page, which itself will gather links to each entry in the daily reports (themselves separate subpages.)</p>
+  </body>
+</html>

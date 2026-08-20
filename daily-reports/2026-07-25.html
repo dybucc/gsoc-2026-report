@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-25)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-25)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on two things; Solving a little something in the newlib PR, and working on the Windows function pointer issues.</p>
+    <p>The newlib PR needed rebasing because recently one of the contributors that commented on my PR submitted a new PR where some generic symbols that the <code>vita</code> target previously used now had <code>vita</code>-specific defintions. This didn’t require much work.</p>
+    <p>I then went on to looking into the Windows function pointer issues. Most of the stuff here seems clear at this point. I’ve now been looking into the Rust Reference, which was the one thing that remained to be done before I potentially reported a slight underspecification of the semantics behind <code>extern</code> blocks. Following I provide some brief context.</p>
+    <p>Platforms like Windows behave a bit differently when linking against a DLL, which itself requires what’s called an import library. This library ensures the symbols that some executable will use from the DLL are exported through what’s referred to in LLVM IR as storage class specifiers. This isn’t so much a need as it is a small optimization, because either way the executable will work. It just so happens that if this annotation is present at compile time, you can skip a double jump to get the target routine in the DLL. Now, the way this is implemented is by having the first jump be to one of the Windows PE format’s header tables, called the _Import Address Table_. This contains a bunch of information on the addresses of different symbols exposed from the DLL. You can think of it as an array of address slots that only get resolved at runtime. Once the program is mapped into memory, the loader switches pages to ensure those address slots are filled in with the actual addresses of the DLL’s exported symbols.</p>
+    <p>In Rust, the Reference from latest <code>nightly</code> says the following under <a href="https://doc.rust-lang.org/nightly/reference/items/external-blocks.html#r-items.extern.attributes.link.empty-block">items.extern.attributes.link.empty-block</a>.</p>
+    <blockquote>It is valid to add the link attribute on an empty extern block. You can use this to satisfy the linking requirements of extern blocks elsewhere in your code (including upstream crates) instead of adding the attribute to each extern block.</blockquote>
+    <p>This is not completely correct in cases like Windows. That’s because the way <code>rustc</code> (or LLVM, I’m not sure yet) lowers a call from a C function in an <code>extern</code> block that has not specified the <code>#[link]</code> attribute with a dynamic library kind, is by simply issuing a <code>call</code> instruction. This happens even if there is another, separate <code>extern</code> block whose “linkage kind” has been specified as <code>dylib</code>. See <a href="https://rust.godbolt.org/z/f379YrhqM">this</a> for a minimal reproducible example. This doesn’t happen when you start off by already including that function within an <code>extern</code> block whose “linkage kind” is <code>dylib</code>. The right jump to the IAT’s pointer symbol (the symbol gets appended a <code>__imp</code>) is used then.</p>
+    <p>So to sum it up; Including the <code>extern</code> block and bindings to routines in a separate <code>extern</code> block is not equivalent to including the routines in the same <code>extern</code> block. Though maybe this is not what the Rust Reference implies.</p>
+    <p>The solution I have so far thought about is to put up an issue in the rust-lang/rust GitHub, and then follow up by researching both the <code>rustc</code> code and the LLVM code. I’ve so far only gotten to the point where I’m looking through open issues in GitHub to check I’m not opening up a new one. There’s about 500 from my filtered search, so that’s taking a while.</p>
+    <p>Other issues I’ve looked into remain mostly unanswered. The MCP hasn’t received any new feedback.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The MCP is still pending. The other PRs are also pending. That I can put on halt for the time being as I focus on the Windows issues and ctest. The Windows issues I believe I understand and the only thing that’s left is to both spark discussion in rust-lang/rust if there wasn’t any precedent, and to start researching why is it that these semantics are encoded this way. Ultimately, I don’t expect I will be submitting a PR changing code to <code>rustc</code> because it’s unlikely that this needs a fix beyond documentation in the Rust Reference.</p>
+  </body>
+</html>

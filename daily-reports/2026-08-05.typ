@@ -8,7 +8,7 @@
   untouched from when it was first written, but note that by the time I wrote it
   (at the end of the work day, as usual) I was more tired than I should've been
   to appropriately structure my thoughts without exposing an overly pathetic
-  perspective on myself in public.]
+  perspective about myself in public.]
 
 #divider()
 

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-11)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-11)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>today work has cenetred around three things.</p>
+    <ul>
+      <li>
+        <p>tweaking the aix pr after i got confirmation on some changes from the target maintainer.</p>
+      </li>
+      <li>
+        <p>pushign some last commits into the nuttx pr.</p>
+      </li>
+      <li>
+        <p>working on a new issue for the 1.0 release.</p>
+      </li>
+    </ul>
+    <p>the aix pr is pretty much done. the target maintainer mentioned that they didn’t mind the changes but that they would like to keep the aix/powerpc64 module. with that in mind, i moved all of the changes concerning the powerpc64 module and the module itself back into the powerpc64 child module. this took a bit longer than expected because i also decided to further split the changes that were initially included in that one patch.</p>
+    <p>the nuttx pr didn’t need any more work. the target maintainer approved the changes and i pushed some commits i had fixed from prior feedback.</p>
+    <p>the new issue i’ve tackled today is concerned with a symbol conflict in the freebsd header files. as it turns out, freebsd has some “constants” which are repeated between header files. of course, when we reexport these symbols in the libc crate we get item resolution errors. the solution was already proposed a few years back but that pr has since not had much activity. that changed three weeks ago when a libc maintainer picked it back up and proposed a roadmap that should hopefully smooth things out.</p>
+    <p>to sum it up, we should provide the “older” bindings under the new module (which is meant to eventually replace the root module organization.) these are reexported at the crate root. then we add (also in the new module) a submodule with the “newer” bindings. these are then not reexported, but rather provided as a public submodule. whoever is worried about this downstream will eventually notice it and once we’re past the 1.0 release, we can break everybody’s code by removing the reexport to the older bindings. some time later the newer bindings would start being reexported instead.</p>
+    <p>i’ve finished rebasing (also solving conflicts) and tweaking some stuff from the pr that was opened a few years ago for the first part; namely, the one concerning the older bindings. i’ve also solved the conflicts for the other pr that was opened to more specifically address the newer bindings, but i’ve yet to finish touching up some stuff before it’s ready to be merged.</p>
+    <p>other issues i commented on yesterday remain unanswered.</p>
+    <h2>2. Blockers</h2>
+    <p>none at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>i believe i will have finished work with the second pr tomorrow. that shouldn’t take long and i will be done early. beyond that, and assuming there’s no new feedback on already open prs, i’ll start looking into other 1.0 release issues.</p>
+  </body>
+</html>

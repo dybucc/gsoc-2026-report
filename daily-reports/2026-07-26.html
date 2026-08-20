@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-26)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-26)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has focused entirely on one thing; Doing all the work I initially set out to do for the Windows function pointer issues. I believe my task here is done until I get an answer from somebody in the corresponding issue.</p>
+    <p>I started off by continuing my read through all GitHub issues that matched my filter in rust-lang/rust. I soon realized I wouldn’t be done before I hit the first half of the day, so I decided to instead look into the specifics of GitHub filters and realized I could use <code>OR</code> operators between labels to allow matching against a boolean-like formula. This made everything far easier because the results narrowed down to little over 150 issues (of which I had already gone through some from yesterday’s efforts.)</p>
+    <p>The first issue that caught my attention was one where there seemed to be open discussions on exactly how should <code>raw-dylib</code> work on Windows, which to this day seems to give trouble to some folks. But then I decided this was probably not the type of issue I should be looking into; The whole point of this research was to see whether somebody had reported inconsitent semantics in <code>extern</code> blocks for platforms like Windows (see yesterday’s report for an explanation on this.)</p>
+    <p>The next issue I looked into was one where users had reported that importing and exporting some symbol in a DLL under Windows targets would incorrectly have all calls to the imported symbol be lowered to calls to the exported symbol, iff both the imported symbol and exported symbol had the same names. This is because their names don’t get mangled. But this was not quite what I needed either; Still, it seemed like I was getting closer to what I initially seeked out for.</p>
+    <p>Finally, I found an issue that was opened about two years ago attempting to stabilize the use of the <code>link</code> attribute without requiring a <code>name</code> specifier, and only having a <code>kind</code> specifier. This issue, though, seemed stale as no activity beyond that of the author itself in the first (and only) comments was present. This seemed like an ideal solution for the issues we were having in rust-lang/libc, where we’re actively attempting to get rid of all explicit <code>link</code> attribute annotations. We could just have the <code>link</code> attribute not specify a library, but rather a <code>kind</code>, so that we get right <code>dllimport</code>-style jumps on any call to the bindings inside such an <code>extern</code> block. Still, I wasn’t quite sure how would this interact with <code>extern</code> blocks from a crate user that specified the libraries. This prompted me to go read the dedicated issue from which this proposal was started.</p>
+    <p>That one source issue turned out to be one 10-year old unsolved issue regarding exactly these Windows DLL problems. I was fortunate enough to have time to read through it all. Most of it, though, seemed to just be a back and forth between contributor solutions and Alex Chrichton’s solution (which used a <code>link_from</code> attribute that doesn’t seem to have ever been stabilized.) Still, it did teach me a few things, chief among them that the <code>name</code> specifier is actually quite useless when it comes to having the linker get the job done. Provided some binding in an <code>extern</code> block, the way the linker is invoked in <code>rustc</code> (this may have very well changed since then) makes it so that any symbol that satisfies the ABI spec specified in the ABI string, as well as the unmangled name, will do just fine. Of course, specifying the <code>name</code> prompts the use of some system library but that I didn’t quite understand in full. This issue, though, was the source of a change of semantics in the way <code>kind = dylib</code> works in Windows, through RFC 1717. That proposal was the one that added relatively “proper” support for <code>dllimport</code>-style calls. It is also implicitly stated in that proposal that <code>extern</code> blocks should have to be annotated with the <code>link</code> attribute explicitly. This made me think that the Rust Reference text mentioning the use of one empty such block to “satisfy link requirements” wasn’t entirely wrong; It probably only needed clarification for Windows targets. That’s pending.</p>
+    <p>My findings have been gathered in the relevant issue, where I hope other contributors may provide insight into which of the proposed solutions we could use. In that write up, I mention that we can either attempt to follow through with the proposal that allows using the <code>link</code> attribute using only the <code>kind</code> specifier, or we can go down a simpler route. See, the only reason why we consider this an issue is not because it’s stopping users from using those bindings (they can use them just fine without <code>rustc</code> ever having knowledge of <code>dllimport</code> at a small runtime cost,) but because tests don’t pass. So we could instead have the <code>link</code> attribute be used solely in libc-test test runs. Other issues I’ve looked into remain mostly unanswered. The MCP hasn’t received any new feedback. I’ve looked a bit into the ctest stuff, but that’s been more of a secondary task today; Still, we can potentially avoid having ctest extended for submodules with the proposed approach in the message above this report.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The MCP is currently sitting waiting for an answer to my latest questions (from a few days ago.) Other PRs are also paused as I await answers. With today’s progress on the Windows issue, I believe I’m also done until somebody answers in the relevant issue. This means I will likely switch to working on having a ctest workaround for the FreeBSD <code>netlink</code>/<code>if_mib</code> PRs starting tomorrow. I don’t expect this to take more than two to three days, unless, of course, we decide to extend ctest.</p>
+  </body>
+</html>

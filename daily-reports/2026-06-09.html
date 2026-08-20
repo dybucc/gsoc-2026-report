@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-09)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-09)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was centered around three main areas; Namely, solving the linking issues in the OpenADK make recipes to build the custom libc toolchain, tackling the <code>off_t</code> transition under Linux musl, and finally, transitioning the <code>off_t</code> type in Linux uClibc.</p>
+    <p>The linking issues remain unsolved and the toolchain still does not build. A few settings from the provided make configuration scripts were tweaked, but this still turned out in errors. Only this time the errors were mostly unknown and now unrelated to symbol availability across translation units. For reasons yet unbeknownst, building gcc as part of the cross-compiling toolchain fails due to errors in the libcoddy library. This seems to be a library shipped to provide some support for C++ 20 modules, but it’s also having trouble disambiguating between multiple options when processing templates in its source code. OpenADK seems to provide an option to opt out of building support for <code>g++</code>, but that option seems to not be toggleable, so there’s that. It’s quite likely that testing with MIPS on Linux and uClibc will fail, because unlike last week’s efforts with espressif’s ESP-IDF, no progress has been made beyond this.</p>
+    <p>Testing on x86_64 and arm, on the other hand, has sucessfully proven that the changes in the patch were not incorrect. It’s fairly simple to set up GitHub Actions with a CI job for these ISAs, so unlike MIPS, testing on them is complete. Still, yesterday’s limit on this task were set for one day and half, and there’s half a day left. Maybe tomorrow a solution is found.</p>
+    <p>While waiting for the openADK toolchain to finish building and bail out with an error, efforts shifted to the next submodule in the <code>unix</code> module; the <code>linux/musl</code> module. This one was fairly simple to tackle, as there was already existing infrastructure for supporting <code>time_t</code>s of differing bit-widths, so work went mostly to the file offset types. At present, no PR has been open yet but the branch with the patch is public and currently only deprecates some <code>off_t</code> definitions and LFS routines. This decision was made as part of the <code>libc</code> crate’s transition into exposing a single fixed-width type for file offsets, which is already the default in usptream musl. There was no reason to provide suffixed variants of functions because the idiomatic thing would be to just use the unsuffixed versions. An accompanying (small) write up for the PR has also been finished, but a review is still pending.</p>
+    <p>Back to the OpenADK toolchain, after realizing that the errors did not seem trivial to solve, and there did not seem to be a simple fix from reading the upstream gcc repo for release 15.2, it was decided that it’d be best to move on to the file offset types. Initially, changes akin to those submitted in other PRs were made, but soon enough, keeping track of all of the architecture-specific definitions started getting messy. It was then decided that these changes would be best done by manually going through all occurrences of any one of the <code>__USE_LARGEFILE64</code> or the <code>__USE_FILE_OFFSET64</code> feature test macros. These are always checked for whenever some symbol is meant to have LFS64 interfaces and when it’s meant to automatically redirect the unsuffixed variants to the suffixed ones, respectively. The corresponding option in the upstream uclibc-ng make scripts sets this by default. A decision was then made to deprecate all instances of types that were redirected to their 64-bit variants, such that our exposed unsuffixed records in the <code>libc</code> crate already use a definition fitting the suffixed variants upstream.</p>
+    <p>This is slow, but out of the 3000 lines in the resulting <code>stdout</code> of running ripgrep on the <code>main</code> worktree of the uclibc-ng repo, 28% of it is done.</p>
+    <p>Currently open PRs have been rebased onto latest <code>main</code>, but no further developments have taken place on that side of things.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>This week’s first two goals are almost complete. Solving the OpenADK toolchain issues to have a fully packaged bootloader, kernel and custom libc implementation is taking some time. It’s also likely to fail, and will be put on halt for the time being. The corresponding PRs have already been edited to mention that testing has taken place in all affected platforms (by the Linux uClibc patch) except for MIPS. Beyond that, this week is likely to go on with the uClibc file offset transition (as mentioned in today’s summary) and reviewing the Linux musl patch.</p>
+  </body>
+</html>

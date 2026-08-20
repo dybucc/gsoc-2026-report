@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-20)</title>
+    <meta name="authors" content="Adam Martinez">
+    <style>
+      /* Alignment */
+      mtable.right-align mtd,
+      mtable mtd.right-align,
+      mtable.left-align mtd.right-align,
+      mtable.aligned mtd:nth-child(odd) {
+        justify-items: end;
+        text-align: right;
+      }
+      mtable.cases mtd,
+      mtable.left-align mtd,
+      mtable mtd.left-align,
+      mtable.aligned mtd:nth-child(even),
+      math:is(:not([display])) > mtable.multiline-equation mtd {
+        justify-items: start;
+        text-align: left;
+      }
+      mtable.cases mtd,
+      mtable.aligned mtd,
+      mtable mtd.flushed,
+      mtable mtd.left-flush {
+        padding-left: 0;
+      }
+      mtable.cases mtd,
+      mtable.aligned mtd,
+      mtable mtd.flushed,
+      mtable mtd.right-flush {
+        padding-right: 0;
+      }
+      
+      /* Tables */
+      mtable {
+        math-style: inherit;
+      }
+      mtd {
+        math-depth: auto-add;
+        math-style: compact;
+        math-shift: compact;
+      }
+      
+      /* Equations */
+      mtable.multiline-equation mtd {
+        math-depth: inherit;
+        math-style: inherit;
+        math-shift: inherit;
+        padding: 0;
+      }
+      math > mtable.multiline-equation mtr:not(:last-child) mtd {
+        padding-bottom: 0.5em;
+      }
+      
+      /* Fractions */
+      mfrac {
+        padding-inline: 0;
+        margin-inline: 0.1em;
+      }
+      
+      /* Accents */
+      mover[accent="true" i] > :first-child {
+        font-feature-settings: "dtls";
+      }
+      mover.dotted[accent="true" i] > :first-child {
+        font-feature-settings: "dtls" 0;
+      }
+      
+      /* Other rules for scriptlevel, displaystyle and math-shift */
+      munder > :nth-child(2),
+      munderover > :nth-child(2) {
+        math-shift: compact
+      }
+      munder[accentunder="true" i] > :not(:first-child),
+      mover[accent="true" i] > :not(:first-child) {
+        math-depth: inherit;
+        math-style: inherit;
+        math-shift: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-20)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was centered around getting the implementation of the latest patch for the write-to-disk bug finished. I can produly say no more bugs seem to have creeped in the latest test runs, and the issue can probably be considered fixed (of course, no actual proof exists at present, so no guarantees can be made on the correctness of the algorithm/approach.) Beyond that, the basics for scrolling support have been implemented and should be fairly straightforward to improve upon.</p>
+    <p>Work on the bugfix started with a patch that completely refactored the implementation in the <code>effect_changes</code> routine as I realized that the issues lied in contention and file handle overwriting when accessing file descriptors between tasks running in parallel. As it turns out, the implementation for <code>FormatFile</code> was behaving as expected, but the fact that I launched a separate task for each constant whose modified flag had been toggled meant that multiple constants sourced from the same file would be reading in from the same file descriptor and writing to the same file at once (potentially in parallel.) This then caused the end result on the file to look considerably inconsistent across runs, as each parallel execution of the tasks could yield one result or another (e.g. some constant <math><mi>𝑎</mi></math> gets to the file before some constant <math><mi>𝑏</mi></math>, and modifies it such that its deprecation attribute appears first, while constnat <math><mi>𝑏</mi></math>, itself marked for undeprecation, ends up still deprecated, alongside constant <math><mi>𝑎</mi></math>.) The solution was actually fairly straightforward; Group all constants sourced from the same file into a single “bucket.” Initially, I implemented this in terms of a call to <code>Itertools::batching</code> that manipulated the iterator within a call chain spawned by the iterator itself, but then found out about <code>Itertools::GroupingMap</code> and realized a <code>HashMap</code> of file paths to constants gathered in a single contiguous container (<code>Vec</code>) would do me just fine. This was easily accomplished with <code>Itertools::into_group_map</code>. Then, for each yield path-to-constants item, I spawned a single task per file that synchronously called <code>change_constants_in</code> (part of the patch that also introduced <code>FormatFile</code>’s functionality, serving as a single entry point to constructing the type and calling <code>FormatFile::mutate</code> with the provided closure.) This makes it so that all modified constants sourced from the same file path are saved to disk sequentially. Whatever minor issues remain are related to formatting and are not very much noticeable, so they may be fixed next week.</p>
+    <p>Then, to update the spans of the memory-resident constants (kept as our custom type <code>Const</code>) we return from each of those tasks the file path with which it got spawned, and call a new routine, <code>ConstContainer::update_spans</code>. This method traverses the entire <code>ConstContainer</code> with a filtering operation to check only for constants whose source file path is equivalent to that of the passed file path (the one returned from each task) and updates the spans of all such matched symbols to the spans of same symbols in the file, after parsing it anew with <code>syn</code>. The reason why we can zip both the iterator of the <code>ConstContainer</code> with the iterator of the parsed file (which itself is a result of some more pre-processing to extract again constants from both module-leve scope and from <code>cfg_if</code> invocation macro bodies) is that both iterators are guaranteed to have the same “length.” Indeed, deprecation and <em>undeprecation</em> of symbols does not remove the effective amount of symbols in a given file, so parsing such symbols anew should yield the same symbols as those in memory that are known to have been sourced from that file. Of course, in matters of order, we go down the easy route (which happens to not be the most efficient) and sort both iterators by line/column span prior to zipping them.</p>
+    <p>Work on the scrolling implementation has greatly progressed today, and I genuinely believe it can be finished either tomorrow or the day after. At present, scrolling works adequately (but certainly not correctly) when in normal mode and with a filter list that contains at least 10 items. The implementation is fairly simple, and may even be further simplified in the coming patches. The running state keeps track of a new type, <code>VisibleList</code>, which ensures statically through its inner type, <code>ConstrainedList</code>, that the underlying bounds are always covering a set amount no larger than the polymorphic constant <code>N</code> over which <code>ConstrainedList</code> exists. I believe this can further simplified by only keeping track of a single lower bound, which would either be advanced or retracted as seen fit. This seems feasible as, outside its implementation details, the type is only used to fetch the value of its lower bound, such that we may skip that many constants when traversing the containers that hold them.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Thankfully, scrolling support is still very much achievable, and the bug (which spawned more bugs) that I had been solving for the last few days has been (at last at the time of writing) solved. With this new outlook, I expect to have finished the scrolling implementation by tomorrow, and to quite possibly have ironed out whatever bugs were left of it by the day after. This should align pretty well with this week’s goals, namely to fix the afore mentioned bug and to have scrolling support implemented. It would also be great if I could get some time to enhance the implementation of the path display in the list of filtered symbols, but we’ll see.</p>
+  </body>
+</html>

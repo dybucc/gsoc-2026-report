@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-09)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-09)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>today work was centered around four things.</p>
+    <ul>
+      <li>reviewing feedback i got on the nuttx pr.</li>
+      <li>reviewing feedback i got on the aix pr.</li>
+      <li>changing some stuff about the linux musl pr.</li>
+      <li>reviewing feedback i got on the linux uclibc pr.</li>
+    </ul>
+    <p>the nuttx pr didn’t need much attention. the target maintainer had asked another question on a change i had made to a type alias definition. i believe the change need not be reverted as it more closely replicates upstream in that it uses (non-fixed-width) c types and not fixed-width integer types.</p>
+    <p>the aix pr needed more work. following yesterday’s plan, i removed a large amount of api additions. this thinned it down quite a bit and left only the fixes. then i commented on some feedback i had gotten about the new cfg for aix’s lfs api. other prs have had the deprecations replaced for fixme comments. this follows the new multi-stage plan for the 64-bit time_t and file offset transition outlined by my mentor. we’re currently on stage 2, which really means we’re not meant to deprecate these bindings just yet. the thing with the cfg i added on aix is that the now cfg-gated types need to be different (and thus the cfg can’t be replaced with a fixme comment for 1.0;) under no circumstances are they equivalent.</p>
+    <p>following the now clearer plan to annotate with comments and not deprecate, i reviewed the linux musl pr (which i had to do anyway because of recent merge conflicts.)</p>
+    <p>i also answered some questions on my changes in the uclibc pr and rebased to latest main (because there were merge conflicts.) i haven’t yet gotten back to commenting on all feedback i’ve received.</p>
+    <h2>2. Blockers</h2>
+    <p>none at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>today i ended up still not starting work on the second part of the proposal. no matter. i’ve reviewed a bunch of prs, and should probably have the linux uclibc review ready by tomorrow. then i can start with the second part of the proposal. if and once that happens, i’ll further comment on the roadmap for that.</p>
+  </body>
+</html>

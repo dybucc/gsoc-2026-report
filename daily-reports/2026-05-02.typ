@@ -4,6 +4,15 @@
 
 #title(context [#document.title \ #html.aside(css-credits)])
 
+#html.blockquote[The following message was prepended to this report back when it
+  was first submitted. This was the first public report, as the one for the day
+  before was only messaged to my mentor. Unlike the Zulip thread, this page has
+  no "messages;" One can access that past report #link(
+    "./2026-05-01.html",
+  )[here].]
+
+#divider()
+
 This daily report reflects the current progress of my proposal plan as of today,
 focusing on three main sections that I gathered from GSoC guides and readings; A
 summary on today's work, a list of possible blockers, and the expected outcome

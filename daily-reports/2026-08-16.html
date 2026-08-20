@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-16)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-16)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has focused on two things; Commenting on yesterday’s issue thread on glibc, and starting work on the final cosmetic touches to my GSoC work product.</p>
+    <p>Yesterday I had left the glibc issue pending. I started off by first reviewing the comments in the libc-test build script, and taking some notes on that. Afterwards, I looked through the list of merged PRs mentioning glibc.</p>
+    <p>The point here was to try and find whether there had been any precedent on us limitting the glibc symbols we exposed for the sake of keeping compatiblity with a baseline version.</p>
+    <p>From my read on those threads and the fact we have a ton of API that is skipped on certain glibc versions when testing on CI, I guessed that wasn’t the case.</p>
+    <p>I gathered this into a response to the glibc thread where I proposed to simply document in our usage guidelines the lowest glibc version in which one of currently exposed bindings was introduced.</p>
+    <p>This is the type of thing that would benefit greatly from having RFC 3905 implemented and extended to work with target-specific <code>cfg</code>s. I also commented on that, though that’s more of a long-term plan.</p>
+    <p>The next thing I did was to start formatting the GSoC work product. I initially intended on typesetting a PDF, but then I realized that could very well trigger a download on somebody’s computer.</p>
+    <p>I’ve settled instead on serving it as plain HTML (no stylesheets whatsoever) after producing those same compilation artifacts with my typsetting tool of choice (<code>typst</code>.)</p>
+    <p><code>typst</code> has a fairly similar syntax to Markdown, so the only noticeable changes are the list of references and links, which get proper support through a bibliography file. That’s the only thing that’s taking up some more time.</p>
+    <h2>2. Blockers</h2>
+    <p>None.</p>
+    <h2>3. Plan for the week</h2>
+    <p>GSoC is nearing its end, and the report is ready text-wise. Following this daily report, I should notify my mentor for review of the text, which continues being available for easy access through a Markdown file in the repo.</p>
+    <p>Beyond that, I’ll just keep doing the same things I’ve done so far; Working on libc issues and touching up cosmetic aspects of the GSoC report. Of course, I could actually receive feedback requiring more from my mentor concerning the report, but that should be manageable.</p>
+  </body>
+</html>

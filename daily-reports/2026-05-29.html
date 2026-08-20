@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-29)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-29)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today we worked on deprecating the <code>*MAX</code>-suffixed constants. This was a change of plans from yesterday’s report, where I mentioned I would leave this for later, but I just thought it’d best if I tackled the larger group first.</p>
+    <p>There was relatively extensive research done throughout the deprecation process, and it is still unfinished. Still, a great amount of progress has been made and deprecation of those symbols is nearing its end. All of the notes relative to whether I took one decision or another are included in the newly opened PR addressing this set of constants at <a href="https://github.com/rust-lang/rust/issues/5122">#5122</a>.</p>
+    <p>Something to note was that I finally had a read through the POSIX standard’s spec for the <code>limits.h</code> file, which defines quite a few constants with the above-matching suffix. As it turns out, there’s some symbols that are runtime invariant, and should thus be considered stable enough that one can check them out directly from the exposed C interface in the <code>libc</code> crate. But then there’s a wide assortment of symbols that are either pathname variable or straight up meant for their values to be increased at compile time. Having definitions for these is fundamentally useless and only motivates the creation of non-portable applications. The standard recommends using one of multiple routines to fetch those values from the system, such as <code>sysconf</code>. I decided this set of constants should quite definitely be deprecated, and that has served me as guidance with quite a few symbols. Though I’m not sure about some of which are deprecated in the standard itself (not pinging my mentor because I already did in the PR.)</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Yesterday’s plan was ever so slightly modified. This has no negative impact whatsoever, and in fact, lets me address the larger set of constants earlier on. I expect to continue these efforts all through tomorrow and possible the day after. I don’t think I will take this to next week, so I could have finished all deprecation by then. Still, I prefer not to get ahead of myself. The proposal plan set the week after (week 3) as the limit for that, so it may just be that something else pops up. I don’t anticipate that to be the case, so I will likely start working on the time/file offset bit transition earlier than expected.</p>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-08)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-08)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on getting the rendering loop to actually show something when running the program. This revealed multiple issues, some of which have already been fixed. Firstly, the compatibility shim that was developed for the purposes of getting an async writer to work in a sync context turned out insufficient (apparently, blocking on a future from a runtime spawned within the future that another runtime is already blocking on is not possible) and was refactored. Initially, I thought of using a <code>tokio::rt::Handle</code> instead of a <code>tokio::rt::Runtime</code>, but that turned out to amount to almost the same thing. I eventually settled for a sync writer wrapped in a <code>tokio::sync::Mutex</code> that I could hold locked across <code>.await</code> points. This decision was made based on the fact getting a quick solution out was not possible, and the only real need here is for <code>crossterm::Command</code>s to run reasonably efficently. The sync buffer continues being a <code>Stdout</code> instance, which I gave up on locking with <code>StdoutLock</code>, and simply wrapped in a <code>BufWriter</code>, itself within the <code>Mutex</code> and <code>LazyLock</code> of a static.</p>
+    <p>After this, I stopped implementing code for the rendering loop and instead went on to set up <code>tracing</code> logs, because something told me I’d need them. Once I got this to work by writing to a log file on debug builds (which seemed like the simplest option for a TUI,) I also implemented a small initialization routine to keep a progress report on cloning the <code>libc</code> repo if such thing was needed. After I finished with this, I started testing the program again, and stumbled upon two new issues; The path that I passed to the library I implemented for the core logic is not really being verified to contain the <code>libc</code> codebase, and the program seems to have a severely high CPU utilization. The first of the issues I’ve started to work on but have quite definitely not finished, though the solution is straightforward. Now, the latter issue is the one that, to some extent, worries me. The debug logs show that beyond the logic that is executed prior to entering the rendering loop, the program currently is not reacting to any events (as expected for this week’s work, despite having implemented all the code for it,) but is still overheating my machine on a less than 30 second test run. This means I’m going to either have to get the rendering loop to sleep and not consume useless CPU cycles, or otherwise switch to a TUI library that handles redrawing for me. I am hesitant to go for the latter option, and I think I can implement a relatively decent one-off solution by switching the event listening routine from being executed as part of the update to being executed as part of the actual rendering loop; I believe this way it would just await on hold until the input handler (itself awaiting) got an event worth sending.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present. Today I’ve got some stuff to deal with in the evening so I had to submit the report earlier than usual.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Considering I’m already working on the rendering loop and more specifically, on the drawing routine, I believe I should have a solution for the above problems by the end of the week. This should still accomplish the goal of getting something reasonable drawn on-screen, even if state-change triggered redraws are not yet implemented.</p>
+  </body>
+</html>

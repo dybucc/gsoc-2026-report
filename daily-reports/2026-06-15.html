@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-15)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-15)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on three main areas; Reviewing the file offset patch for Linux musl, rebasing currently open PRs to latest <code>main</code>, and starting off work on Linux glibc.</p>
+    <p>The bulk of it was really the file offset patch. The changes that had been committed last week were just fine, but did not cover any file offset types beyond <code>off_t</code>. That meant going through all of upstream musl’s occurrences of the <code>_LARGEFILE64_SOURCE</code> feature test macro, to deprecate all LFS64 types and routines.</p>
+    <p>The decision here was the same as in prior modules; Prepare the removal of all suffixed symbols and ensure the one and only unsuffixed symbol prevails. This holds pretty well in musl because their unsuffixed types are already 64-bits wide, and it is their suffixed variants that are defined as aliases to the unsuffixed ones.</p>
+    <p>Beyond that, work went into ensuring this did not cause any issues by testing out in both QEMU and CI, which went well. After that, a little write up with the changes and a reference regex search to look up in upstream to check if these changes were correct did the trick. Another PR will likely be opened later on once feedback is provided on this one including full removal of the symbols. For now, only types and the <code>musl/lfs64</code> module have been deprecated.</p>
+    <p>Once that was done, I received a merge conflict notification from rustbot on one of the currently open PRs, and decided I’d rebase them all. That’s just (even more) plumbing work so I won’t go into any details on it.</p>
+    <p>Finally, I moved past the <code>musl</code> module into the <code>linux/glib</code> module. So far, no changes to the <code>libc</code> crate have been made as I’m still grokking upstream code. From what I can gather, the way they handle both file offset types and <code>time_t</code> is very much like uClibc. That does not come as a surprise, as the latter’s sources seemed to be a fork of glibc’s. They both use the same feature test macros to expose LFS64 types and routines, and to expose those by default. The only difference seems to be in the makefile configuration scripts to make those <code>#define</code>s available. In uClibc they had a fairly straightforward “toggle” but in glibc they don’t seem to expose the possibility to configure LFS64 symbol availability. They do have, though, a configuration option to ensure the <code>__USE_FILE_OFFSET</code> feature test macro is <strong>not</strong> defined. We’ll see about that tomorrow.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present. Testing on MIPS platforms with Linux uClibc is pending and input would be very much welcome on setting up a cross-compilation toolchain for this. Thus far, all efforts on this front have failed.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The first task of the week regarding the Linux musl file offset PR has been completed. The rest of the week is likely to follow the same pattern as the last two weeks; Namely, go through the rest of the <code>unix</code> submodules and check the way upstream handles 64-bit file offset types and <code>time_t</code>. If any changes are required, a patch will be prepared. Though unlike last week, if testing on some platform takes more than two days, that’s a hard cap for the platform, and the PR will be opened as a draft. This will be the case irrespective of progress in the allotted time span.</p>
+  </body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-24)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-24)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today we worked on finishing this week’s goal and setting up some minimal infrastructure for some (possible, but not assured) future addition to display the values of constants.</p>
+    <p>The initial idea I had implemented for path display got scratched in favor of an approach that focuses on tabulating the contents of the list such that we get column-like formatting. This makes the end result look fairly clean, though of course, forces whitespace-padding of elements whose identifiers are not as (byte-wise) long as the largest identifier. This then caused issues when displaying paths because there would sometimes be line wrapping, which itself would become another source of issues.</p>
+    <p>The solution was fairly simple; Switch the order in which columns are printed, and add an ellipsis to identifiers that are too long to fit the terminal grid. This change meant getting the path displayed right after the deprecation mark and before the identifier. To some small extent, this also reduced the max padding required as the largest identifier among parsed symbols is still a bit shorter than the path being displayed. We always print the full path, but then we check if the identifier can fit in whatever remains of the line. This check is still pending some more work to cover some edge case, but it’s already working nicely with the vast majority of constants in the <code>libc</code> codebase.</p>
+    <p>Another improvement to the path display was to properly format the path. Previously, we were showing the fully parsed path to the constant, which is good enough for purely functional purposes but no so much when put on display. At present, the path is sanitized before being show on screen such that it only outputs the module and eventual trailing source file from which the symbol was parsed. This was a bit finicky to get right as some edge cases concerning separators in user-provided paths could get the formatting to look inconsistent.</p>
+    <p>Beyond that, there’s not much else to comment on. If at some point next week we get to add support for displaying the values of constants, there’s now dedicated events for that. Though for the time being, these are ignored.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>This week’s goals were sucessfully accomplished two days ago. Ever since then, the refactors to the codebase have made the core library be far more organized and have completely rid it of <code>unsafe</code> (which is <em>almost</em> also the case in the binary.) Next week, I expect work to be focused on ironing out bugs and actually using the tool for deprecation of symbols. The first problem that I plan on solving, though, is the afore mentioned edge case when displaying large identifiers. Beyond that, I believe the tool is ready for “production”-use.</p>
+  </body>
+</html>

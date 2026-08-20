@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-18)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-18)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today efforts were centered around two things; Starting work on the BSDs and fixing up a bunch of the currently open PRs.</p>
+    <p>Firstly, I started off by finishing the write up for the Android PR and opening it up. The only thing that was left from yesterday was to link sources.</p>
+    <p>I then went on to work on the BSD module, where I was quite surprised to see that most submodules already handle file offset and <code>time_t</code>-related types/routines values nicely. The <code>apple</code> module is done, and I’m currently looking into the <code>netbsd</code> module, where things also look quite good as well. I’m not yet done with all of the supported target architectures, but so far those modules I’ve looked into don’t contain any file offset types nor <code>time_t</code> types that would require changing. They already expose a 64-bit <code>off_t</code> by default and they don’t bind suffixed variants of that (and similar) type(s.) The same thing applies for <code>time_t</code> stuff.</p>
+    <p>Halfway through the day, I got back from my mentor on a bunch of open PRs. Regarding the constant deprecation and removal PRs, it seems the <code>libc</code> crate is in the process of updating their SemVer guarantees. These guarantees, which are yet prone to further changes, relax some of the regular Rust crate SemVer guarantees, such that users may expect that, among others, records not marked as non-exhaustive get new fields in what would be non-breaking SemVer releases (so either a minor release or a fix.) This is to more easily adapt to upstream C repos hosting the implementation, as things that would imply breakage in Rust are not always the same as in C.</p>
+    <p>For constant deprecation, this means that instead of having those symbols be deprecated and eventually removed in release 1.0, they should rather be documented as possibly unstable. A small annotation to the upcoming usage guidelines would seem to suffice in advising users of the <code>libc</code> crate about the expectations they should set for those symbols.</p>
+    <p>I then went on to change all of the deprecation PRs so as to replace the deprecation attribute annotation with a documentation comment indicating the above. I expected this to possibly be something recurring in the future (future revisions of the POSIX standard could add more pathname variable values or runtime increasable values,) so I also added a macro for these types of item declarations. That was submitted in a separate PR.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present. Testing on MIPS platforms with Linux uClibc is pending and input would be very much welcome on setting up a cross-compilation toolchain for this. Thus far, all efforts on this front have failed.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Unexpectedly, the <code>bsd</code> module, even though large, is quite well-behaved when it comes to file offset and <code>time_t</code> types/routines. This means we could very well end it by the end of the week, though the <code>freebsd</code> module remains unexplored and that could have some surprises left for us. Either way, that still makes the goal achievable. Tomorrow work will start by answering to the rest of the PRs I got feedback on. Once that’s done (and it should probably not take up the whole day’s worth of work,) I’ll go back to looking through the <code>bsd</code> module. That should leave at least two and a half days for it, which makes things quite manageable. We could be moving to the <code>solaris</code> (and derivatives) module before next week.</p>
+  </body>
+</html>

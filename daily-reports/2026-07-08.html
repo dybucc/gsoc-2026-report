@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-08)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-08)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>today work was centered around two things.</p>
+    <ul>
+      <li>reviewing feedback the hurd pr had received.</li>
+      <li>reviewing new feedback from yesterday on the nuttx pr.</li>
+    </ul>
+    <p>the first task was fairly straightforward. i seemed to have gotten the upstream source wrong. the one i was cross-referencing hadn’t been updated since 2021. i had just assumed this was expected, considering the gnu hurd site and docs themselves are a bit outdated. but apparently they transitioned to using upstream glibc. so i went through the patches again and made some tweaks to adapt it to upstream glibc. this resulted in proper handling of time_t values and of the glob and globfree routines. these were redirected to different routines when the time bits feature test macro was issued. that was not part of the legacy glibc fork i had initially based my work off of. there were also some other minor modifications.</p>
+    <p>the nuttx pr needed a tad bit more work. the target maintainer had gotten back (from yesterday’s ping) and i also received some advice from my mentor on the rate at which new types/bindings should be added. i need not bother with adding new types and routines if they are not requested. that was honestly great news. it made the pr far smaller and digestible to outside readers. i also removed support for configuring large file support. feedback mentinoed that it was not really feasible to add cfgs for each configurable option usptream. so much like the afore mentioned advice on api additions, if nobody complains nor needs it, then it’s staying out. now all types are back to being 64-bit only.</p>
+    <h2>2. Blockers</h2>
+    <p>none at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>if tomorrow i don’t get any new feedback requiring large changes, i can safely start with the second part of my proposal. the first part was done yesterday, but not all prs are closed or merged, so those are going to need some reviewing. for one, with the new advice i got today on the hurd pr, i’ll review the aix pr to remove all additions to the api and only leave the fixes. that should trim it down considerably. once that is done, i’ll start looking into the issues i had in mind for the second part of the proposal.</p>
+  </body>
+</html>

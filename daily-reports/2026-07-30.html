@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-30)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-30)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was centered around continuing (and almost finishing) the <code>siginfo_t</code> matters on Linux targets that I kicked off yesterday.</p>
+    <p>I began by looking into <code>clangd</code> and more specifically, configuring target options to get accurate type size and alignment information. This made the task of ensuring not only the right types were exposed, but also the right size and alignment, far easier. This did serve me well in one of the two modifications I ended up making. The workflow mostly consisted of checking glibc’s <code>sysdeps/unix/sysv/linux/bits/types/siginfo.h</code> file, while ensuring the target in question didn’t have overrides living under <code>sysdeps/unix/sysv/linux/{arch}/bits/siginfo-arch.h</code>.</p>
+    <p>Most of the targets had fairly correct bindings in Rust, except for the M68K and RISCV32 targets. The former specified <code>si_errno</code> and <code>si_code</code> in the wrong order. In fact, the glibc codebase itself mentions that only MIPS targets (both 32-bit and 64-bit) have a different ordering. The 32-bit RISCV target had an 8-byte alignment requirement in <code>siginfo_t</code>, while it has a 4-byte alignment requirement upstream. With the full definition (counter to mere padding fields,) this is fixed.</p>
+    <p>As an extra (though unrelated to Rust,) there were some funny definitions for SPARC targets that added whole fields. There’s also the fact that I decided to use <code>sigval</code> instead of declaring a <code>sigval_t</code> type because they’re actually equivalent but the former is part of POSIX and the latter is not (though its use is prevalent across glibc.)</p>
+    <p>Other issues I’ve looked into remain mostly unanswered. The MCP hasn’t received any new feedback. The Windows function pointer issue thread remains silent.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The MCP and pending PRs continue on halt. I think it’s going to be best if I wait until tomorrow and if no new feedback is received, I will seek for outside help. Beyond that, I am fairly confident the <code>siginfo_t</code> issue can have a PR opened before the end of week. Today I finished through all targets using glibc, which made up the bulk of it. Now only the uClibc targets (less than five) and musl (Heaven on Earth; a single shared definition for all targets) are left. Of course, once I open the PR, we’ll see about the relative correctness of my changes.</p>
+  </body>
+</html>

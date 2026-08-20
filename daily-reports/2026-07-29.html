@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-29)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-29)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused mostly on two things; Solving a small issue in the FreeBSD PR that was causing test failures, and starting work on another issue in the 1.0 release milestone.</p>
+    <p>The issue in the FreeBSD PR was failry simple to solve. Yesterday, I had tested the patchset against a trimmed down version of CI that only ran the FreeBSD targets’ workflows. This made me miss the fact that the <code>cfg</code> that got added to support conditional imports in the ctest-generated tests would produce a warning in all other targets. The solution was to move the <code>check-cfg</code> directive we issue through Cargo from the FreeBSD test function to the build script’s <code>main</code> function.</p>
+    <p>Afterwards, I started looking again into the issue tracker, and kept going with the next issue in the list after the OpenBSD issue (for which I’ve already got the MCP going.) This time I’m looking into <code>siginfo_t</code> in the Linux bindings. The original issue dates back more than ten years, and the last update to it was seven years ago. It’s been sitting for a long while in the backlog and the original source source of confusion isn’t even the same anymore. Back then, <code>siginfo_t</code> had some funky definition in the Linux kernel and the rust-lang/libc bindings replicated that. After some time, upstream changed it to better support 32-bit machine word systems, where a certain set of fields and their orderings would cause ABI breakage. The issue was intended to solve that, but these days we provide bindings to each Linux system’s libc implementation, instead of to the kernel’s definition.</p>
+    <p>I decided it would be best to go through all definitions in supported Linux targets to ensure that things were alright. I’ve started off with the Linux systems using glibc’s definition, and today I’m done with x86. My main goal here is to provide a definition that closely matches upstream’s, as we currently have a private field that serves only to match the record’s size and alignment. This is flaky and I would prefer to have the full union comprising the main body of <code>siginfo_t</code>. There’s also the fact that glibc has architecture-specific definitions, that are easy to get wrong; For example, x86 will force a 4-byte alignment over the regular <code>clock_t</code> type in an inner union’s record’s field if compiling against x86 but running in x86_64. This usecase, in fact, is one I’ve not found a clean solution for in Rust, so I’ve had to make it unconditionally use the x86 <code>clock_t</code> type, which is always 4-byte aligned.</p>
+    <p>Today I also got some feedback from other Rust contributors to help move forward the MCP and pending PRs. You can probably see those messages right above this one.</p>
+    <p>Other issues I’ve looked into remain mostly unanswered. The MCP hasn’t received any new feedback, but a contributor has tried to move it forward some by pinging my mentor. The Windows function pointer issue thread remains silent.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The MCP and pending PRs are sitting in the backburner ready to receive further feedback or merge; The FreeBSD PR is now added to that list. The new issue I’ve started solving today will likely take me a few days to finish up, as I’ve go to go through quite a few targets. Still, I believe I could finish it by the end of the week. That’s the goal now.</p>
+  </body>
+</html>

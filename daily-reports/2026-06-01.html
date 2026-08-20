@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-01)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-01)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today we continued work on reviewing all modules in the <code>libc</code> crate that define <code>time_t</code> and <code>off_t</code> types. We finished up with all modules except the <code>unix</code> module, and have almost finished work on the <code>newlib</code> child module.</p>
+    <p>Most of the top-level modules that were left already had definitions within their root scopes for types that were compliant with our current goal of exposing a single 64-bit type. I found some issues in TEEOS, as there were notable differences between the definitions in the kernel interface and those used in the OhOS SDK. For details, see the corresponding PR.</p>
+    <p>The next PR I submitted addressed a small mismatch between the definition we expose under WASI for <code>off_t</code> and that which appears in the upstream repo. Still, the current definition is equivalent in terms of effective bit-width, but unlike upstream, relies on fixed-width Rust integer types and not on C <code>long long</code>s.</p>
+    <p>Finally, I started looking into child modules of the Unix tree. The newlib C standard library implementation was conditionally compiling the <code>time_t</code> type to be 32 bits on all platforms but <code>horizon</code> and espidf with the corresponding compatibility shim. All forks of newlib for all targets supported in the <code>libc</code> crate define it by default as a 64-bit wide signed integer. The only exception to this was triggered by a configuration option at build time or if the host system was detected to have C <code>longs</code>s whose bit-width was larger than 32 bits. Another PR has been opened addressing these changes, though testing is pending because there’s no automated CI for espressif’s ESP-IDF nor <code>horizon</code> (which is known to run in the tier 3 Nintendo 3DS target.)</p>
+    <p>Other PRs continue open and awaiting input from other contributors/my mentor.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The revised plan for this week included starting earlier with the time and file offset deprecations/modifications. This is expected to have been almost completed by the time we reach the first GSoC evaluation period. Based off of the current pace, it’s quite possible that work is done before that. Still, one must factor in that there’s barely been any feedback to the currently open PRs, so more work could creep up from there. Either way, the proposal outlined that work would move on to other issues in the 1.0 release track if such thing were to happen.</p>
+  </body>
+</html>

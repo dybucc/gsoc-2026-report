@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-05)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-05)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <blockquote>This report got out of hand quite badly. It has been left untouched from when it was first written, but note that by the time I wrote it (at the end of the work day, as usual) I was more tired than I should’ve been to appropriately structure my thoughts without exposing an overly pathetic perspective about myself in public.</blockquote>
+    <hr>
+    <h2>1. Summary</h2>
+    <p>Today work was quite miserable; Solving a ton of Git conflicts on stuff that I had finished working on between yesterday and this morning.</p>
+    <p>I started off by finishing up the changes on musl and uClibc concerning <code>siginfo_t</code>. This was not the hard part, though. I then started working on changes to the Git history, which is where I took the longest time.</p>
+    <p>As I went through the changes, new stuff starting popping out; Chiefly, impl blocks that I had forgotten to include in some files. I then decided it would be best if all commits provided a working revision that actually built.</p>
+    <p>That took me along another fairly large session of Git rebase conflicts to get a single commit all the way down to the start of the patchset. The details are not really worth it.</p>
+    <p>The last thing I did was to separate the patches that handled actually adding the bindings to the <code>new</code> module from those that remove them from the old but still prevalent module structure. This took the longest, by far.</p>
+    <p>I first started off by, just in case, creating new branches off of the original patchset (pre-reorganizing stuff.) Then I dropped those patches from the PR’s branch, and conflicts starting popping in that rebase session.</p>
+    <p>This took a while to solve and affected all other patches stacked on top of the now dropped initial patchset. Then I had more conflicts from the one commit I decided on putting at the start of the patchset to make all revisions build.</p>
+    <p>After solving all of that, I started on actually splitting the changes from the patch that had the <code>new</code> organization and the reexports at <code>new/mod.rs</code>. That had a few more conflicts, but those were expected.</p>
+    <p>All along this, my editor starts experiencing bugs and I have to cherry pick unmerged PRs from upstream to get a custom build that lets me keep working. This wasn’t that time-consuming (10 minutes + 5 minute build) but it was a waste.</p>
+    <p>Next thing I do is notice the alarm; It’s time for the daily report, and I only got one PR done today (not even a new PR.)</p>
+    <h2>2. Blockers</h2>
+    <p>Beyond dangerously useless days like today, none.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Today was catastrophic, and I’m not sure anymore that I can finish tomorrow the small-to-medium work I mentioned yesterday. If I do, then the plan remains unchanged because I’ll then start looking into the MCP implementation.</p>
+    <p>If I don’t (and this is now very likely) then I will have to extend that period for one more day. This gets us to Friday. It leaves two days for the MCP implementation.</p>
+    <p>I honestly think that’s doable, but days like this make me doubt.</p>
+  </body>
+</html>

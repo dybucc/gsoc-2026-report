@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-28)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-28)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has focused on three things.</p>
+    <ul>
+      <li>
+        <p>Gathering information on yesterday’s attempts at solving the function pointer mismatches on Windows x86 GNU.</p>
+      </li>
+      <li>
+        <p>Fixing up the currenlty open Windows PR. The other Windows PR got merged yesterday. This one needs adding a <code>cfg</code> to the changes introduced in that PR.</p>
+      </li>
+      <li>
+        <p>Looking into the GNU Hurd module. I started checking out <code>time_t</code> and file offset types.</p>
+      </li>
+    </ul>
+    <p>What little I could find out on the function pointer checks has been added to an open issue. That’s going to be left unattended for the time being. There’s nothing new to add to yesterday’s report.</p>
+    <p>The currently open Windows PR got some feedback. It was mostly about style. there was also advice on not skipping <code>time_t</code> anymore on Windows x86 with GNU. Defining <code>_TIME_BITS=32</code> should have yield the same results as defining <code>_USE_32_BIT_TIME_T</code>. It could be that MinGW is picking up on the host machine’s set of pre-defined macros and not on the compiled binary’s target. That would explain why defining the above macro doesn’t work. MinGW won’t allow 32-bit <code>time_t</code> on x86_64. The tests compile to x86 but run on GitHub hosted runners. These are x86_64. I haven’t tested on an actual x86 machine.</p>
+    <p>I also requested a compile farm account. It’s been approved. I needed to access AIX machines to cross reference their headers with the definitions we bind to in the <code>libc</code> crate. Though I’m currently working on verifying <code>time_t</code> and file offset types for the GNU Hurd. It will still come in handy to ensure Rust programs build on that system. I haven’t yet tested it out. My hypothesis is that they won’t work. There’s duplicate definitions between GNU Hurd bindings and general UNIX bindings. We currently expose non-LFS64 and LFS64 definitions no matter the target. The GNU Hurd has two Rust supported targets. They correspond to the x86 and x86_64 ISAs. LFS symbols aren’t always defined. Redirecting to the LFS64 symbols is neither the default. And yet we have those definitions ungated. I’ve started annotating them with the existing <code>gnu_file_offset_bits64</code> <code>cfg</code>. This should do just fine because the Hurd uses glibc. The types are only deprecated. The routines are going to get gated. Testing is pending but it seems compile farm has machines set up. We’ll see.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The first half of GSoC ends the next week. My proposal set a hard limit on verifying <code>time_t</code> and file offset types to the seventh week. The GNU Hurd changes should take me three more days. The last module will be Apache’s NuttX. But i’ve already looked through that module. There’s nothing immediately apparent to fix there. They already have 64-bit <code>time_t</code> and file offset types.</p>
+  </body>
+</html>

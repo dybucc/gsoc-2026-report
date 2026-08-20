@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-17)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-17)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work went on to focus on only one thing; Taking notes on my readings thus far and preparing an MCP for OpenBSD targets to include their OS+libc version in the <code>target_env</code> <code>cfg</code>. Other minor tasks are detailed last.</p>
+    <p>This has been met with decent success in that I’ve finished taking most notes and I’ve discarded multiple alternatives to the <code>target_env</code> solution. To sum it up, RFCs 3750 and 3905 continue being the ones that can make it the easiest for us but that will likely take multiple years to land on <code>libc</code> due to our MSRV policy. I instead attempted to see whether prior (accepted) RFCs could fit our purpose. I read through RFC 3716 but soon realized that (1) there does not seem to be a simple way of exposing this to crate authors beyond command line flags, and (2) the purpose of that RFC seems to be aimed towards something like <code>target_feature</code>, which exposes architecture-specific features rather than OS versioning. Granted, the RFC attempts to avoid unsoundness issues from ABI differences due to the use of certain conflicting features, but I don’t think that’s enough of a reason to have OS versioning be added as a target modifier (the internal name for these flags proposed in the RFC.)</p>
+    <p>The most viable solution seems to simply go for a <code>target_env</code> override every six months, which should align with the OpenBSD release cadence. This would add some overhead to the target maintainer(s) but should hopefully be an automatable task. This also happened to be the last solution proposed in the Zulip thread for MCP 916 and is the one alternative that T-compiler seems to has some confidence in if it gets pushed forward.</p>
+    <p>Today I also commented on some feedback the GNU/Hurd PR had gotten and have since made some small changes to it. These were fairly surprising to me, as I had previously thought we generally assumed users to have <code>#define</code>d <code>_GNU_SOURCE</code>. This macro and a few others actually gate an alternative non-POSIX compliant version of the <code>strerror_r</code> function, but apparently (even though the bindings initially indicatd otherwise) it’s preferable that the GNU/Hurd bindings are as close as possible to what “the rest of the world does.”</p>
+    <p>I also got an update on yesterday’s AIX tests. The patchset I had submitted worked out just fine and the only errors that remain are the sort that we would have skipped on CI if AIX were a tier 1/2 target.</p>
+    <p>Other issues I’ve commented on remain unanswered.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The plan is now clear. I’ve read through my mentor’s answer and have formulated what I believe should provide a short-term solution for <a href="https://github.com/rust-lang/libc/issues/570">rust-lang/libc#570</a>. The MCP I will open in the next few days should attempt to address the need for <code>target_env</code> in OpenBSD targets to reflect the <code>Major.minor</code> versioning scheme alongside (possibly) the OS name. Once that is done, I may look into RFC 3750 again and ping all participants to see whether something needs pushing for this to at least reach nightly. Hopefully, the former approach will solve the above issue’s original author’s concerns, while the latter should maybe provide a better long-term solution to other targets.</p>
+  </body>
+</html>

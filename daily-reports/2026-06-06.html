@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-06)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-06)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today efforts were focused on testing the newlib patch on <code>horizon</code>. This was pending from last week where testing on both <code>vita</code> and <code>horizon</code> were set as tasks to be tackled between june 6th-7th. <code>vita</code> is still pending, but the changes on <code>horizon</code> have been both confirmed and fixed.</p>
+    <p>All in all, things were fairly simple to test. The choice of emulator for <code>horizon</code> was a fork of the now defunct Citra. There was no required set up on that side, but a few things had to be prepared to make the Rust toolchain work on the 3DS. As per the guides by the rust3ds org, a recent build of the LLVM toolchain was required, as well as devkitARM from the devkitPRO team. Those were also straightforward to configure and soon enough, a template program was already running in the emulator.</p>
+    <p>During testing, the changes in the patch (which concerned both <code>time_t</code> and <code>off_t</code>) required some modification. Firstly, the decision regarding <code>time_t</code> was correct in <code>horizon</code>, where providing a 64-bit type did, indeed, fit the upstream definition on the newlib fork shipped alongside devkitARM. The test simply consisted of ensuring that a two-element array of <code>time_t</code> values had only one of the array values modified when providing a pointer to it to the <code>time</code> C routine.</p>
+    <p>It was while testing <code>off_t</code> that issues arose. Testing with this type was not as straightforward and required some human “inference” to draw conclusions because no simple test (that I could come up with) could prove the bit-width of the <code>off_t</code> type. <code>time_t</code> has bunch of routines where a pointer to it is taken and one can ensure that a write has been performed with the right bit-width, but that is not the case with <code>off_t</code>. This meant that some way of passing a value (possibly) larger than the expected <code>off_t</code> (if it was 32 bits) had to be found. The solution ended up using the virtual file system that the 3DS Rust toolchain provides to create a file larger then 2 GiB and perform a call to <code>fseeko</code> with an <code>off_t</code> larger than <code>2^31</code>. While building the binary for <code>horizon</code> with the embedded virtual file system, the toolchain was unable to package files within the FS that were larger than <code>2^31</code> bytes. Even though this does not imply a 32-bit <code>off_t</code>, it does mean there is no LFS64 support.</p>
+    <p>Looking again through the source code for newlib in all supported targets, it turned out that the last submitted patch had missed something. The <code>off_t</code> type is defined as a 64-bit integer in all platforms but espressif’s and <code>vita</code>. The newlib fork for <code>horizon</code> (part of devkitARM) has a 64-bit declaration. This meant that the patch, which changed <code>off_t</code> to always be a C <code>long</code>, was completely wrong. It is only a C <code>long</code> in <code>esp-32</code> and <code>vita</code>. This, though, still means some changes are required to the upstream <code>libc</code> crate, as under the latter it is currently exposed as a C <code>int</code>.</p>
+    <p>The open PR has not yet been modified, but will soon enough be.</p>
+    <p>Beyond that, work on other open PRs continues awaiting contributor/mentor responses (genuinely not trying to put pressure here, but I don’t know a simpler way to word this.)</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>This week was meant to start work on the bit-width transition while looking through the open PRs for symbol deprecation. No clear goal beyond the “mini-tasks” regarding tests outlined in each of the newly open PRs was set. These tasks, though, have all been accomplished except for the ones set for days June 6th-7th. Testing on newlib with <code>horizon</code> is mostly done and the changes to the PR are only pending a review before getting pushed (and before changing the write up in the PR.) That leaves tomorrow to test out the changes in <code>vita</code> (which may or may not be as simple as with the 3DS.)</p>
+  </body>
+</html>

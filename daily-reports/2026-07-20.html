@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-20)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-20)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has focused on two things; Touching up the MCP and submitting it, and starting to look into the <code>rustc</code> code for handling target information.</p>
+    <p>The MCP was done and only needed another quick review before I submitted it, and posted on the prior MCP about it. I also concluded that the <code>target_env</code> and any other target-specific <code>cfg</code>s are likely specific to <code>rustc</code> versions; This would make the most sense, as there’s versions of the Rust compiler without support for certain targets. The old MCP has been closed.</p>
+    <p>Of course, it was far from ideal to simply dump the idea and expect feedback from T-compiler, so I started looking into the <code>rustc_target</code> crate (part of the compiler codebase.) Thus far, I’ve concluded that the infrastructure to automate the changes is there; The central record holding information on each target contains itself a field that keeps the LLVM target triple. In LLVM, the OpenBSD targets already have their release versions appended to the end of the tuple’s stringified representation. In theory, one could automate changes to the in-tree Rust targets by only updating the LLVM targets, and scrape the value of that one field. That would be possible if the field’s value were already something automated. But it’s not, so that solution doesn’t quite cut it. I also considered the possibility for a bunch of OpenBSD-specific code to end up in that internal crate due to implementation detals; I believe we will have to cope with that and provide a small <code>FIXME</code> comment to remove this little hack once either one of (or both) RFC 3750 and 3905 are stabilized.</p>
+    <p>I gathered these notes and some others under the comments of the new MCP. My goal here is to see into having a PoC implementation where the <code>target_env</code> for OpenBSD targets specifies their release version. Then I’d have to look into setting up some CI workflow to update an isolated part of the code concerning the available versions. I’m thinking expanding the <code>rustc_crate</code> with another module that has a macro whose body is defined by an external (maybe <code>awk</code>) script. Still, all of this is just an idea; Implementation details will be ironed out later on.</p>
+    <p>Today I also commented again on the GNU/Hurd PR to, at the huge risk of overstepping my boundaries, tell the target maintainer that the bulk of the test suite in the rust-lang/libc codebase are generated at run-time and are not to be “found” anywhere. I got the impression they were testing the wrong things when they mentioned that the <code>rustc</code> test suite seemed more complete than the dedicated <code>libc</code> test suite.</p>
+    <p>Other issues I’ve commented on remain mostly unanswered. One of the issues has been answered by my mentor, which mentioned that I could just start opening up PRs if the original author didn’t answer back in a week’s time.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>As originally mentioned at the start of last week, the plan was to have the MCP done and start working on the implementation this week. This has been accomplished. I expect to actually have something worth providing feedback to in a couple days’ time; possibly by the end of the week. I don’t think I will strike the right implementation by then, and neither do I expect to have set up automation for OpenBSD version updates. That will have to wait until next week.</p>
+  </body>
+</html>

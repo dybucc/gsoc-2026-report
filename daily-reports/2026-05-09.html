@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-09)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-09)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Work today was focused on solving yesterday’s open issues. This turned out pretty well, as most of them were fixed and have been proven to work out just fine (and the only one that didn’t get tested still got a patch.) Firstly, we tackled implementing the <code>ensure_libc</code> routine to fail in the library routine <code>scan</code> whenever the given path existed but did not correspond with <code>libc</code>’s codebase. This was very simple, and it made testing easier. While implementing this, a bug in the way the routine handling the second layer of event processing was found; Upon absence of events, it would just issue a termination event. The fix for this was also fairly simple and itself involved refactoring the code into simpler logic.</p>
+    <p>We then went on to fix the issues with CPU consumption in the rendering loop. The solution was again fairly straightforward, as we only had to stop looping on repeat to avoid adding up all those cycles. This was done by changing the same routine that we just refactored for event processing such that it awaited events from the first event processing layer; This makes it so that the async scheduler just waits on hold as no tasks can progress lest the input handler receives an event.</p>
+    <p>Finally, as I was testing things out, I found a new bug. This consisted of synchronization issues related to the way we handled thread-unsafe types from <code>syn</code> (and more specifically, from <code>proc-macro2</code>) within the parsing routines of the library with the core logic. As it turns out, my reasoning about <code>syn</code> types having fallback implementations that were thread-safe was not in the wrong, but did miss the fact that there’s some span-related functionality that relies on globals with TLS. Because we scanned the files, stored them in a type of our own and then parsed them, this caused issues whenever one task happened to run in a different thread from the one where the backing source map (an implementation detail of <code>proc-macro2</code> to keep track of file span information) was filled during file scanning. The solution I went for was to reduce the surface API of the backing library to offer only one entry point routine; The <code>scan</code> function. Previously, this parsed files, and then allowed the user to scan the constants from those files with a separate routine, which caused issues with the locality of storage between the thread in which files were scanned and the thread in which constants were parsed from. Now, the whole thing is done all at once; This has required some further refactoring of the core library but has both solved the issue and made for less instances of <code>unsafe</code> code to be used all throughout it (for the always-<code>Send + Sync</code> wrapper types.) This has not yet been tested, but <code>tracing</code> diagnostics lead to believe the issue lied in parsing constants (which fetched their spans when constructing our own abstractions over them,) and I think this issue should be solved, but of course, we’ll see.</p>
+    <p>Work on the PRs continues on halt.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The goal of this week was already accomplished yesterday, and ever since it’s all been about debugging issues to actually get a working rendering loop with something feasible on-screen. I believe I can get that done by tomorrow if no major issues arise. Beyond that, I plan next week to be dedicated to getting proper handling of all state in the drawing routine, as state updates are mostly done (only have to solve some issues with selection extension.) This should not take long, and so I hope I can debug some more stuff along the week, as well as throughout the week after the next.</p>
+  </body>
+</html>

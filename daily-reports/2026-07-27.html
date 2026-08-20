@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-27)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-27)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has shifted towards getting the new ctest usecase that appeared in the FreeBSD <code>netlink</code> PR patched.</p>
+    <p>I didn’t get any answer just yet from yesterday’s query, but I needed to solve this before moving on to something else. That’s why I decided I would try to solve the problem in the simplest possible way; Patch the libc-test build script, and avoid having to extend the test harness. I believe this to be the best approach because this usecase is not something we ever expect to support (even on 1.0,) and the FreeBSD PR itself only requires this as sort of hack.</p>
+    <p>I first started off by changing the main routine in charge of generating the tests in FreeBSD targets, so that it took an input variable that determined whether the currently tested interface was that of <code>net/if_mib.h</code> or that of <code>netlink/netlink.h</code>. Yes, this currently means we’re running the whole test suite twice but it’s a WIP and CI runs quick enough while I work through the solution.</p>
+    <p>This input variable is then used in the predicate for the macro we use for including headers in ctest’s test generator, so that we avoid having the <code>#include</code>s from both of the above headers collide in the C template. This same variable is then used to selectively skip certain symbols corresponding with those of either one of the two interfaces on the Rust side of things. This is necessary because ctest itself will try to generate C tests from the Rust items it parses (it doesn’t parse the C headers.)</p>
+    <p>This solved most of the test failures, but it needed some further tweaking to avoid testing other types that don’t conflict between headers but that just aren’t there when the <code>#include</code> is skipped.</p>
+    <p>The last thing I worked on was the SemVer tests. These get generated from plain text files that include a single symbol per line. Each of these is then parsed and included verbatim as an item import in a generated Rust file that contains nothing but the imports themselves. This is to ensure that the surface API of the bindings isn’t accidentally removed. The generator isn’t smart about the items, so it assumes all symbols are reexported at the crate root level. This means having a public submodule like that of the afore mentioned PR causes spurious errors.</p>
+    <p>The nifty thing here was that there’s no precedent of platforms tweaking these tests. We just removed the symbols from the plain text file when removal was in order. Ideally, I would want not to skip them because that would either way require setting up skipping logic (as this doesn’t rely on ctest.) The solution I’m working through right now is to keep a list of symbols that need to be imported not through a <code>libc::&lt;symbol></code> import statement, but through a more fine-grained <code>libc::netlink::&lt;symbol></code> import. This is still a WIP but I believe it to be the simplest solution that we can get rid of fairly simply once we settle on which interface to keep post-1.0.</p>
+    <p>Other issues I’ve looked into remain mostly unanswered. The MCP hasn’t received any new feedback. The Windows function pointer issue thread also remains silent.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Both the MCP and the Windows issue are currently on halt. I’m expecting to get an answer at some point throughout the week, and the same applies to the rest of open PRs. Still, it seems like folks have been laying low in the rust-lang/libc repo for the last few days, so I hope to finish up work on the ctest stuff by tomorrow. I expect the only thing left is to finish the SemVer tests’ patch, and tweak the FreeBSD test routine to avoid having it run everything but the affected bindings twice. Both of those should be simple tasks.</p>
+  </body>
+</html>

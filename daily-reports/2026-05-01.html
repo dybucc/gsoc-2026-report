@@ -3,20 +3,21 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Archived daily report (2026-05-01)</title>
+    <title>Daily report (2026-05-01)</title>
     <meta name="authors" content="Adam Martinez">
   </head>
   <body>
     <style>
       body{
-        color:#fff;background:#000;
-        margin:40px auto;
-        max-width:650px;
-        line-height:1.4;
-        font-size:18px;
-        padding:0 10px;}
-      h1{line-height:1.2; text-align:center}
-      h2,h3{line-height:1.2; border-bottom: 1px solid;}
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
       pre,blockquote,.signature{
         padding: 1em;
         background:#444;
@@ -25,8 +26,8 @@
         font-style: italic;
         margin: 2em 1em;}
       p,ul,ol { list-style-type: circle; text-align: justify;}
-      a { color:#169;text-decoration:none; padding:0.5em 0;}
-      a:hover { text-decoration:underline;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
       .center {
         display: block;
         margin-left: auto;
@@ -34,24 +35,24 @@
         width: 80%;
       }
       figcaption{ font-style: italic; font-size: 90%; text-align: center;}
-      aside{ font-size:50%;}
-      code{ font-size:80%;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
       .ref li{ margin: auto auto 1em; text-align: start;}
       .header{
         margin: 1em 0;
         display: block;
-        width:100%;
+        width: 100%;
       }
-      .horizontal { text-align: center; padding:10px 40px;}
+      .horizontal { text-align: center; padding: 10px 40px;}
       .horizontal li{display: inline-block; margin: 0 0.5em;}
       a[href^="mailto"]::after {content:' 📧';}
       a[href^="gemini"]::after {content:' 🚀';}
     </style>
     <h1>
-      Archived daily report (2026-05-01)<br>
+      Daily report (2026-05-01)<br>
       <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
     </h1>
-    <p>“This report was the only one that was not published the same day as it was written. It was first messaged to my mentor, and the day after, coupled with the report for that day.”</p>
+    <blockquote>This report was the only one that was not published the same day as it was written. It was first messaged to my mentor, and the day after, coupled with the report for that day.</blockquote>
     <hr>
     <p>At present, I believe to have finished the core functionality in the library backing the constant deprecator. Work on the binary started a few days ago, though today I have been staring at the code and thinking, so minimal changes have been made to the codebase. One change I made to the project plan since I presented my proposal was to remove support for keeping a record of constants on disk, as I deemed it unnecessary (deprecation of a set of selected, narrowed down constants is not dependent on anything else, and be effected on the codebase immediately) and quite possibly error-prone to keep track of in addition to version control.</p>
     <p>Beyond that, the currently open PRs I have in the <code>libc</code> GitHub repo are up-to-date and ever since I last commented on them, I have been awaiting further review/comments. I believe the work on all three PRs is complete, and each addresses one of the issues I found during <code>time_t</code> deprecation on Windows x86 GNU. According to my proposal plan, I should have finished the constant deprecator by the first to second weeks, and have already deprecated/tested it on the codebase for a fairly large amount of constants. At my current pace, I still believe that to be achievable; By the end of next week, I should have finished the logic around the renderer and input handler, but possibly not around the navigation modes in the deprecator’s prompt.</p>

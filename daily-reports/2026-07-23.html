@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-23)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-23)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has centered around four things. I’ve taken special care of annotating what I do throughout the day to avoid what happened in yesterday’s report.</p>
+    <ul>
+      <li>Reviewing the Fuchsia PR.</li>
+      <li>Reviewing the GNU/Hurd PR.</li>
+      <li>Reviewing the newlib PR.</li>
+      <li>Studying the Windows function pointer mismatch issues.</li>
+    </ul>
+    <p>The Fuchsia PR needed a little tweak that I had forgotten to address in the last two days. It’s only concerned with having <code>ssize_t</code>, which I made a <code>c_long</code>, go back to being an <code>isize</code>. This is because even though it’s a <code>c_long</code> upstream (all supportred Fuchsia targets follow LP64,) it’s best if we leave it as is; The effective bit width is the same.</p>
+    <p>The GNU/Hurd PR is mostly done. I already mentioned a few days ago that the target maintainer had approved the changes. The only thing that remained was for me to answer to some concerns my mentor had with the <code>glob</code> family of library functions. Those now conditionally redirect to different symbols, because that’s the way it is in glibc. In this patchset, though, there are no changes concerning <code>time_t</code> or records that use <code>time_t</code>. That’s because <code>glob_t</code> and <code>glob64_t</code> are effectively equivalent in our bindings. The fields that differ upstream are function pointers directly or indirectly involved with <code>time_t</code>. Of course, this means there’s bound to be different behavior if the user’s got the time64 feature test macros and corresponding <code>cfg</code> set. But that doesn’t apply here because those fields of <code>glob_t</code> and <code>glob64_t</code> (which are the types that the <code>glob</code> function family takes in) are private and declared as <code>*mut c_void</code> in our bindings.</p>
+    <p>The newlib PR didn’t need much attention either. I got back from my mentor in answer to yesterday’s small fix. They’ve put up a script that should make checking if some target builds easier.</p>
+    <p>Then comes the Windows function pointer issues. This was by far the highlight of the day. Two contributors chipped in and provided a fairly good explanation on why function pointers were comparing unequal between linked C functions in Rust and actual C. I decided I would use this chance to read through a bunch of the Microsof docs and some random folks’ findings on the inner workings of Windows executable files to study this a bit more. As it turns out, image files (the way Microsoft refers to what we’d call executable object files/modules in ELF) have a set of addressing tables in the PE header (which is much like the ELF program header.) One of these tables is called the Import Address Table, and is used to have one centralized place from which the loader can switch pages at runtime to provide resolved addresses for external DLL symbols. When you call some function from an external DLL (and assuming you’re not compiling with a certain optimization option that makes MSVC behave much like <code>rustc</code> with a single codegen unit,) this function gets replaced by the linker with an assembly thunk that performs a jump to a slot in the Import Address Table. The linker doesn’t have the slightest idea about the address of a symbol in an external DLL, so it resources to having that be determined at runtime. Then the loader fills in that slot of the Import Address Table with the resolved (exported) function from the external DLL. And so you end up with two jumps to call a function. Well, to avoid this, Microsoft allows you to annotate with an attribute the function that will be imported in the DLL (not the main executable) so that the compiler can already lower that to assembly that jumps straight into the Import Address Table. The details of this last part I’m still not entirely sure of, so take this with a grain of salt.</p>
+    <p>In Rust, the problem comes from the type of library we’re linking to through the <code>extern</code> block. Without any <code>#[link]</code> directives, the <code>extern</code> block just defaults to having any call to this routine in Rust code be a call to a static function. When you annotate such block with <code>#[link]</code> (and don’t add the type of library you’re linking against) this gets resolved to linking with a dynamic library. Then and only then, do we get the right jumps to the dllimport thunk that eventually gets us to the IAT slot and thus to the external DLL’s function.</p>
+    <p>This I only learned today, so I could very well be corrected or find out something new in the next few days.</p>
+    <p>This has prompted some discussion about the semantics that Rust implicitly encodes in the assembly calls that it makes on <code>extern</code> blocks that are not annotated with a <code>#[link]</code> attribute. But that is only preliminary.</p>
+    <p>Other issues I’ve commented on remain mostly unanswered. The PR I would be taking over is still pending.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The MCP hasn’t received any new comments today so that’s allowed me to work on the rest of the PRs that were pending and to finally get my hands dirty with the Windows function pointer issues. The plan for the rest of the week is to post the updated PR for the stale PR I took over with, and to potentially have the Windows issue resolved.</p>
+  </body>
+</html>

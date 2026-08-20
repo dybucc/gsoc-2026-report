@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-16)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-16)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p><strong>Edit (the day after:)</strong> I, again<sup id="loc-1" role="doc-noteref"><a href="#loc-2">*</a></sup>, forgot to mention one fairly important even that also took place yesterday; I got feedback on the GNU/Hurd PR. Overall, it didn’t require too many changes on my side, but I did have to comment on a few things that I wasn’t quite sure of.</p>
+    <p>Today worked went on to focus on two things:</p>
+    <ul>
+      <li>
+        <p>Finishing my read over the target version situtation and preparing a small write up to check with my mentor how should I proceed further.</p>
+      </li>
+      <li>
+        <p>Working on a review I had gotten on the AIX module.</p>
+      </li>
+    </ul>
+    <p>The bulk of today consisted of the former task, as the review only got to me once the day.</p>
+    <p>There’s not much to update beyond yesterday’s plan. I first finished reading through RFC 3750, and realized that really is stalled for reasons unbeknownst to me. There does not seem to be any concerning issues (beyond bikeshedding the <code>cfg</code> name) so I was surprised that it had not gotten any attention since October 2025. The details I already gave in yesterday’s report.</p>
+    <p>I then moved on to looking through RFC 3905, which is bit more tangential to our purposes but if merged, will quite definetely help in getting some form of target versioning <code>cfg</code> set up. It basically proposes to have <code>cfg</code>s be “typed” in the sense of possibly having a type check between the type of a given <code>cfg</code> key and then the string with which a given binary operation is being made. The RFC focuses on the <code>rust_version</code> and <code>rust_edition</code> <code>cfg</code>s, which would have a <code>version()</code> type; all other <code>cfg</code>s as we know them today would be of the <code>default</code> type. Then it exploits this to add a slightly more diverse set of operators to <code>cfg</code>s that make more sense when comparing versions; Namely, <code>>=</code> and <code>&lt;</code>. The system that would have to be implemented here would be potentially useful in other scenarios like OS-version checking and libc-version checking, which are the ones the libc crate is most interested in. Still, it doesn’t even have a PoC implementation nor does it seem like the type of thing we would be using in the short term because it would first have to land on stable (and our MSRV is fairly far away from that.) The <code>cfg</code> should in theory be usable on older versions but the operators (which are most useful to us) cannot be backported.</p>
+    <p>After this, I went through the MCP my mentor had opened on September 2025 to propose a change to the OpenBSD targets’ <code>target_os</code> <code>cfg</code>. That seems blocked because updating the targets would have to take place twice a year, which quickly adds up considering there’s 6 OpenBSD targets. The amount of work was considered too much, and it seems like the best way out would be for these targets to instead define an extra <code>cfg</code> property (like those that are already target-specific for the <code>target_cpu</code> <code>cfg</code>.)</p>
+    <p>With all of this context, I decided to go and ask on Zulip directly to my mentor whether I should attempt to move forward RFC 3750 or instead focus on revising the MCP with the feedback it had gotten. I believe my mentor has answered to this in the message prior to this one, but I’ve not yet read the answer.</p>
+    <p>Unexpectedly, I got a GitHub notification on the AIX PR by the end of the day. As it turns out, there were quite a few test failures with the patchset I had submitted. Still, it was easy to fix and/or justify, and I’ve already finished a review and pushed a new patch. I also asked the target maintainer (who had tested it out) to try again.</p>
+    <p>Other issues I’ve commented on remain unanswered.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>As mentioned yesterday, this week’s goal has been finished in advance. The situation for OpenBSD-like systems seems dire but the MCP could at least solve that for OpenBSD. The long-term solution goes through having one of (if not both) RFC 3750 and 3905 approved and merged, but that will take a while. I can’t quite provide a plan for the rest of the week or the next one just yet because I’ve not yet read my mentor’s answer (should be above this report.)</p>
+    <section role="doc-endnotes">
+      <ol style="list-style-type: none">
+        <li id="loc-2"><sup role="doc-backlink"><a href="#loc-1">*</a></sup><a href="https://rust-lang.zulipchat.com/#narrow/channel/421156-gsoc/topic/Project.3A.20libc.3A.20transition.20differing.20bit-width.20time/near/610897046">https://rust-lang.zulipchat.com/#narrow/channel/421156-gsoc/topic/Project.3A.20libc.3A.20transition.20differing.20bit-width.20time/near/610897046</a></li>
+      </ol>
+    </section>
+  </body>
+</html>

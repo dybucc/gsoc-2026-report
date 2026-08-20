@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-13)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-13)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has focused solely on the MCP implementation. I also finished the initial draft for the GSoC work product.</p>
+    <p>I got new feedback from my mentor on what I believed to be a finished initial implementation. Most of it is solved, but there’s one thing that’s held me up for the entire day.</p>
+    <p>The feedback basically said that it would be best if a given Rust compiler didn’t automatically lint on some unrecognized <code>target_env</code> value for an OpenBSD version if such version is newer than the one in the version of rustc that’s compiled at that point.</p>
+    <p>That could maybe happen with some older rustc version maintained in the OpenBSD ports, whereby some crate would try to provide support up to the latest rustc (and OpenBSD versions) but the older rustc compiling that would notice <code>cfg</code>s using an unrecognized value for <code>target_env</code>.</p>
+    <p>That’s why I’ve been digging a bit into both the errors and lints section of the rustc dev guide, as well as the actual code under both <code>rustc_lint</code> and <code>rustc_session::lint</code>. I’m not even close to done, but I think I got a high-level overview.</p>
+    <p>I also worked on the GSoC work product. I finished up some stuff I wanted to include in the closing words and fixed some broken links. I would say it’s ready, but I’d prefer to read through it one more time.</p>
+    <h2>2. Blockers</h2>
+    <p>None.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The GSoC work product is done and tomorrow I will be giving it a review before messaging my mentor asking for initial feedback. I’m not sure about this, though, as the document turned out a bit long.</p>
+    <p>The MCP implementation work will likely take me two to three more days. I don’t think I will be capable of providing something satisfactory in less time, as I barely know anything about the diagnostics system in rustc.</p>
+  </body>
+</html>

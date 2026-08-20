@@ -8,16 +8,16 @@
   </head>
   <body>
     <style>
-      
       body{
-        color:#fff;background:#000;
-        margin:40px auto;
-        max-width:650px;
-        line-height:1.4;
-        font-size:18px;
-        padding:0 10px;}
-      h1{line-height:1.2; text-align:center}
-      h2,h3{line-height:1.2; border-bottom: 1px solid;}
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
       pre,blockquote,.signature{
         padding: 1em;
         background:#444;
@@ -26,8 +26,8 @@
         font-style: italic;
         margin: 2em 1em;}
       p,ul,ol { list-style-type: circle; text-align: justify;}
-      a { color:#169;text-decoration:none; padding:0.5em 0;}
-      a:hover { text-decoration:underline;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
       .center {
         display: block;
         margin-left: auto;
@@ -35,15 +35,15 @@
         width: 80%;
       }
       figcaption{ font-style: italic; font-size: 90%; text-align: center;}
-      aside{ font-size:50%;}
-      code{ font-size:80%;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
       .ref li{ margin: auto auto 1em; text-align: start;}
       .header{
         margin: 1em 0;
         display: block;
-        width:100%;
+        width: 100%;
       }
-      .horizontal { text-align: center; padding:10px 40px;}
+      .horizontal { text-align: center; padding: 10px 40px;}
       .horizontal li{display: inline-block; margin: 0 0.5em;}
       a[href^="mailto"]::after {content:' 📧';}
       a[href^="gemini"]::after {content:' 🚀';}
@@ -122,7 +122,7 @@
     <p>My initial proposal outlined two main goals; I intended on solving a long-standing issue concerning certain constant symbols, to then go on and solve some doubts and issues around matters Y2038.</p>
     <p>If time allowed, I would follow through with other issues included in the 1.0 milestone. The above two seemed to be the more pressing concerns from a first approximation, and had been stale or largely in need of work for a few years.</p>
     <p>The proposal plan was followed to the letter, and the timeline was even improved by finishing up work on the main two issues I intended on tackling earlier than expected.</p>
-    <p>Throughout GSoC, a report of all my activities each day was submitted on the Zulip thread associated with this project <span id="loc-3">[</span><a href="#loc-71" role="doc-biblioref">Mar26a</a>].</p>
+    <p>Throughout GSoC, a report of all my activities each day was submitted on the Zulip thread associated with this project <span id="loc-3">[</span><a href="#loc-71" role="doc-biblioref">Mar26a</a>]. That thread contains both the daily reports as well as some recurring discussion. For a list of the reports only, <a href="./daily-reports/">this page</a> contains a list of all reports compiled in this page.</p>
     <p>The first three weeks were spent on the issue concernig constant deprecation. That issue consisted of going through all supported targets, ensuring there were no un-deprecated constants left that fit a given criteria.</p>
     <p>Such criteria was not completely well-defined from prior discussion, but it generally included symbols often used in C to denote the “last” or “limit” value in a list of other constants and/or enumeration variants.</p>
     <p>Notably, I further narrowed down the “limit” constants to those classified by the POSIX and SUS standards as being pathname variable or runtime increasable values under their section on header file <code>limits.h</code>.</p>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-30)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-30)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today we worked on finishing up work on constant deprecation. I’ve already covered all of the constants I had in mind; All <code>*MAX</code> constants, as well as all <code>*NUM</code> constants.</p>
+    <p>Yesterday’s efforts on the former group has finally culminated in a final PR (meaning it stopped being a draft PR.) This meant a bunch more research into both kernel and standard library implementation source code, though I won’t go into any details in this report. See <a href="https://github.com/rust-lang/libc/issues/5122">rust-lang/libc#5122</a> for notes on each and every constant (or set of constants). Of note is that I couldn’t get my hands on the QNX Neutrino SDK so I could not have a look into the header files for that one target. I did get to deprecate the constants that I realized matched those values POSIX defines as non-runtime invariant.</p>
+    <p>The latter group of constants was fairly easy to go through. I did short work of it, and another PR with those batched changes is ready.</p>
+    <p>At this point, I would like to ask for some input by Trevor Gross, as I believe I have went through most if not all constants with an immediately obvious SemVer-breakage issue.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>This week’s goal has been met, and I’ve even gotten to finish up what I expected would take me all of next week. This does not mean that I can just move on to the next part of the proposal, but it does mean I can start work on it. I believe next week I will get some response back from other <code>libc</code> maintainers on comments I made across the different PRs I submitted concerned with deprecation work. Either way, I will start working on the bit-width transition issues again starting tomorrow (following from the changes I already made prior to GSoC.)</p>
+  </body>
+</html>

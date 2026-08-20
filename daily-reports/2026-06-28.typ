@@ -9,8 +9,10 @@ Today work has focused on three things.
 
 - Gathering information on yesterday's attempts at solving the function pointer
   mismatches on Windows x86 GNU.
+
 - Fixing up the currenlty open Windows PR. The other Windows PR got merged
   yesterday. This one needs adding a `cfg` to the changes introduced in that PR.
+
 - Looking into the GNU Hurd module. I started checking out `time_t` and file
   offset types.
 

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-17)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-17)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was mostly focused on getting something implemented to fix yesterday’s issue with constants not having their spans correctly updated when saving to disk. This has eventually lead to rethinking the whole approach to performing the roundtrip from loading a file to memory, parsing it, and then saving it back to disk.</p>
+    <p>Initially, some further test runs lead me to believe that just unparsing the <code>syn::File</code> and saving it to disk would be insufficient. This was due to the fact the way these files get parsed onto memory discards a large amount of information that is source-irrelevant, like comments and whitespace. To this we must add the already buggy behavior where constants were not having their spans updated when a deprecation attribute was added to them while saving to disk. Ensuring they were would require rerunning the <code>syn</code> parsing utilities over the saved file to get the updated spans, so I decided I could as well improve the whole pipeline.</p>
+    <p>Because the tool I’m developping is meant to seamlessly integrate with the actual <code>libc</code> codebase, just saving to disk the <code>Display</code> implementation of the resulting <code>TokenStream</code> doesn’t do it. Back when I was implementing the initial version of the core library, I had only thought of keeping whitespace as best as the <code>prettyplease</code> library could keep it, but had completely forgot about comments. That is why today I first attempted to develop a replacement parser solely for constant items and the <code>cfg_if</code> macro in hopes of replacing <code>syn</code>. Of course, soon enough I realized that was not going to work out because even though we only parse items and macro invocations at the module scope level, we also require parsing attributes (more specifically, ensuring that we either already have a deprecated item or not.) From that point on, I decided to keep the part of the core libary that parses from disk on entry, and to only implement a replacement parser that used <code>syn</code> in certain areas of the code (like attributes.) This should allow me to have more control over how does the output file we save to disk look, as the parser should keep a mutable view over the byte slice of the file. Then it would parse the contents with <code>syn</code>’s help; We still parse the byte slice into a <code>File</code>, but we don’t convert that back to a string and use <code>prettyplease</code>. Instead, we go through each of the module items and macro invocations that have been parsed and provide a mutable view into the parsed <code>ItemConst</code>s. Then, because each of those items also keeps track of the start and end spans, a formatter type fetches each of those <code>ItemConst</code> and <code>ItemMacro</code> after having been modified through the externally sourced closure, and manually creates a byte vector to replace the start and end spans of the item prior to modification. This then gets inserted to the output byte vector that is saved to disk.</p>
+    <p>Though all of this is mostly just talk, as no work whatsoever has gone into incorporating it into the codebase. Instead, I started to work on a separate binary (akin to working in Godbolt in C/C++) to have less overhead from the entire project as I first tried things out. I first had to figure out whether spans were updated internally by the <code>syn</code> data structures, to then see whether my plan was feasible. At present, I have uploaded a GitHub Gist with that isolated work <a href="https://gist.github.com/dybucc/0eaeb1ad18c6ddc1795b8b80ecccab13">here</a>.</p>
+    <p>The PRs got rebased.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Then again, I have to extend anew the time I have to allot to fixing the issue with saving constants to disk. This means it will likely take me two more days to implement everything and test it out. Beyond that, scrolling should come up next, and then including the path of the parsed constants on the filter list. The issue with saving to disk can’t be left for later, as it’s literally the one thing that must work as best as I can make it work. This means preserving as much formatting from the codebase as possible, especially inside the <code>cfg_if</code> body, where runnning <code>rustfmt</code> afterwards won’t work. Considering the “coding period” starts next week, and from that point on I have one week to finish up this tool, I still believe I can finish this part of my proposal on time.</p>
+  </body>
+</html>

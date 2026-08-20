@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-27)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-27)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today we worked on finishing up yesterday’s refactor, starting to deprecate symbols and issue patches to the <code>libc</code> PR tracker, and fixing some bugs I found along the way.</p>
+    <p>Firstly, the refactor concerning the combinator logic was fairly straightforward to finish up and was a true gift of the galactic emperor. Getting a set of futures produced from an iterator into a stream that folds down to a task pool and then unfolds back the whole thing into another stream that reduces all fallible task results is genuine bliss. Once that was done, though, I realized I didn’t quite get through with the <code>tracing</code> refactor, as the dependency was still being pulled unconditionally. The fix was simple, though, as just making it optional and transitively adding it to the set of “after-effects” the <code>tracing</code> feature has on both the core library and the binary did the trick.</p>
+    <p>Beyond that, I started out with actual deprecation work, and found two bugs so far (both of which have been fixed and “tested.”) As I was writing some regexes, I realized that the program just bailed out when syntax parsing failed. This was far from ideal, and has now been changed to instead report an error message that the user can exit out of with any key press. The prompt is then cleared and the deprecation session resumes with the prior search results.</p>
+    <p>The other bug was also fairly simple to fix; The flag that keeps track of the modified constant was not getting updated after saving changes to disk. This then caused constants that had already been modified (but not had their modification stamp reset) to be deprecated again (in the case of undeprecation, nothing happened as there is no attribute to remove.) The end result was having multiple deprecation attributes annotating the same item. Patching this simply required updating the modified flag alongside the spans of modified constants in the <code>ConstContainer::update_spans</code> routine, which has now been renamed to <code>ConstContainer::update</code> to reflect its new responsibilities.</p>
+    <p>Finally, deprecation work today was light as I focused first on getting rid of constants that had already been identified to cause issues. At present, this has meant looking through the source code of the different BSDs for which the <code>ELAST</code> constant was defined, and ensuring they all use it for the same purpose; Namely, as the largest <code>errno</code> value one may find after calling into library routines. A PR has been opened with these changes in <a href="https://github.com/rust-lang/rust/issues/5118">#5118</a>.</p>
+    <p>I did want to ask Trevor Gross, though, about one other constant I’ve been looking into. The <code>RAND_MAX</code> constant (present in tree hierarchies other than that of the BSDs) seems to have been changed in FreeBSD 12 but not ever since FreeBSD 13. I’ve not yet looked into the <code>git blame</code> of changes to other target OSs where the constant is defined so I can’t say for sure if it should be deprecated in other modules.</p>
+    <p>I would like to mention that the <code>libc-constant-deprecator</code> is potentially ready for external use. This was the plan all along in the written proposal, and bug reports are very much welcome.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>As per the stated weekly plan, deprecation work has started, and alongside it bugs have started to pop up. I expect tomorrow to repeat the same routine as today; Look into some constants that are already known to have caused SemVer issues, look into their upstream source code and repeat again with constants (possibly) declared alongside those. For the time being, I’m focusing on the BSD family, and more specifically, on the FreeBSD tree, where there seems to have been quite a few changes across releases 11-15.</p>
+  </body>
+</html>

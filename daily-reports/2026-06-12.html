@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-12)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-12)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today efforts were centered around solving the errors that started popping up from building the <code>libc</code> crate with the file offset patch, and getting a working toolchain to test those out in MIPS targets.</p>
+    <p>The first task has been completed. As it turns out, the last few errors that I read through yesterday before writing the report were actually spurious errors. There seems to be a long-standing issue in L4Re targets where not even std builds. This seems to be related to issues in the types used in std from <code>libc</code>. There’s still an open issue in upstream <code>rust-lang/rust</code> about it, but the new maintainer does not yet seem to have his working std merged. His changes on the libc crate, though, are causing the current build failures. But then again, it could be his changes have only been merged in <code>libc</code> and not in std.</p>
+    <p>After realizing all errors from building std were unrelated and not meant to be solved, I ended up with two patches; The one for file offsets, and one that solves the conflicting definitions between symbols of the <code>uclibc</code> module and the top-level <code>linux_l4re_shared</code> module. The latter is believed to be unrelated to the current state of L4Re targets, and has already had a corresponding PR open. The one concerning file offsets is in the process of having its PR open. The write up is ready but the sources must still be gathered. I quite badly forgot to take note of them as I was making changes so now i have to go through the whole patch looking them up in upstream uclibc-ng.</p>
+    <p>Beyond that, all work has gone into attempting to compile the toolchain packaging a full bootloader, kernel and compiler tools. Yesterday’s attempt failed (though the compilation results got cached.) This ended up not being due to connection resolution errors to remote servers, but rather due to the same <code>libcoddy</code> errors found while using OpenADK. For some reason, there’s unresolved symbols in the final object file’s <code>.text</code> section of the library’s object files, and there’s no issues upstream tracking it. Because building anew did not yield any results, I instead went for the option that Builroot offers for externally sourced toolchains (prepackaged toolchains that don’t require building.)</p>
+    <p>The toolchain I got from bootlin’s toolchain repository, but even then, Buildroot still found errors in the compilation pipeline. This time, they were due to executable mismatch errors. At the end of the build, Builroot ensures everything is working by running a few shell scripts on the host machine attempting to run the cross-compilation compilers shipped in the toolchain. In the VM I was doing this in, there seems to be an incompatibility in the format of the object file ran. Later on, I found out that the toolchains distributed by bootlin are cross-compilation toolchains were the host is meant to be using the x86_64 ISA. My host (both my actual machine and the VM I mounted) where Aarch64.</p>
+    <p>While researching into the bootlin docs to solve the above issue, I found their training manuals for testing out in QEMU the cross-compilation toolchain. There’s not yet been time to go through it all, but this will be the next solution (and possibly the last) i will try to get the toolchain working for MIPS targets and test the file offset patch.</p>
+    <p>There’s not been any progress on other open PRs.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The file offset patch is done and only requires annotating sources. That will be done by tomorrow. Testing for this patch and last week’s <code>time_t</code> patch on MIPS uClibc is pending and will be put on halt if I don’t get the toolchain and QEMU working by the end of the week. Those PRs will be left as drafts then with the corresponding tests checkbox unmarked. That should about do it for this week’s work.</p>
+  </body>
+</html>

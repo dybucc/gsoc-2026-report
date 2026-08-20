@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-11)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-11)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was again focused around PR feedback review, merging and whatnot.</p>
+    <ul>
+      <li>
+        <p>I finished up work on the AIX PRs. This I started yesterday and had already planned for.</p>
+      </li>
+      <li>
+        <p>I tweaked some the FreeBSD PR and got the SemVer tests passing after my mentor suggseted a possible solution.</p>
+      </li>
+      <li>
+        <p>I commented some on the issue concerning the ctest test harness extension.</p>
+      </li>
+      <li>
+        <p>I solved some merge conflicts on other PRs after some older PRs got recently merged.</p>
+      </li>
+      <li>
+        <p>I worked on the GSoC work product.</p>
+      </li>
+      <li>
+        <p>I started reviewing the latest feedback I got on the FreeBSD <code>netlink</code> PR.</p>
+      </li>
+    </ul>
+    <p>The AIX PRs didn’t take too long to finish up. They were simple fixes concerning some symbols that are best left opaque, to which I added some source control clean ups to make clear which changes corresponded to which patch.</p>
+    <p>The next thing I did was to review the FreeBSD PR. My mentor had suggested that things could maybe just work if we appended the path to the now public submodule in the SemVer tests. This did the trick.</p>
+    <p>I’ve gotten to some newer feedback later on today, but things seem to be working out just fine thus far. The new feedback is concerned with some clean ups on the way we handle publicly-exposed modules, but I think I’ve got an idea for that.</p>
+    <p>That work is mostly done but pending some an answer to the GitHub PR thread.</p>
+    <p>The ctest test harness extension discussion tagged me because I could potentially be facing the same issues in the FreeBSD PR. I alredy mentioned that I didn’t think my mentor’s concerns were warranted and I’ve reiterated on that today.</p>
+    <p>Then I got to solve merge conflicts on some of the pending PRs after the emscripten and Android PRs got merged. These added a few comments that I had to quite easily rebase onto from the pending PRs’ branches.</p>
+    <p>I then worked on the GSoC work product report, which at this point is almost done (at least, the initial draft.) I expect to have finished it by tomorrow or the day after, which means I’ll have one to two days to review before asking for feedback.</p>
+    <h2>2. Blockers</h2>
+    <p>None.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The FreeBSD PR seems on track to being merged. It’s only going to need some small clean ups that I think I’ve figured out. I believe I should be done with this early tomorrow or even now after submitting today’s report.</p>
+    <p>Beyond that, there’s some new feedback I’ve received throughout today on some PRs that I’ve yet to attend, so that’s likely going to take up some more time tomorrow. I do expect to be able to get to some new issues/stale PRs in the 1.0 milestone.</p>
+  </body>
+</html>

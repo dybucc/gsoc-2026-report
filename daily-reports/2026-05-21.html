@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-21)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-21)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today we worked on getting the scrolling implementation finished. This was actually far easier than I expected, and at present, all cases that were not handled in yesterday’s patch are now fixed.</p>
+    <p>The implementation itself is fairly straightforward, though I have refrained from refactoring it into a simpler, single-index based representation for the time being (following up on yesterday’s talk about there being a far simpler way of doing things here.) The first patch today addressed the possibility to scroll while in select mode. This required another refactor of the selection implementation itself, as I intended on keeping its underlying range to be a representation of the actual range of constants in the data container. This required reimplementing a few primitives of the <code>Selection</code> type, such that it used <code>usize</code>s instead of <code>u16</code>s. This, though, was fairly simple to adapt in most callsites. Of course, because the bounds of the selection are not made up of the visible area of the list anymore, there had to be some tweaking of the <code>Selection::extend</code> routine. Though, by far, the one routine that required the largest rework was the <code>finalize_select_list</code> function. This is used as part of the drawing routine to highlight some items of the list after having already printed the filter list out. Still, the changes were mostly related to ensuring I understood right the relationship between the offsets into the container, the position on the visible area of the list, and the selection range within the container. Combining those three to produce offsets into the visible list took a while, but the end result is satisfactory.</p>
+    <p>Once I went thorugh a few test runs, everything seemed to work, except for toggling, which was oddly setting the deprecation state right but not unsetting it. Fortunately, this is not related to the write-to-disk issue, as I speak only of the in-memory state in this instance. A patch has not yet been implemented but it should be fairly simple to fix. As I was trying to solve this, though, I realized that the <code>Visit</code> and <code>VisitMut</code> trait implementations were in dire need of some refactoring, so I got to it but have so far not finished. I believe I can get it done by tomorrow, and it just may be that the refactor fixes the toggling issues altogether.</p>
+    <p>All through this, the code for the core library also got a bit of a clean up, as there were some stray modules with prior implementations of patches to the write-to-disk bug that I ended up scratching. I also <code>const</code>ified a bunch of things.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Scrolling support is virtually done, and the only thing left is to fix the toggling operation, which I am completely sure is unrelated to the selection implementation itself (and for that matter, I don’t even believe it’s tied to the logic implemented in the binary.) This means I should have finished by tomorrow unless some nasty new bug creeps up, but I don’t expect that to happen. If everything goes as planned, I should have finished not only this week’s goal before time, but also have two more days to enhance some visuals of the TUI. One of the first things that I would like to improve is the display of source paths for the list items, which at present is only appended to the constant’s identifier (with no path post-processing, so you get the raw path and not just the path relative to the <code>src</code> directory in the repo.) It would also be great if the value of the constant could be displayed.</p>
+  </body>
+</html>

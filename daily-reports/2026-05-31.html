@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-31)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-31)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today we worked on getting some work done on the type bit-width side, and on fixing up some of the currently open PRs targetting deprecation of constants.</p>
+    <p>After finishing up with the constant deprecation yesterday, I started looking again into the bit-width transitioning issues with time and file offset types. On Windows, the currently open PRs are still on halt as I await a response from my mentor. On other platforms, though, work is still pending. That’s why I kept going through all target OSs we declare at the top-level of the <code>libc</code> crate, after Windows. So far, I believe I’m done with Fuchsia and VxWorks. The former required some discussion and is still very much an open question whether deprecation of the <code>off64_t</code> type should actually move forward. I won’t go into the details because I already prepared a write up on the PR description, so look into that if you’re interested. On VxWorks, though, things were fairly simple. The definitions between <code>off64_t</code> and <code>off_t</code> were straightforward to work through in their header files, and there were no conflicts with other symbols/routines using the suffixed variant (now deprecated.) There was, though, one thing to note about the way the bit-width of that one type is handled when the operating system is operating in either one of an RTP (Real Time Process running in user land) or in kernel mode. Though then again, see the corresponding PR for details. I haven’t mentioned the <code>time_t</code> type on none of the above two target OSs because they already define only a single 64-bit <code>time_t</code>.</p>
+    <p>All through this, I realized I could also submit another PR that more smoothly allowed users to use the nightly features required in the <code>libc</code> crate. I realized this was a bit of a pain point while solving the style checks on CI in my open PRs, where a stable <code>rustfmt</code> would not recognize the unstable configuration options used in <code>libc</code>’s <code>.rustfmt.toml</code> file. This meant a user was either required to manually configure an override with <code>rustup</code> or otherwise just have the nightly toolchain as their default. The patch I submitted included a <code>rust-toolchain.toml</code> file that would do that “automatically” (with manual intervention if some component like <code>rustfmt</code> was not installed) as <code>rustup</code> will just read that and use the right version. This required some changes in CI because this takes priority over setting the default toolchain in the current Rust install scripts, but I believe to have also solved that with some other changes (CI passes, but we’ll see.)</p>
+    <p>Finally, I got back from one of the regular contributors/maintainers to the <code>libc</code> crate on one of my open PRs, and realized I had idiotically deprecated constants starting on <code>1.0.0</code>. This meant the lint would not trigger until that version was reached in the crate release, which is, of course, not ideal because we’re trying to move all library users out of deprecated behavior before removing it altogether in the 1.0 release. That got solved, and now those PRs are awaiting further comments from maintainers/my mentor.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Next week was supposed to continue deprecation work. That is, in theory, already done. But I still need to get feedback on that, so work on this is likely to continue this week. That does not mean I won’t be working, like I have today, on the bit-width transitioning issues. It just so happens I will be focusing on this task, while keeping an eye on new comments to the PRs I got open concerning constant deprecation.</p>
+  </body>
+</html>

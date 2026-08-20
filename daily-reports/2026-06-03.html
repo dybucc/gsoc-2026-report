@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-03)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-03)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on (finally) getting both the official ESP-IDF toolchain and the Rust compatibitliy toolchain working together, and on finishin up work under the <code>unix/newlib</code> module. Much like yesterday’s report, the write up reflects notes taken as progress was being made, so at times it may come off as short scribbles. This was only ever so slightly edited to provide an “official” record of the bulk of today’s work.</p>
+    <p>Attempting to modify the CMake generated files was futile, as the dependency graph is complex enough that manual intervention is not feasible. The build system, Ninja, reads straight from those files, but does not seem check if an existing (incomplete) build of the bootloader already exists. This triggers a rebuild of both the 2nd stage bootloader and the flash program. That’s where the issues arise, as the Rust crate is built alongside the bootloader, which does not include in its compilation pipeline the directories that the Rust bindings require. Later on, this was found to not be the source of the symbol resolution errors.</p>
+    <p>After this, work switched to inspecting the verbose output of Cargo when issuing the build command to the <code>idf.py</code> build driver. It was thought that this could reveal some way of patching the upstream crate to include certain directories instead of reading in from the build environment. But debugging the Rust build in the mixed CMake/Rust template from the esp-rs org did not yield any fruitful results beyond what was already known. The stack backtraces did not show any missing headers from the routine in charge of detecting if the any driver component involved in the build.</p>
+    <p>Still, the debugging session over the <code>esp-idf-sys</code> crate did reveal that the error does not seem to happen when the header files are processed by the compiler driver. This followed from inspecting the build script of that crate (which is a transitive dependency of all espressif Rust-based projects.) The error does not seem to be in the closure that generates the bindings, but in the preprocessing step right before it. The header file included in the bindgen generator is the one under the <code>src/include</code> directory of the <code>esp-idf-sys</code> crate. This header is the one causing symbol resolution errors. These errors take place in an internal parsing routine of the bindgen crate where the AST produced by the <code>clang</code> driver is transformed into their internal representation. This did confirm the fact that the source of issues is the unavailability of certain headers in the toolchain that the Rust crate builds with.</p>
+    <p>An alternative aproach was then taken to patch the upstream repo for the official ESP-IDF toolchain. The goal was to unset the <code>BOOTLOADER_BUILD</code> property when the <code>components/driver</code> espressif component is built. The component implementors already took into consideration not using the corresponding headers during the developemnt process, so it should be alright. The only exception would’ve been if there were headers with the same name on multiple translation units for each compiled component. Even though this did not end up being an issue, it did not solve the symbol availability errors. Then a build was attempted by explicitly unsetting the <code>BOOTLOADER_BUILD</code> property in the <code>CMAKeLists.txt</code> file. This was done through the <code>idf_build_unset_property</code> CMake function provided by the official ESP-IDF toolchain, but it did not solve the problems. This also proved that the problems were not coming from compiling the Rust crate right before the bootloader.</p>
+    <p>Making the ESP-IDF toolchain installation work through the conventional (but apparently not recommended) Git repo install scripts did the trick. Thus far, all attempts had been using the <code>eim</code> toolchain manager provided by espressif, which serves a similar purpose to <code>rustup</code>. This installs the toolchain but also recommends running a few shell scripts when developing in an espressif CMake project that conflict with the tooling provided by the esp-rs org. Instead, one must manually run the <code>install</code> script and then the <code>export</code> scripts (the former not even mentioned in the regular install, as it’s meant to be run only by <code>eim</code>.)</p>
+    <p>This finally built both the image and the 2nd stage bootloader.</p>
+    <p>To summarize and for future reference, the following steps did the trick:</p>
+    <ol>
+      <li value="1">Install <code>esp-rs/espup</code> and ensure the Rust toolchain can build without issues (in a project with no mixed support for CMake.) Ensure the <code>export-esp.sh</code> shell script is ran before all steps following this one.</li>
+      <li value="2">Install the official toolchain through the <code>eim</code> toolchain manager. Ensure that the toolchain matches the latest stable release for which bindings in the <code>esp-idf-sys</code> crate are generated.</li>
+      <li value="3">Do not run any of the recommended shell scripts that set up shell definitions and environment variables.</li>
+      <li value="4">Run the <code>install.*</code> script found in the installation directory of the toolchain installed through <code>eim</code>. The above wildcard pattern should match the user’s shell of choice, though support for sligthly unconventional shells like nushell is limited. Any shell supporting basic compatibility with the POSIX-compliant <code>sh</code> should do just fine with the <code>install.sh</code> script.</li>
+      <li value="5">Run the <code>export.*</code> shell script found in the toolchain installation directory (the same as in the previous step.)</li>
+      <li value="6"><strong>(Optional)</strong> Run <code>idf_tools.py install qemu-xtensa</code> to install the QEMU emulator with support for the Xtensa chip family (which the <code>esp-32</code> chips are based on.)</li>
+      <li value="7"><strong>(Required only if step 6 was followed)</strong> Run agan the <code>export.*</code> shell script to make the newly installed QEMU available to the <code>idf.py</code> build driver.</li>
+    </ol>
+    <blockquote>Before step 1, it is assumed that no installation of ESP-IDF nor the tools provided by the esp-rs org are present on the system. If the latter is installed and it has been installed though <code>eim</code>, then the <code>eim purge</code> command should remove all installed versions. Steps 6 through 7 are only required the first time the toolchain is installed. Subsequent runs should automatically detect the QEMU binary after going through steps 4 and 5.</blockquote>
+    <p>The flaw in all prior attempts (including the very first one yesterday) was to mix the installation instructions from the ESP-IDF documentation with those in the <code>esp-rs/esp-idf-template</code> project. The steps above must be followed without fault, lest one knows better.</p>
+    <p>The test ran to prove the (relative) correctness of these changes simply consisted of calling <code>size_of::&lt;T>()</code> for <code>T</code>s equivalent to the types modified in the patch. The returned bitwidth was then logged through and output through the QEMU monitor.</p>
+    <p>Introducing a CI run for the ESP-IDF toolchain was thought but eventually discarded as <code>libc</code> does not seem to include any tier 3 targets in their CI.</p>
+    <p>Before the end of the day, work on fixing the <code>off_t</code> type under newlib was also finished and tested on <code>esp-32</code>. The issue seemed fairly odd, as the upstream repo maintained by the Cygwin developers keeps a definition for both types that is left untouched in the corresponding forks of all three of espressif’s <code>esp-32</code>, the VitaSDK and the devkitARM for development on <code>horizon</code>. There was some special casing done on the first two but that did not seem necessary based off of their definitions. This has been tested under <code>esp-32</code> with the emulation setup that was also used today for <code>time_t</code>, and it seems the changes are (then again, relatively) correct. Testing the changes on <code>vita</code> and <code>horizon</code> will have to wait until days June 6th through June 7th.</p>
+    <p>Other PRs continue open and awaiting input from other contributors/my mentor.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Currrent progress on the bit-width transition for <code>time_t</code> and <code>off_t</code> is progressing at a decent pace. The <code>unix/newlib</code> module is done, and only testing remains on the <code>horizon</code> and <code>vita</code> tier 3 targets. This will be finished by the end of the week, though it won’t be specifically addressed until days June 6th through June 7th. Work on other submodules of the <code>unix</code> tree shall continue until Friday. This module is the largest one in the <code>libc</code> crate, but finishing the bit-width transition by weeks 6-7 is feasible.</p>
+  </body>
+</html>

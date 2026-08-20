@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-11)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-11)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today efforts were centered around continuing yesterday’s uClibc file offset types transition, and attempting to build a functional MIPS toolchain to test both those changes and the <code>time_t</code> patch. This has gone fairly well, and the latter task has quite definitely been met with more success (thus far) than this week’s initial attempts with OpenADK.</p>
+    <p>Much like yesterday, work started with the current patch for file offset types under Linux uClibc. This has been completely finished, which is great because this was expected to take up possibly two more days. Still, just attempting a cross-compiled build for each of the affected targets already produced multiple errors. Except for one error concerning the <code>dirent</code> record, which had been moved across modules because of the similarity in its field layout, all other item resolution errors seemed to be currently present in upstream libc (and thus unrelated to the file offset patch.)</p>
+    <p>Efforts on fixing these have already started, but are still unfinished. So far, it’s been fairly simple stuff to fix. Those changes are currently commited in the same branch but will be separated later on. At the time of writing, this has involved removing definitions for multiple constants from the uClibc module related to the <code>langinfo</code> header file. These are already defined in the <code>linux_l4re_shared</code> module top-level module, so they end up conflicting. The latter’s were kept, because the former actually mismatched the upstream uclibc-ng declarations.</p>
+    <p>A few errors were found on imports used by the standard library but these have not been fixed just yet nor will they be for the time being. They are part of the <code>l4re/uclibc</code> module, for which no changes have yet been made. That module follows from the current one (<code>linux</code>) so the errors will be fixed soon either way (after reviewing the Linux musl patch and finishing Linux glibc.)</p>
+    <p>Efforts on the toolchain bootstrapping side of things were met with a fair amount of success. After setting up Buildroot on a Linux virtual machine, the first few attempts at building failed but the reason was related to missing configuration settings. After more thoroughly reading the docs, the required configuration for the specific board to build the Linux kernel and the packaged bootloader was simple to set up. Buildroot uses the concept of boards because it’s mostly geared towards embedded development, but it also supports a wide array of QEMU “boards,” which include the MIPS platforms on which the uClibc patches need to be tested on.</p>
+    <p>At the time of writing, no build errors have happened, and all required binaries/libraries have been built successfully. The toolchain should leave me with a bootloader image and a kernel image that should be ready to plug into QEMU for emulating the system with uClibc as the default C standard library implementation. Still, the build is likely bound to fail. It’s been a few hours already and it’s not done (which is expected,) but my computer is going off the grid soon after this report is finished. If some dependency requires fetching from remote servers, the build will fail. Hopefully all of the compiled tools are cached and don’t have to be recompiled from scratch tomorrow. If that is the case, though, the build will instead be started from early morning instead of early evening (as it was today.)</p>
+    <p>There’s no news on other open PRs.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Yesterday it was expected for the file offset task to take up longer than it ended up taking. This is great, but I must not get ahead of myself. The task remains unfinished as long as there are build errors, and testing is still pending. Still, thorough testing seems to now be more viable than it was at the start of the week and that is, indeed, another parallel task I’m actively working on. The pending review to the changes to Linux musl that was left for later may even fit in this week’s schedule. But we’ll see.</p>
+  </body>
+</html>

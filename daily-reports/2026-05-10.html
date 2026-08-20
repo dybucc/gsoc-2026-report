@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-10)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-10)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today we worked on two main things; Refactoring the code from yesterday’s overhaul of the core library, and tweaking some details of both the pre-rendering terminal manipulation logic, and the (still bare) drawing logic. The refactor was required because yesterday we had to change the public API, and that meant tweaking some symbol availability across the crate, as well as moving some docs and refining some interfaces. This also allowed me to refactor the error handling module to be more modular in its internal implementation, such that there’s less reliance on direct construction and inner value matching for types that have sources of errors represented as enumeration variants.</p>
+    <p>Beyond that, the fix we implemented yesteryday for the synchronization issues proved to be correct, and multiple test runs show that there are no more panics during initialization due to missing span information. This meant that I could finally focus fully on the rendering loop, as well as fixing up other parts of the codebase that were still not working just fine. Work has started with a refactor of the routine in charge of making space for the TUI, which so far was attempting to get a similar effect to getting the terminal in cooked mode to move the entire contents of the terminal buffer up, to allow space for the TUI. I finally concluded that was infeasible; I delayed enabling raw mode until right before entering the rendering loop, and reworked the <code>prepare_space</code> routine to exploit the line buffering and line feed events in cooked mode. This allowed making code simpler in that routine, providing a very straigthforward way of getting the terminal emulator to “make space” for the 11 rows the TUI needs. Alongside these changes, the actual drawing routine within the rendering loop got refactored to coordinate with the escape sequences that we issued in the <code>prepare_space</code> routine (and thus require fewer commands to be issued anew.) As I was testing this out, one edge case uncovered a bug in the order of commands issued w.r.t. the time when the <code>SavePosition</code> command is issued. This caused the TUI to render incompletely once it entered the rendering loop whenever the user shell launched the program with less than 11 rows left in the terminal grid of their terminal emulator. This has not yet been fixed but should be fairly simple to patch up.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The goal of the week had already been accomplished two days ago, and today test runs have proven that the TUI layout looks as expected, except for the one edge case mentioned in the summary. This should be easily fixable, and so I plan next week to be dedicated to fixing issues with the selection logic, to then proceed to both implement and test out how does the drawing routine handle state updates (which themselves were already implemented this week.) I’m not sure if next week I can also fit in scrolling support, but we’ll see. Either way, the proposal plan continues as expected; By the first to second weeks of the “coding period,” the binary should be finished and actual deprecation of symbols should have started/finished.</p>
+  </body>
+</html>

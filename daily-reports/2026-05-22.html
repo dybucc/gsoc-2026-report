@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-22)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-22)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today we worked on getting scrolling completely working and refactoring the crate with the core library. The scrolling implementation was already working correctly in normal mode and a basic implementation when in select mode had been finished yesterday. An issue had also been identified in the way constants were being toggled while in select mode, which has been addressed today.</p>
+    <p>As mentioned in the last report, solving the afore mentioned issue had to go through refactoring the implementaiton for the <code>Visit</code> trait (and the overarching type infrastructure around it.) This required reimplementing the trait for <code>BorrowedContainer</code>, to adapt it with its now more generic interface, accepting a closure returning any type implementing <code>std::ops::Try</code>. Getting this to work, though, was quite finicky, as I did everything from within the macro body of the <code>visit_def</code> recursive macro used to define shared functionality in both <code>Visit</code> and <code>VisitMut</code>. Still, the end result was great and the solution was neat. Most of the provided methods expect to return a value of the same type as that implementing <code>Try</code>. Of course, simply calling the provided closure is insufficient as further prep-work must be done while already inside the closure with which we call the required method of the trait. This meant that the required method, itself expecting a closure returning some type implementing <code>Try</code>, had to return <code>ControlFlow&lt;Option&lt;R>></code> where <code>R</code> was the type implementing <code>Try</code> from the closure of the provided method. Then some combinators map the two branches to the values resulting from calling <code>&lt;R as FromResidual>::from_residual</code> and <code>&lt;R as Try>::from_output</code>, where the latter is always provided the unit tuple as part of the constraints imposed by the <code>Visit</code> trait.</p>
+    <p>After implementing this, the issue still remained, though in this case, it was due to the fact the constants being traversed did not carry with them information on their modification stamp nor on the initial state since the last save-to-disk operation. This was handled initially by embedding those two pieces of information into the closures that get passed, as they had so far been ignored but were actually part of the <code>BorrowedElement</code> type of which <code>BorrowedContainer</code> is composed. After realizing that just passing two more boolean flags was not quite doing it, I decided to refactor that part of the interface to provide a more precisely typed view into those two pieces of state. This ended up with the <code>VisitOptions</code> type, which holds either one of the modified stamp and the initial state stamp as exclusive references or as owned values (depending on whether the traversal is mutable or immutable through <code>Visit</code> or <code>VisitMut</code>.) The neat thing here was that I realized traversal was always known statically to be immutable or mutable, so embedding an enumeration into this new type was a waste. Instead, I replaced it with a union and a polymorphic type over which <code>VisitOptions</code> exists, that implements the sealed trait <code>TraversalMarker</code>. This trait is then implemented for two new ZSTs, <code>OwnedTraversal</code> and <code>ReferenceTraversal</code>. The <code>TypeId</code>s of each of these types then serve as the discriminant to ensure which of the two fields of the union we ought consider at a time; The owned boolean or the reference to a boolean. This also makes implementing certain methods like mutable getters exclusive to instances of <code>VisitOptions</code> that are parameterized with <code>ReferenceTraversal</code>.</p>
+    <p>Beyond that, work has gone into some fairly large restructuring of the core library crate, to ensure everything is cleanly organized. There’s really not much else to say in this front. This refactor, even though largely finished, is still pending some other changes I would like to see in the exposed interface. Of note is the removal of the <code>BorrowedSubset</code> type, which did not serve any purpose no more, as the <code>BorrowedContainer</code> has been a fixed-size container for a few patches already, and getting a contiguous view into it does not necessarily yield regex-matched symbold anymore.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Scrolling support is officially completed and with it, the fundamental functionality of both the binary and the core library. I believe by tomorrow I should have finished the refactors I intend on doing, and quite possibly have started (if not finished) a refactor to improve the looks of the displayed path for items in the filter list. This is the last goal I’m setting for the week, and I believe next week should really be dedicated to straight deprecation to really diagnose usability bugs. I would also like to implement display of the constant’s value, though we’ll see.</p>
+  </body>
+</html>

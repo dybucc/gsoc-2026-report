@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-14)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-14)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was solely concerned with the issue that yesterday we implemented a patch for, and which has revealed further bugs (some of which we already have patches for, and some of which we don’t.) We started off by implementing some type infrastructure around the <code>Spinner</code> type that had been used in the <code>init</code> routine, and for which wider use was now needed to report progress on the async operation that writes out the in-memory representations to disk. This was deemed necessary because this operation could take enough time for the user to notice a hang on the program (though only when modifying over thousands of constants at once.) Most of the work got completed on today’s first two commits, while the third one just refactored it to make the trait bounds on it less restrictive.</p>
+    <p>The implementation is simple to grasp, but there were some intricacies to the way the type system was expecting trait bounds to fit together for the async closure’s captured bindings that I could not understand, and had to find some alternative ways of fixing. The entry point is a single associated function that takes on an async closure to which the spinner provides a transmitter (as part of a channel) to communicate strings into it such that progress reporting may be updated at different intervals. Apparently, async closures require specifying that the future that is returned from calling the closure is <code>Send</code> for us to use them within contexts that require so. <code>tokio::task</code>s always require so, but the error messages were not simple to grok. Then came the trait bounds, which were quite finicky in their treatment of subtyping and I didn’t completely understand; The string type I used initially for the async closure was a <code>Cow&lt;'static, str></code> but the type system complained that that was not a general enough implementation for any possible lifetime in <code>Cow</code>. This was then fixed by using higher-ranked trait bounds on the <code>Cow</code> for any lifetime <code>'a'</code>. But then on all callsites the type system complained that the owning transmitter we get as part of the async closure was escaping the closure’s body, which is just not possible with the use we were giving it (especially considering this error was being triggered by a call to <code>send</code> on the transmitter.) At the end, I settled for the slightly less efficient <code>String</code> (as often times the spinner was used with static strings, and this just forces a heap allocation.)</p>
+    <p>With this implemented, the <code>init</code> routine got refactored to use the spinner type, and its own implementation got removed. The <code>State::update</code> routine also started using the spinner type to better handle the event where changes were being effected to disk. A <code>TODO</code> comment I wanted to solve regarding that one event was that it was the only reason why the whole method was async, and it really needed to report something to the user instead of just awaiting and putting the whole program on hold until the I/O operations were done. The logic here got quite finicky again, and for the time being, I’ve had to implement an <code>unsafe</code> wrapper over raw pointers to allow the task that gets launched there but never awaited to capture the required context from the running state. This is sound because the state will not be dropped, as the drawing routine keeps the other half of the channel with the receiver to show a spinner animation while the constants are saved to disk (and the drawing routine is called as a method on an instance of the running state.) One way to stop using <code>unsafe</code> here would likely go through using atomically reference-counted shared pointers, but I decided against it in favor of solving more pressing issues. And the threaded pointer type used here also ended up being used in other callsites of the <code>Spinner::run_while</code> routine to assert that the trait values could be moved inside the closure even if they weren’t <code>'static</code>. This is sound because the spinner awaits completion of its tasks, and at callsite, we always await completion of the spinner future itself as soon as it the call is made.</p>
+    <p>Finally, the bug that yesterday got a patch was found to be correct in its fix, but insufficient to properly solve the problem. Minutes before I started writing this report, I found the source of issues, so the fix is not yet implemented, but considerable tracing information has been added to the logs to diagnose it. Apparently, the filtering operation that reused a borrowed contaienr cleared and updated the non-owning container with the new regex-matched results, but forgot to update as well the other piece of state these views keep over the owning container; The initial state with which the program is initialized. This then causes that the amount of symbols in the former buffer ends up (possibly) smaller than that of the latter buffer, thus causing the initialization state (concerning modification) to mismatch the current elements in the view with the elements that were previously in the view.</p>
+    <p>The PRs got rebased onto latest <code>main</code>.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The issue that was diagnosed today but not fully fixed will likely be solved by tomorrow. Beyond that, I expect to have finished scrolling support by the end of the week, which should make next week the last one or the one before the last one before hotfixes should stop and actual symbol deprecation starts. I’m also thinking of adding some further indication about the source file of the constant in the list of filtered symbols, as often times there are multiple constants with the same identifiers from differing <code>libc</code> modules, and it’s impossible to know which one is which.</p>
+  </body>
+</html>

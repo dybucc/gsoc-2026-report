@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-05)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-05)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today was mostly a day of refactors. A large amount of code that we implemented yesterday for the purposes of input handling got moved into a macro that more gracefully deals with all things related to types that use an internal representation, while still allowing for extensibility of such types. This made the implementation of other utility types easier, and allowed me to improve some parts of the input handling and state update routines. The main difference with the initial implementation is that the pattern of keeping a public-facing type with an internal representation and another public-facing implementation has been finally implemented in full. Previously, I was hesitant to do this due to the amount of code bloat that it would require, but some macro wizardry got most things out of the way. Moreover, I also refactored another macro that generated accessor, checker and consumer methods for the above types to make it far easier to repeatedly implement them. All of this has not only unified greatly the public interface (even though a binary and not a library crate, I prefer to keep some degree of separation of concerns,) but has also allowed me to detect a few places where my manual implementation was not covering edge cases, like the types of input events that I was transforming between their lower-level, raw forms to their higher-level, nicely formatted types.</p>
+    <p>Beyond that, I have also made good progress on the state updating side. All events that yesterday did not have proper input handling now have a complete implementation, which itself has been made modular by creating a bunch of other types using the internal representation pattern mentioned earlier. Among these, the <code>Position</code> type is of special relevance, as it required further refactoring the macro for type generation and trivial implementations to allow the inclusion of fields other than the internal representation. This type is used in the running state to keep track of the current position in the terminal grid; Both as raw cell coordinates, and as parsed coordinate offsets into the area under consideration for the TUI. A new event that I have added but for which there is no complete implementation just yet is the <code>Switch</code> event, which allows the user to move between the prompt and the list of filtered constants. I decided to include this command to make implementation matters easier when it came to deciding whether existing motion commands should also allow moving between layout containers. There’s also another event that is not even caught yet, but for which I have left a <code>TODO</code> comment; Backspace for character removal.</p>
+    <p>The PRs’ state continue as mentioned yesterday. There was a new commit in the <code>libc</code> repo, so I rebased them to latest <code>main</code>.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>As commented yesterday, it seems like the rendering loop may not take as long to implement after all. Though, of course, I have not yet properly started the on-screen drawing implementation, and that will likely require as much if not more type infrastructure as the update part. Either way, the priority continues to be this drawing loop, so events like <code>Backspace</code> (mentioned as not yet being implemented in the summary) won’t receive any attention for the time being.</p>
+  </body>
+</html>

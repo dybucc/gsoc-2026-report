@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-19)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-19)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on solving a few questions that remained in the MCP which I believed I could solve myself. The GNU/Hurd PR is also ready and the target maintainer has given his stamp of approval.</p>
+    <p>I started off by thinking twice about the proposal. Surely if we’re aiming to add the values of the OpenBSD OS+libc version to their <code>target_env</code> <code>cfg</code>, this <code>cfg</code> must be different across versions of <code>rustc</code>. So I started (and finished) reading through the high-level overview of the compiler and relevant sections during parsing in the first stages explained on the <code>rustc</code> development guide. I’ve so far not concluded anything new beyond the fact that it probably does have different <code>cfg</code> values for supported targets. This is pending looking a bit further into it, but something tells me the answer is obvious and I only have to find it.</p>
+    <p>Now, it could be that some user happens to change those <code>cfg</code> values by providing a JSON spec of their own (which is very much possible, considering the OpenBSD targets are tier 3.) I couldn’t find a way around this and decided I would simply mention it in the MCP.</p>
+    <p>I was also worried about the possibility some new OpenBSD release dropped support for an architecture; Should we then drop Rust support as well or should this target continue being supported with an older <code>rustc</code>? Soon after writing those thoughts down, I realized it was idiotic to consider this; The target maintainers would know best, and whether upstream continues to support some ISA or not is completely irrelevant to us. The MCP is aimed at getting some versioning support in C bindings, which could very well support upstream unsupported targets (with a predicate matching whichever version the target maintainers believe works with Rust.)</p>
+    <p>Concerning the GNU/Hurd PR, it seems done from the target maintainer’s comments. Still, I noticed that they mentioned they had run the <code>rustc</code> test suite against my changes to <code>libc</code>, but I digressed in that the <code>libc-test</code> test suite was likely a better fit. Considering <code>rustc</code> is more of a regular consumer of the crate, I don’t think their tests are as exhaustive as those we have in-house.</p>
+    <p>Other issues I’ve commented on remain unanswered.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The plan continues as expected. The few things I needed to find out to solve all of my doubts around the MCP are mostly solved. The only thing that remains is to figure out whether different <code>rustc</code> versions will report different <code>cfg</code>s for supported targets. I’ve not yet found information on this but something tells me it’s really obvious and I just haven’t caught up yet; Still, I’d prefer not to ask anybody directly. Once that is done, I will open the MCP, and post a comment on MCP 916 mentioning that this new proposal is likely to replace the older one as a follow up.</p>
+  </body>
+</html>

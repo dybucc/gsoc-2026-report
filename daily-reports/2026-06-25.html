@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-06-25)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-06-25)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on two things. We finished up fixes in PRs. We also continued work in file offset types and <code>time_t</code> in other modules. The latter has progressed greatly.</p>
+    <p>A bunch of PRs got rebased. The VxWorks PR got merged. All of the constant deprecation PRs also got merged. The latter needed fixing broken doc links. The former needed some rephrasing.</p>
+    <p>The L4Re uClibc PR got reviewed. I may end up removing the AArch64 module. There’s no Rust supported target with that target triple combination. That’s been held off for the time being. The priority is solving the Linux uClibc PR.</p>
+    <p>The Windows PR fixing 32-bit symbols is done. It was blocked. The PR changing the way <code>cfg</code>s are set got merged recently. That was its only dependency. Now it’s not blocked anymore. Changes have been made. A review is pending.</p>
+    <p>I finally moved back to the <code>bsd</code> module. that’s done. No changes have been deemed necessary. Both <code>time_t</code> and file offset types only exist as 64-bit unsuffixed types. I then moved on to other <code>unix</code> submodules. The following have all been reviewed. No changes were deemed necessary.</p>
+    <ul>
+      <li>Solaris and Solaris-like systems.</li>
+      <li>Haiku.</li>
+      <li>Redox.</li>
+      <li>Cygwin.</li>
+    </ul>
+    <p>I removed some stub submodules. They supported target architectures that don’t have Rust support. The patch is not ready. It needs a write up and a PR. That should be done tomorrow. Though this may not be worth it.</p>
+    <p>The <code>nto</code> module couldn’t be reviewed. I couldn’t get a hold of the QNX neutrino SDK. Either i’m missing something or their download center is broken. This also happened while deprecating constants.</p>
+    <p>I’m currently working on the <code>aix</code> module. I don’t know where to get system headers. I’ll look some more into this.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present. Testing on MIPS targets with uClibc is pending. These are all tier 3 targets. This is low priority. Input would be welcome.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Work today has provided some relief. Almost the entirety of the <code>unix</code> module is done. That means the proposal deadline will be met. It should be completely finished by next week. That even leaves some room for reviewing PRs (if there’s need for them.) A number of the currently open PRs also got merged. The Android one should be straightforward to merge. The musl and emscripten ones also apply. Though they will likely be blocked until we near 1.0. That leaves the Fuchsia and uClibc PRs. The latter seems done to me. The former also seems complete. Testing is pending on both.</p>
+  </body>
+</html>

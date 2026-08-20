@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-15)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-15)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has focused on two things; Realizing the new MCP implementation I had started off on was not feasible, and rebasing/fixing a few PRs that had conflicts. I also started looking into another old issue in the 1.0 milestone.</p>
+    <p>Most of the day was spent further reading through the rustc codebase, trying to potentially understand the consequences of the changes to the allowed set of <code>cfg</code> values. After a few hours, I came to the realization this would need a separate RFC.</p>
+    <p>For the last two days, I’ve been blindly thinking that it would be just fine to extend the <code>cfg</code> system to allow for lower and upper bounds to be set on the values. This is very much possible, but it’s a non-trivial expansion to the <code>cfg</code> system.</p>
+    <p>So much so, that I eventually realized this would be touching upon the versioned <code>cfg</code>s RFC and the binary relations that would be introduced for “version” <code>cfg</code>s, which would fit the same less than or equal semantics I was trying to implement with the bounded expected values.</p>
+    <p>I pointed that out in the MCP PR thread, and dropped the relevant commits. I’ve also mentioned that maybe once that RFC lands, it’s more feasible to put up another RFC that extends that functionality to apply to specific <code>cfg</code> variants rather than whole <code>cfg</code> keys.</p>
+    <p>But, thinking twice about it, once that one RFC lands, it’s best if we focus on extending it to support target-specific versioning rather than attempting to adapt the functionality to existing <code>cfg</code>s. The current MCP is only a short-term solution, after all.</p>
+    <p>In then went on to review some PRs I had with pending merg conflicts. There was one in particular that took a while to solve.</p>
+    <p>After rebasing the patchset that submitted a complete definition for <code>siginfo_t</code>, some code that hadn’t turned up with conflicts introduced an item resolution error in Rust.</p>
+    <p>Simply reviewing the diffs didn’t reveal much context because the literal diff context window in <code>git-log</code> was not large enough for me to see the pulled, conflicting changes.</p>
+    <p>That took a while, but I’m positive it’s solved now. The last thing I got to do today was reading through an issue that discussed the glibc support policy in rust-lang/libc.</p>
+    <p>At present, I think this could be solved quite easily by incorporating a section to the recently added documentation on usage guidelines. But I’d have to look some more into it (possibly with fresher eyes.)</p>
+    <h2>2. Blockers</h2>
+    <p>None.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The MCP implementation work should be virtually done. The extension that I had started to work on for the last three days has been abandoned. I highly doubt the changes required there would be possible without prior discussion.</p>
+    <p>Getting a temporary workaround only for OpenBSD systems neither seems like a viable option. I’ll keep working on rust-lang/libc issues then.</p>
+  </body>
+</html>

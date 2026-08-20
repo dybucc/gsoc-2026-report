@@ -18,9 +18,8 @@ the way it is currently handled. Still, a separate branch an attempt has been
 made to more gracefully handle these symbols. Though tests don't pass. The way
 it's been implemented uses the `gnu_file_offset_bits64` `cfg` option. No
 dedicated `cfg` was made available because the `_LARGEFILE64_SOURCE` macro seems
-deprecated as per #footnote[#link(
-  "https://linux.die.net/man/7/feature_test_macros",
-)]. Instead, it's recommended to set `FILE_OFFSET_BITS=64`, for which we already
+deprecated #footnote[#link("https://linux.die.net/man/7/feature_test_macros")].
+Instead, it's recommended to set `FILE_OFFSET_BITS=64`, for which we already
 have the afore mentioned `cfg` in the `libc` crate.
 
 No further efforts have gone into making CI pass tests as the changes introduced

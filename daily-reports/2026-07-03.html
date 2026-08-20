@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-03)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-03)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work has focused on three things.</p>
+    <ul>
+      <li>Reviewing some of the changes in the GNU Hurd patch.</li>
+      <li>Opening the NuttX PR.</li>
+      <li>Attempting (one more time) to test on both NuttX and the GNU Hurd.</li>
+    </ul>
+    <p>I got to both finish gathering sources and touch up the GNU Hurd PR yesterday. Today I simply went through it again just in case yesterday’s hurry had left something pending. Admittedly, I had forgotten two things. I had to run the style checker to ensure macro invocations used for conditional compilation were correctly formatted. On a more relevant note, I did miss a subtle detail in the memory layout of the <code>stat</code> and <code>stat64</code> records. In most systems I’ve reviewed these are the same so long as the target has a 64-bit machine word size, or has otherwise indicated through feature test macros that large file support should be the default (i.e. not just used for suffixed types/routines.) In the GNU Hurd this only holds if the the feature test macros are enabled. Under the x86_64 target, this structure has different trailing padding on each of the two. This meant that some C routine bindings also needed proper indication of equivalence (or inequivalence) if they expected or produced a value of such type.</p>
+    <p>The NuttX PR has also been opened. Much like yesterday, it was divided into more digestible commits. The patch was far smaller than the GNU Hurd’s so I made quick work of it. See the PR or prior daily reports for the list of included changes. It mostly just adds proper support for LFS bindings and correct widths for pointer-sized c types (<code>size_t</code> and <code>ssize_t</code>) under the NuttX small memory model.</p>
+    <p>Testing on both of these target groups has failed miserably. This was the second and last attempt I would make as they are tier 3 targets. Testing on NuttX was not possible because I again failed to cross compile to it. There’s nothing new to add here compared to the last time I attempted this. Testing on the GNU Hurd went through quite a few stages (each making testing seem less feasible.)</p>
+    <ul>
+      <li>
+        <p>I first realized that gcc had no support for the Hurd kernel. This meant that I couldn’t use a cross-compiling gcc to build and link the <code>libc-test</code> test suite.</p>
+      </li>
+      <li>
+        <p>I then tried to emulate the GNU Hurd on a virtual machine. This went quite badly. A combination of Guix GNU/Hurd didn’t boot up in QEMU. A combination of Debian GNU/Hurd booted up but didn’t get past the boot manager.</p>
+      </li>
+    </ul>
+    <p>I eventually gave up on testing on the GNU Hurd. I have access to cfarm machines but it’s not feasible to build a Rust toolchain there (the GNU/Hurd systems are quite weak and have very little disk space.) I need to get a GNU Hurd toolchain compiled or otherwise have the <code>libc-test</code> test binary compiled for any one of (through preferably both) x86 and x86_64 targets.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>We’re back on track. The original plan remains untouched. Having opened the GNU Hurd PR yesterday and the NuttX PR today, I got enough time to attempt to test on both today. This will be now put on halt. Work will be centered around cross referencing the AIX headers (from the cfarm machines) with the existing <code>libc</code> crate bindings. I hope to have a PR open in the next to days but that may take a little longer.</p>
+  </body>
+</html>

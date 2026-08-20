@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-16)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-16)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was focused on getting the issue with effecting changes to disk completely ironed out, but today’s efforts were insufficient in accomplishing this. The major patch today solved yesterday’s bug with constants from macro bodies not being correctly taken into consideration when saving to disk. I decided to tackle this by designing and implementing a container and iterator over the constants that could be (potentially) parsed from the <code>cfg_if</code> macro body. This required mirroring some parser functionality I had already implemented for initial scanning of the codebase, as well as some type infrastructure to unify parsed constant items and macros into a single, unified view that was passed to an externally-sourced closure to manipulate.</p>
+    <p>THe rest of today’s work was focused on refactoring this by reducing fragmentation in some abstraction layers of the underlying implementation. Beyond that, work has focused on attempting to completely fix issues with saving to disk, though this has not yet been solved. The issue now lies in that going from a state opposite to the one with which the symbol is loaded into memory, and then going back to the initial state (irrespective of whether this is “deprecated” or “undeprecated”) does not correctly perform the roundtrip. Minutes before writing this report, I realized that was caused by the spans of the constants under consideration changing from when they get deprecated/undeprecated to the opposite state. When parsing the file in which the constant is contained to find a match and modify it prior to effecting changes to disk, this skips the constant and thus no changes are actually effected. The tracked span is based off of line numbers and columns, so adding the attribute or removing it changes this information about the symbol.</p>
+    <p>A patch has not yet been implemented, but will be coming tomorrow.</p>
+    <p>Work on the PRs continues on halt.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>What yesterday I expected to be one day’s worth of work will become two days’ worth of work, which means scrolling won’t be finished until at least Wednesday next week. This is all, of course, under the assumption that fixing the current bug does not reveal further inconsistencies in the way we handle saving to disk. This week’s goal was modified halfway through the week to also aim for scrolling support. That expectation was set while solving one of the first bugs that I discovered when saving changes to disk, and ever since, I have continued finding more bugs and submitting more patches. Still, the minimal features required to actually deprecate constants continue to include scrolling, as that is needed for regex filter results that contain more than 10 items, so I won’t be giving up on that just yet. Considering the expected timeline is to finish the binary by the first to second weeks of the “coding period,” this still seems feasible.</p>
+  </body>
+</html>

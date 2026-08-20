@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-05-28)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-05-28)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today we worked on getting a bunch of constants deprecated. I won’t be discussing the specifics of each of the constants because a summary of that research was already included alongside the opened PRs.</p>
+    <p>Still, I can say that work started by deprecating <code>RAND_MAX</code> constants in the FreeBSD tree, as that one seemed to have changed between releases 12-13. That followed up from yesterday’s changes to the <code>ELAST</code> constant across all BSDs. Then I moved on to deprecating constants that matched the <code>*LAST</code> naming scheme, and then to constants fitting the <code>*COUNT</code> naming scheme. Both of those required a fair amount of looking into the sources for each of the upstream repos, as well as taking into consideration prior efforts by Lilit0x and comments by Amanieu. There were, though, some hurdles I coulnd’t get through; Namely, understanding whether certain constants under <code>mach/host_info.h</code> should be deprecated, and pinpointing the <code>DLFO_STRUCT_HAS_EH_COUNT</code> in the GNU Hurd repos.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Looking back at the proposal plan, things are going quite well. The expected timeline for deprecation work was meant to start next week, and I’ve already went through a bunch of the constants before the end of week 1 of the “coding period.” Tomorrow I will continue working on constants matching the <code>*NUM</code> regex, and from there on, I will look into the larger group of <code>*MAX</code> constants. I believe researching all of the constants in the latter group is going to take a little bit longer.</p>
+  </body>
+</html>

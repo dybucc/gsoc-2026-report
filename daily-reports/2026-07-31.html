@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-07-31)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-07-31)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was centered around a few things. The main ones are outlined below.</p>
+    <ul>
+      <li>
+        <p>I reviewed the MCP with new feedback I had received.</p>
+      </li>
+      <li>
+        <p>I started looking into setting up a GitHub pages for the repo I’ll hold the GSoC work product on.</p>
+      </li>
+      <li>
+        <p>I finished the <code>siginfo_t</code> on Linux patch and opened a PR.</p>
+      </li>
+    </ul>
+    <p>The first thing I did was reviewing the MCP by simplifying the text and ensuring the purpose was stated in a more straightforward manner. Then I also tweaked some smaller stuff and sent back a response on the Zulip thread.</p>
+    <p>Then I went on to looking through the GSoC guidelines for the final evaluation to get a rough overview of the expected text body. I messaged my mentor with an outline of my plan, and looked into creating a GitHub Pages site for the report.</p>
+    <p>In between doing this, I also answered back to the FreeBSD PR, where my mentor mentioned it would be best to extend ctest. Another contributor has already been tagged with this task, so I’ll take it up if they’re not implementing it.</p>
+    <p>I also got the Linux uClibc PR merged.</p>
+    <p>Then I continued working through the <code>siginfo_t</code> on Linux patchset. I’ve finished up the uClibc targets and the musl definition, and have also opened a PR with the changes. The only notable changes are to M68K and RISCV-32 targets.</p>
+    <p>The last thing I did was to look into another issue in the 1.0 milestone. This time I looked into another old issue that seemed to already be solved in present-day libc. It’s concerned with a backward-incompatible change in FreeBSD.</p>
+    <p>The Windows function pointer issue thread remains silent.</p>
+    <h2>2. Blockers</h2>
+    <p>None at present.</p>
+    <h2>3. Plan for the week</h2>
+    <p>The MCP seems to be on the road to getting merged, as there didn’t seem to be any roablocks in my mentor’s answer. The pending PRs continue on halt, except for the Linux uClibc PR, which is now merged. The <code>siginfo_t</code> PR, though, fills that hole as it’s now pending. Either way, the Linux uClibc PR was split and the other half has remained silent for a while. I pinned the target maintainers back when I opened it, but that’s not received any comments yet. I plan to look into another old issue concerning the use <code>union</code>s, which seems more juicy.</p>
+  </body>
+</html>
