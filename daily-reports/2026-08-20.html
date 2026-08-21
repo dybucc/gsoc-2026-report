@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daily report (2026-08-20)</title>
+    <meta name="authors" content="Adam Martinez">
+  </head>
+  <body>
+    <style>
+      body{
+        color: #fff;
+        background: #000;
+        margin: 40px auto;
+        max-width: 650px;
+        line-height: 1.4;
+        font-size: 18px;
+        padding: 0 10px;}
+      h1{line-height: 1.2; text-align: center}
+      h2,h3{line-height: 1.2; border-bottom: 1px solid;}
+      pre,blockquote,.signature{
+        padding: 1em;
+        background:#444;
+      }
+      blockquote,.signature{
+        font-style: italic;
+        margin: 2em 1em;}
+      p,ul,ol { list-style-type: circle; text-align: justify;}
+      a { color: #169; text-decoration: none; padding: 0.5em 0;}
+      a:hover { text-decoration: underline;}
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+      figcaption{ font-style: italic; font-size: 90%; text-align: center;}
+      aside{ font-size: 50%;}
+      code{ background-color: #444; font-size: 80%;}
+      .ref li{ margin: auto auto 1em; text-align: start;}
+      .header{
+        margin: 1em 0;
+        display: block;
+        width: 100%;
+      }
+      .horizontal { text-align: center; padding: 10px 40px;}
+      .horizontal li{ display: inline-block; margin: 0 0.5em;}
+      a[href^="mailto"]::after {content:' 📧';}
+      a[href^="gemini"]::after {content:' 🚀';}
+    </style>
+    <h1>
+      Daily report (2026-08-20)<br>
+      <aside>CSS blatantly copied from <a href="https://offpunk.net/">Offpunk</a>’s site with some modifications.</aside>
+    </h1>
+    <h2>1. Summary</h2>
+    <p>Today work was centered around two things; Finishing all matters work product, and commenting some on PRs I had received feedback on.</p>
+    <p>The first thing I did was to finish working on loading each daily report in the dedicated subpage of the GSoC report. Now each daily report can also be read from a subpage to which I link to from the main report.</p>
+    <p>After finishing the daily report import, I also proofread the conversion but left all mistakes related purely to each day’s report itself untouched. The page indexing each of the reports can be accessed from the main report’s page.</p>
+    <p>Then I went through two PRs I had received new feedback on; One was related to the <code>netlink</code> matters, and I’ve mostly solved it; The other one is related to the L4Re PR and it’s completely done.</p>
+    <p>The <code>netlink</code> PR mostly needed me to refine the solution to the double-reexport of the modules under the <code>sys/netlink</code> directory tree upstream. Other minor changes also took place, though I’ve notably not gotten to the last of them.</p>
+    <p>The L4Re PR only needed me to get rid of a certain type and to set up a rename in the libc-test build script. I think I’m done with this, but soon after submitting my patch and writing up the answer, I got a new notification from the target maintainer on that thread; I’ve yet to get to that one.</p>
+    <h2>2. Blockers</h2>
+    <p>None.</p>
+    <h2>3. Plan for the week</h2>
+    <p>Beyond potential feedback from my mentor on the GSoC work product, I think that is completely done and ready to submit. I expect to go back to addressing purely rust-lang/libc matters starting tomorrow.</p>
+    <p>The first two things I plan on doing include finishing up work on the <code>netlink</code> PR (which needs me refactoring some constants into using our <code>c_enum</code> macro,) followed by tweaking (if there’s need) the L4Re PR once I read the new notifications there.</p>
+  </body>
+</html>
