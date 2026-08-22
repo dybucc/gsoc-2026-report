@@ -124,6 +124,7 @@ report, see #link("..")[here].
   [2026-08-18],
   [2026-08-19],
   [2026-08-20],
+  [2026-08-21],
 )
 
 #html.div(class: "horizontal")[#for report in report-list { e(report) }]
